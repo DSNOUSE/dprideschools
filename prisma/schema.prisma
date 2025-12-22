@@ -5,10 +5,104 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+// -----------------------------
+// Auth & RBAC
+// -----------------------------
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  roles        UserRole[]
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  description String?
+
+  // Relations
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  label String?
+
+  roles RolePermission[]
+}
+
+model UserRole {
+  userId String
+  roleId Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+// -----------------------------
+// Academics Core
+// -----------------------------
+model Department {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  classes  Class[]
+  subjects Subject[]
+}
+
+model Class {
+  id           Int        @id @default(autoincrement())
+  name         String
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+
+  @@unique([name, departmentId])
+}
+
+model Subject {
+  id           Int         @id @default(autoincrement())
+  name         String
+  departmentId Int?
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+
+  @@unique([name, departmentId])
+}
+
+model Term {
+  id   Int    @id @default(autoincrement())
+  name String @unique // e.g., Term 1, Term 2
+}
+
+model Session {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique // e.g., 2025/2026
+  isActive Boolean @default(false)
 }
