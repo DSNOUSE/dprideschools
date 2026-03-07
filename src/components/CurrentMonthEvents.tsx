@@ -1,10 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Box, Typography, Paper, Chip } from '@mui/material';
-import { CalendarMonth, School, BeachAccess, Assignment, Celebration } from '@mui/icons-material';
 import { LinkButton } from './Button';
-import { CalendarEvent } from './SchoolCalendar';
+import type { CalendarEvent } from './SchoolCalendar';
 
 const CurrentMonthEvents: React.FC = () => {
   // Get current month and year
@@ -42,21 +40,6 @@ const CurrentMonthEvents: React.FC = () => {
       location: 'School Hall',
     },
   ];
-
-  const getEventIcon = (type: string) => {
-    switch (type) {
-      case 'academic':
-        return <School sx={{ color: 'white', fontSize: 18 }} />;
-      case 'holiday':
-        return <BeachAccess sx={{ color: 'white', fontSize: 18 }} />;
-      case 'exam':
-        return <Assignment sx={{ color: 'white', fontSize: 18 }} />;
-      case 'event':
-        return <Celebration sx={{ color: 'white', fontSize: 18 }} />;
-      default:
-        return <CalendarMonth sx={{ color: 'white', fontSize: 18 }} />;
-    }
-  };
 
   const getEventColor = (type: string) => {
     switch (type) {
@@ -113,22 +96,24 @@ const CurrentMonthEvents: React.FC = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedEvents.map((event) => (
-            <Paper
+            <div
               key={event.id}
-              sx={{
+              className="p-6 rounded-xl"
+              style={{
                 backgroundColor: getEventColor(event.type),
                 transition: 'all 0.3s ease',
                 cursor: 'pointer',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: '0 12px 30px rgba(0,0,0,0.15)',
-                },
               }}
-              className="p-6 rounded-xl"
             >
               <div className="flex items-start gap-3">
-                <div className="mt-1">
-                  {getEventIcon(event.type)}
+                <div className="mt-1 text-white text-lg font-bold">
+                  {event.type === 'academic'
+                    ? '📘'
+                    : event.type === 'holiday'
+                    ? '🌴'
+                    : event.type === 'exam'
+                    ? '📝'
+                    : '📅'}
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-white mb-2">
@@ -136,34 +121,21 @@ const CurrentMonthEvents: React.FC = () => {
                   </h3>
                   <div className="space-y-1 text-sm text-white">
                     <p className="font-medium">
-                      {new Date(event.date).toLocaleDateString('en-US', { 
-                        weekday: 'long', 
-                        month: 'short', 
-                        day: 'numeric' 
+                      {new Date(event.date).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'short',
+                        day: 'numeric',
                       })}
                     </p>
-                    {event.time && (
-                      <p>Time: {event.time}</p>
-                    )}
-                    {event.location && (
-                      <p>Location: {event.location}</p>
-                    )}
+                    {event.time && <p>Time: {event.time}</p>}
+                    {event.location && <p>Location: {event.location}</p>}
                   </div>
-                  <div className="mt-3">
-                    <Chip
-                      label={event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        borderColor: 'white',
-                        color: 'white',
-                        fontSize: '0.75rem',
-                      }}
-                    />
+                  <div className="mt-3 inline-flex items-center px-3 py-1 border border-white rounded-full text-xs text-white uppercase tracking-wide">
+                    {event.type}
                   </div>
                 </div>
               </div>
-            </Paper>
+            </div>
           ))}
         </div>
 

@@ -1,6 +1,5 @@
 // Example usage of the Button component
 import { Button, LinkButton } from '@/components/Button';
-import { Add, Download, CalendarMonth } from '@mui/icons-material';
 
 // Basic usage examples
 export default function ButtonExamples() {
@@ -28,24 +27,6 @@ export default function ButtonExamples() {
         <div className="flex gap-4">
           <LinkButton href="/calendar">Link Button</LinkButton>
           <LinkButton href="/calendar" shape="pill">Pill Link</LinkButton>
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-lg font-semibold mb-4">With Icons (Custom Implementation)</h3>
-        <div className="flex gap-4">
-          <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            <Add className="mr-2" fontSize="small" />
-            Add New
-          </button>
-          <button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Download className="mr-2" fontSize="small" />
-            Download
-          </button>
-          <button className="inline-flex items-center px-5 py-2.5 bg-gray-900 text-white rounded-full hover:bg-black">
-            <CalendarMonth className="mr-2" fontSize="small" />
-            Calendar
-          </button>
         </div>
       </div>
 

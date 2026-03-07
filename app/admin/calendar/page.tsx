@@ -1,36 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Paper,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  Card,
-  CardContent,
-  IconButton,
-} from '@mui/material';
-import {
-  CalendarMonth,
-  Add,
-  Edit,
-  Delete,
-  Event,
-  School,
-  Celebration,
-  Assignment,
-  BeachAccess,
-} from '@mui/icons-material';
 
 interface CalendarEvent {
   id: string;
@@ -147,21 +117,6 @@ const CalendarPage: React.FC = () => {
     location: '',
   });
 
-  const getEventIcon = (type: string) => {
-    switch (type) {
-      case 'academic':
-        return <School sx={{ color: '#2563eb' }} />;
-      case 'holiday':
-        return <BeachAccess sx={{ color: '#f59e0b' }} />;
-      case 'exam':
-        return <Assignment sx={{ color: '#dc2626' }} />;
-      case 'event':
-        return <Celebration sx={{ color: '#10b981' }} />;
-      default:
-        return <Event sx={{ color: '#6b7280' }} />;
-    }
-  };
-
   const getEventColor = (type: string) => {
     switch (type) {
       case 'academic':
@@ -217,211 +172,251 @@ const CalendarPage: React.FC = () => {
     setEvents(events.filter(e => e.id !== id));
   };
 
-  const sortedEvents = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sortedEvents = [...events].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  );
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1e3a8a' }}>
-          School Calendar
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
+    <div className="p-4 md:p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">School Calendar</h1>
+        <button
           onClick={() => handleOpenDialog()}
-          sx={{ backgroundColor: '#2563eb', '&:hover': { backgroundColor: '#1d4ed8' } }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition"
         >
-          Add Event
-        </Button>
-      </Box>
+          <span className="text-lg leading-none">＋</span>
+          <span>Add Event</span>
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
-              Q1 2025 Calendar Events
-            </Typography>
-            {sortedEvents.map((event) => (
-              <Card key={event.id} sx={{ mb: 2, backgroundColor: getEventColor(event.type) }}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                    {getEventIcon(event.type)}
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                        {event.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {new Date(event.date).toLocaleDateString('en-US', { 
-                          weekday: 'long', 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
+        {/* Events list */}
+        <div className="md:col-span-2 space-y-3">
+          <h2 className="text-lg font-semibold text-slate-900">Q1 2025 Calendar Events</h2>
+          {sortedEvents.map((event) => (
+            <div
+              key={event.id}
+              className="rounded-xl p-4 bg-white shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition cursor-pointer"
+              style={{
+                backgroundColor: getEventColor(event.type),
+              }}
+              onClick={() => handleOpenDialog(event)}
+            >
+              <div className="flex items-start gap-3">
+                <div className="mt-1 text-lg">
+                  {event.type === 'academic'
+                    ? '📘'
+                    : event.type === 'holiday'
+                    ? '🌴'
+                    : event.type === 'exam'
+                    ? '📝'
+                    : '📅'}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <h3 className="font-semibold text-slate-900">{event.title}</h3>
+                      <p className="text-sm text-slate-700">
+                        {new Date(event.date).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
                         })}
-                      </Typography>
-                      {event.time && (
-                        <Typography variant="body2" color="text.secondary">
-                          Time: {event.time}
-                        </Typography>
-                      )}
-                      {event.location && (
-                        <Typography variant="body2" color="text.secondary">
-                          Location: {event.location}
-                        </Typography>
-                      )}
-                      {event.description && (
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                          {event.description}
-                        </Typography>
-                      )}
-                      <Box sx={{ mt: 1 }}>
-                        <Chip 
-                          label={event.type.charAt(0).toUpperCase() + event.type.slice(1)} 
-                          size="small" 
-                          sx={{ mr: 1 }}
-                        />
-                      </Box>
-                    </Box>
-                    <Box>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleOpenDialog(event)}
-                        sx={{ mr: 1 }}
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDeleteEvent(event.id)}
-                        color="error"
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
-          </Paper>
+                      </p>
+                    </div>
+                    <span
+                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white uppercase tracking-wide"
+                      style={{ backgroundColor: getEventBorderColor(event.type) }}
+                    >
+                      {event.type}
+                    </span>
+                  </div>
+                  <div className="mt-2 space-y-1 text-sm text-slate-800">
+                    {event.time && <p>Time: {event.time}</p>}
+                    {event.location && <p>Location: {event.location}</p>}
+                    {event.description && <p>{event.description}</p>}
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/70 text-slate-800">
+                      {event.type}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="md:col-span-1">
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
-              Event Types
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <School sx={{ color: '#2563eb' }} />
-                <Typography>Academic Events</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <BeachAccess sx={{ color: '#f59e0b' }} />
-                <Typography>Holidays</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Assignment sx={{ color: '#dc2626' }} />
-                <Typography>Examinations</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Celebration sx={{ color: '#10b981' }} />
-                <Typography>Events & Activities</Typography>
-              </Box>
-            </Box>
-          </Paper>
+        {/* Sidebar */}
+        <div className="space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+            <h3 className="text-base font-semibold text-slate-900 mb-3">Event Types</h3>
+            <ul className="space-y-2 text-sm text-slate-700">
+              <li className="flex items-center gap-2">
+                <span>📘</span>
+                <span>Academic Events</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span>🌴</span>
+                <span>Holidays</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span>📝</span>
+                <span>Examinations</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span>🎉</span>
+                <span>Events & Activities</span>
+              </li>
+            </ul>
+          </div>
 
-          <Paper sx={{ p: 3, mt: 3 }}>
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
-              Quick Stats
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Typography variant="body2">
-                Total Events: {events.length}
-              </Typography>
-              <Typography variant="body2">
-                Academic Days: {events.filter(e => e.type === 'academic').length}
-              </Typography>
-              <Typography variant="body2">
-                Holidays: {events.filter(e => e.type === 'holiday').length}
-              </Typography>
-              <Typography variant="body2">
-                Examinations: {events.filter(e => e.type === 'exam').length}
-              </Typography>
-              <Typography variant="body2">
-                Events: {events.filter(e => e.type === 'event').length}
-              </Typography>
-            </Box>
-          </Paper>
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+            <h3 className="text-base font-semibold text-slate-900 mb-3">Quick Stats</h3>
+            <dl className="space-y-1 text-sm text-slate-700">
+              <div className="flex justify-between">
+                <dt>Total Events</dt>
+                <dd className="font-semibold">{events.length}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Academic Days</dt>
+                <dd className="font-semibold">
+                  {events.filter((e) => e.type === 'academic').length}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Holidays</dt>
+                <dd className="font-semibold">
+                  {events.filter((e) => e.type === 'holiday').length}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Examinations</dt>
+                <dd className="font-semibold">
+                  {events.filter((e) => e.type === 'exam').length}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Events</dt>
+                <dd className="font-semibold">
+                  {events.filter((e) => e.type === 'event').length}
+                </dd>
+              </div>
+            </dl>
+          </div>
         </div>
       </div>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          {editingEvent ? 'Edit Event' : 'Add New Event'}
-        </DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField
-              label="Event Title"
-              fullWidth
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            />
-            <TextField
-              label="Date"
-              type="date"
-              fullWidth
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-            />
-            <FormControl fullWidth>
-              <InputLabel>Event Type</InputLabel>
-              <Select
-                value={formData.type}
-                onChange={(e) =>
-                  setFormData({ ...formData, type: e.target.value as CalendarEvent['type'] })
-                }
+      {/* Add/Edit dialog */}
+      {openDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-slate-900">
+                {editingEvent ? 'Edit Event' : 'Add New Event'}
+              </h2>
+              <button
+                onClick={handleCloseDialog}
+                className="text-slate-500 hover:text-slate-800 text-sm font-medium"
               >
-                <MenuItem value="academic">Academic</MenuItem>
-                <MenuItem value="holiday">Holiday</MenuItem>
-                <MenuItem value="exam">Examination</MenuItem>
-                <MenuItem value="event">Event</MenuItem>
-                <MenuItem value="meeting">Meeting</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              label="Time"
-              fullWidth
-              value={formData.time}
-              onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-              placeholder="e.g., 9:00 AM"
-            />
-            <TextField
-              label="Location"
-              fullWidth
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-            />
-            <TextField
-              label="Description"
-              fullWidth
-              multiline
-              rows={3}
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} variant="outlined" color="inherit">
-            Cancel
-          </Button>
-          <Button onClick={handleSaveEvent} variant="contained" color="primary">
-            {editingEvent ? 'Update' : 'Add'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+                Close
+              </button>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-800 mb-1">
+                  Event Title
+                </label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-800 mb-1">
+                  Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-800 mb-1">
+                  Event Type
+                </label>
+                <select
+                  value={formData.type}
+                  onChange={(e) =>
+                    setFormData({ ...formData, type: e.target.value as CalendarEvent['type'] })
+                  }
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="academic">Academic</option>
+                  <option value="holiday">Holiday</option>
+                  <option value="exam">Examination</option>
+                  <option value="event">Event</option>
+                  <option value="meeting">Meeting</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-800 mb-1">
+                  Time
+                </label>
+                <input
+                  type="text"
+                  value={formData.time}
+                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                  placeholder="e.g., 9:00 AM"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-800 mb-1">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-800 mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows={3}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={handleCloseDialog}
+                className="px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 bg-white hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveEvent}
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+              >
+                {editingEvent ? 'Update' : 'Add'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

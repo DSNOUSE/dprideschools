@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,45 +6,38 @@ datasource db {
   provider = "postgresql"
 }
 
-// -----------------------------
-// Auth & RBAC
-// -----------------------------
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  name         String?
-  passwordHash String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Relations
-  roles        UserRole[]
+  id                String         @id @default(cuid())
+  email             String         @unique
+  name              String?
+  passwordHash      String
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  sentNotifications Notification[] @relation("SentNotifications")
+  reports           Report[]
+  roles             UserRole[]
 }
 
 model Role {
   id          Int              @id @default(autoincrement())
   name        String           @unique
   description String?
-
-  // Relations
-  users       UserRole[]
   permissions RolePermission[]
+  users       UserRole[]
 }
 
 model Permission {
-  id    Int    @id @default(autoincrement())
-  key   String @unique
+  id    Int              @id @default(autoincrement())
+  key   String           @unique
   label String?
-
   roles RolePermission[]
 }
 
 model UserRole {
   userId String
   roleId Int
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, roleId])
   @@index([roleId])
@@ -59,30 +46,33 @@ model UserRole {
 model RolePermission {
   roleId       Int
   permissionId Int
-
-  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@id([roleId, permissionId])
   @@index([permissionId])
 }
 
-// -----------------------------
-// Academics Core
-// -----------------------------
 model Department {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-
-  classes  Class[]
-  subjects Subject[]
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  classes       Class[]
+  notifications Notification[]
+  subjects      Subject[]
 }
 
 model Class {
-  id           Int        @id @default(autoincrement())
-  name         String
-  departmentId Int
-  department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  id            Int            @id @default(autoincrement())
+  name          String
+  departmentId  Int
+  level         String?
+  sort_order    Int?
+  department    Department     @relation(fields: [departmentId], references: [id])
+  grades        Grade[]
+  notifications Notification[]
+  results       Result[]
+  students      Student[]
+  subjects      Subject[]
 
   @@unique([name, departmentId])
 }
@@ -91,18 +81,201 @@ model Subject {
   id           Int         @id @default(autoincrement())
   name         String
   departmentId Int?
-  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  classId      Int?
+  maxScore     Float       @default(100.0)
+  grades       Grade[]
+  reports      Report[]
+  class        Class?      @relation(fields: [classId], references: [id])
+  department   Department? @relation(fields: [departmentId], references: [id])
 
   @@unique([name, departmentId])
 }
 
 model Term {
-  id   Int    @id @default(autoincrement())
-  name String @unique // e.g., Term 1, Term 2
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  grades  Grade[]
+  reports Report[]
+  results Result[]
 }
 
 model Session {
-  id       Int     @id @default(autoincrement())
-  name     String  @unique // e.g., 2025/2026
-  isActive Boolean @default(false)
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  isActive Boolean   @default(false)
+  grades   Grade[]
+  results  Result[]
+  students Student[]
+}
+
+model Student {
+  id          String          @id @default(cuid())
+  admissionNo String          @unique
+  firstName   String
+  lastName    String
+  middleName  String?
+  sex         String?
+  birthDate   DateTime?
+  classId     Int
+  sessionId   Int
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  grades      Grade[]
+  reports     Report[]
+  results     Result[]
+  class       Class           @relation(fields: [classId], references: [id])
+  session     Session         @relation(fields: [sessionId], references: [id])
+  parents     StudentParent[]
+}
+
+model Parent {
+  id                     String                  @id @default(cuid())
+  email                  String                  @unique
+  name                   String
+  phone                  String?
+  passwordHash           String
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  notificationRecipients NotificationRecipient[]
+  students               StudentParent[]
+}
+
+model StudentParent {
+  studentId String
+  parentId  String
+  relation  String
+  parent    Parent  @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, parentId])
+}
+
+model Grade {
+  id          String   @id @default(cuid())
+  studentId   String
+  subjectId   Int
+  classId     Int
+  termId      Int
+  sessionId   Int
+  firstScore  Float?
+  secondScore Float?
+  fourthScore Float?
+  average     Float
+  gradeId     Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  class       Class    @relation(fields: [classId], references: [id])
+  session     Session  @relation(fields: [sessionId], references: [id])
+  student     Student  @relation(fields: [studentId], references: [id])
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  term        Term     @relation(fields: [termId], references: [id])
+
+  @@unique([studentId, subjectId, classId, termId, sessionId])
+}
+
+model Result {
+  id         String   @id @default(cuid())
+  studentId  String
+  classId    Int
+  termId     Int
+  sessionId  Int
+  position   Int?
+  average    Float
+  totalScore Float
+  maxScore   Float
+  gradeId    Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  class      Class    @relation(fields: [classId], references: [id])
+  session    Session  @relation(fields: [sessionId], references: [id])
+  student    Student  @relation(fields: [studentId], references: [id])
+  term       Term     @relation(fields: [termId], references: [id])
+
+  @@unique([studentId, classId, termId, sessionId])
+}
+
+model GradeScale {
+  id          Int     @id @default(autoincrement())
+  grade       String  @unique
+  minScore    Float
+  maxScore    Float
+  description String?
+}
+
+model Report {
+  id         String       @id @default(cuid())
+  studentId  String
+  teacherId  String
+  subjectId  Int?
+  termId     Int
+  grade      String
+  comment    String
+  attendance Int?
+  conduct    String?
+  status     ReportStatus @default(DRAFT)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  student    Student      @relation(fields: [studentId], references: [id])
+  subject    Subject?     @relation(fields: [subjectId], references: [id])
+  teacher    User         @relation(fields: [teacherId], references: [id])
+  term       Term         @relation(fields: [termId], references: [id])
+
+  @@index([studentId, termId])
+}
+
+model Notification {
+  id            String                  @id @default(cuid())
+  senderId      String
+  title         String
+  message       String
+  type          NotificationType
+  priority      Priority                @default(NORMAL)
+  recipientType RecipientType
+  classId       Int?
+  departmentId  Int?
+  sentAt        DateTime                @default(now())
+  class         Class?                  @relation(fields: [classId], references: [id])
+  department    Department?             @relation(fields: [departmentId], references: [id])
+  sender        User                    @relation("SentNotifications", fields: [senderId], references: [id])
+  recipients    NotificationRecipient[]
+}
+
+model NotificationRecipient {
+  id             String       @id @default(cuid())
+  notificationId String
+  parentId       String
+  read           Boolean      @default(false)
+  readAt         DateTime?
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  parent         Parent       @relation(fields: [parentId], references: [id])
+
+  @@unique([notificationId, parentId])
+}
+
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  PUBLISHED
+}
+
+enum NotificationType {
+  ANNOUNCEMENT
+  REPORT_READY
+  MEETING
+  REMINDER
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum RecipientType {
+  ALL_PARENTS
+  CLASS_PARENTS
+  DEPARTMENT_PARENTS
+  SPECIFIC_PARENTS
 }

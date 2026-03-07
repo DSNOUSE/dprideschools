@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Overview
 
-## Getting Started
+- Admin-protected Next.js (App Router) site with PostgreSQL (Prisma) and Sanity CMS.
+- Authentication via NextAuth Credentials; RBAC with Prisma roles/permissions.
+- Sanity Studio mounted at `/admin/studio` for content management.
 
-First, run the development server:
+Key files:
+- App layout and homepage: [app/layout.tsx](app/layout.tsx), [app/page.tsx](app/page.tsx)
+- Admin area: [app/admin/layout.tsx](app/admin/layout.tsx), [app/admin/page.tsx](app/admin/page.tsx)
+- Auth route/options: [app/api/auth/[...nextauth]/route.ts](app/api/auth/%5B...nextauth%5D/route.ts), [src/lib/auth.ts](src/lib/auth.ts)
+- Prisma schema/seed: [prisma/schema.prisma](prisma/schema.prisma), [prisma/seed.js](prisma/seed.js)
+- Sanity config/schemas: [sanity.config.ts](sanity.config.ts), [sanity/schemas](sanity/schemas)
+- Admin gating middleware: [middleware.ts](middleware.ts)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Prerequisites
+
+- Node.js 18+ (tested with Node 20)
+- PostgreSQL database; connection string in `.env` as `DATABASE_URL`
+- A `NEXTAUTH_SECRET` set in `.env`
+- Sanity project/dataset IDs for CMS (or use placeholders while developing)
+
+## Environment Variables
+
+Copy [env.example](env.example) to `.env` and fill in:
+
+- `DATABASE_URL` — PostgreSQL connection string
+- `NEXTAUTH_SECRET` — random string for signing JWTs
+- `NEXTAUTH_URL` — e.g., `http://localhost:3000`
+- `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_PREVIEW_SECRET`
+
+## Install & Generate
+
+```powershell
+npm install
+npx prisma generate
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Database Migrate & Seed
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Run initial migrations:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+npx prisma migrate dev
+```
 
-## Learn More
+Seed an admin user (Windows PowerShell):
 
-To learn more about Next.js, take a look at the following resources:
+```powershell
+$env:ADMIN_EMAIL = "admin@dprideschools.com"
+$env:ADMIN_PASSWORD = "TestPass123!"
+npm run db:seed
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Seed (bash/zsh):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+ADMIN_EMAIL=admin@dprideschools.com ADMIN_PASSWORD=TestPass123\! npm run db:seed
+```
 
-## Deploy on Vercel
+The seed ensures base permissions, an `Administrator` role, and links it to the admin user.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Run the App
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```powershell
+npm run dev
+```
+
+Visit the app at http://localhost:3000.
+
+## Sign In and Admin
+
+- Go to http://localhost:3000/signin
+- Sign in with the seeded credentials (see seed step above)
+- You will be redirected to `/admin` and see the dashboard if your role includes `Administrator`.
+
+Admin protection is enforced by middleware in [middleware.ts](middleware.ts) and a server-side check in [app/admin/layout.tsx](app/admin/layout.tsx).
+
+## Sanity Studio
+
+- Start the app and open http://localhost:3000/admin/studio
+- Edit content types defined in [sanity/schemas](sanity/schemas) (homepage, news, admissions, etc.)
+
+## Useful Scripts
+
+- `npm run dev` — Start Next.js dev server
+- `npm run build` — Build production bundle
+- `npm start` — Start production server
+- `npm run db:migrate` — Alias for `prisma migrate dev`
+- `npm run db:generate` — Generate Prisma client
+- `npm run db:seed` — Seed roles/permissions and admin user
+- `npm run studio` — Run Sanity Studio locally
+
+## Troubleshooting
+
+- Missing Prisma client during seed:
+	- Run `npx prisma generate`, then re-run the seed.
+- `DATABASE_URL` not set or DB unreachable:
+	- Ensure `.env` has a valid `DATABASE_URL` and PostgreSQL is running and accessible.
+- Login says "Invalid credentials":
+	- Re-run the seed with the intended `ADMIN_EMAIL`/`ADMIN_PASSWORD`.
+- Accessing `/admin` redirects back to sign-in:
+	- Confirm user has the `Administrator` role. The seed attaches it automatically.
+- Sanity Studio fails to load:
+	- Verify `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` in `.env` and restart the dev server.
+
+## Notes
+
+- Auth callbacks and role mapping live in [src/lib/auth.ts](src/lib/auth.ts).
+- Prisma client is created via Node driver adapter in [src/lib/prisma.ts](src/lib/prisma.ts).
+- Homepage pulls from Sanity but includes safe fallbacks in [app/page.tsx](app/page.tsx).

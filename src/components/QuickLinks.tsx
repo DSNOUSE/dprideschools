@@ -2,26 +2,25 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { CalendarToday, Description, Payment, DateRange } from '@mui/icons-material';
 
 const QuickLinks: React.FC = () => {
   const quickLinks = [
     {
       title: 'TERM DATES',
       href: '/calendar',
-      icon: <DateRange sx={{ fontSize: 20, color: '#ffffffff' }} />,
+      icon: '📅',
       description: 'Academic calendar'
     },
     {
       title: 'CALENDAR',
       href: '/calendar',
-      icon: <CalendarToday sx={{ fontSize: 20, color: '#ffffffff' }} />,
+      icon: '🗓️',
       description: 'School events'
     },
     {
       title: 'GENERAL LETTERS',
       href: '/letters',
-      icon: <Description sx={{ fontSize: 20, color: '#ffffffff' }} />,
+      icon: '✉️',
       description: 'Official communications'
     },
     
@@ -37,7 +36,7 @@ const QuickLinks: React.FC = () => {
               href={link.href}
               className="group flex items-center gap-3 px-4 py-3 hover:bg-gray-800 transition-all duration-300 border-l-4 border-transparent hover:border-amber-500"
             >
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 text-lg">
                 {link.icon}
               </div>
               <div className="flex-1 min-w-0">

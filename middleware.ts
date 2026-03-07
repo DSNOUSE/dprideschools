@@ -1,21 +1,27 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-export async function middleware(req: Request & { nextUrl: URL }) {
-  const token = await getToken({ req: req as any, secret: process.env.NEXTAUTH_SECRET });
-  const url = new URL(req.nextUrl as any);
-  const pathname = url.pathname;
+export async function middleware(request: NextRequest) {
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/admin')) {
     if (!token) {
-      return NextResponse.redirect(new URL('/signin', url));
+      const response = NextResponse.redirect(new URL('/admin-signin', request.url));
+      return response;
     }
     const roles = (token as any).roles as string[] | undefined;
-    if (!roles?.includes('Administrator')) {
-      return NextResponse.redirect(new URL('/signin', url));
+    if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
+      const response = NextResponse.redirect(new URL('/admin-signin', request.url));
+      return response;
     }
   }
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'origin-when-cross-origin');
+  return response;
 }
 
 export const config = {

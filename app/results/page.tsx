@@ -6,17 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
 import SectionHeader from '@/components/SectionHeader';
-import { 
-  Logout, 
-  MenuBook, 
-  Schedule, 
-  EmojiEvents, 
-  TrendingUp, 
-  CalendarMonth, 
-  Person, 
-  Search 
-} from '@mui/icons-material';
-
 interface ResultData {
   student: {
     admissionNo: string;
@@ -312,19 +301,17 @@ export default function ResultsPage() {
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-semibold text-gray-900">Search Results</h2>
                 <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                  >
-                    <Logout sx={{ fontSize: 16 }} />
-                    Logout
-                  </button>
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Logout
+                </button>
               </div>
 
               <form onSubmit={handleSearch} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <MenuBook sx={{ fontSize: 16, marginRight: 1 }} />
                       Select Class
                     </label>
                     <select
@@ -344,7 +331,6 @@ export default function ResultsPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <CalendarMonth sx={{ fontSize: 16, marginRight: 1 }} />
                       Select Session
                     </label>
                     <select
@@ -364,7 +350,6 @@ export default function ResultsPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <Schedule sx={{ fontSize: 16, marginRight: 1 }} />
                       Select Term
                     </label>
                     <select
@@ -384,7 +369,6 @@ export default function ResultsPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <Person sx={{ fontSize: 16, marginRight: 1 }} />
                       Student ID/Admission Number
                     </label>
                     <input
@@ -501,8 +485,8 @@ export default function ResultsPage() {
 
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-amber-100 rounded-lg">
-                <EmojiEvents sx={{ fontSize: 24, color: '#f59e0b' }} />
+              <div className="p-3 bg-amber-100 rounded-lg text-amber-700 text-xl font-bold">
+                ★
               </div>
               <span className="text-2xl font-bold text-gray-900">{result.result.totalScore}</span>
             </div>
@@ -511,8 +495,8 @@ export default function ResultsPage() {
 
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <MenuBook sx={{ fontSize: 24, color: '#1e3a8a' }} />
+              <div className="p-3 bg-blue-100 rounded-lg text-blue-800 text-xl font-bold">
+                Σ
               </div>
               <span className="text-2xl font-bold text-gray-900">{result.result.maxScore}</span>
             </div>
@@ -521,8 +505,8 @@ export default function ResultsPage() {
 
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-amber-100 rounded-lg">
-                <Schedule sx={{ fontSize: 24, color: '#f59e0b' }} />
+              <div className="p-3 bg-amber-100 rounded-lg text-amber-700 text-xl font-bold">
+                #
               </div>
               <span className="text-2xl font-bold text-gray-900">{result.result.position || '-'}</span>
             </div>
@@ -595,7 +579,6 @@ export default function ResultsPage() {
             onClick={handleLogout}
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
-            <Logout sx={{ fontSize: 16 }} />
             Logout
           </button>
 

@@ -1,31 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Paper,
-  Grid,
-  Card,
-  CardContent,
-  Chip,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
-import {
-  CalendarMonth,
-  School,
-  Celebration,
-  Assignment,
-  BeachAccess,
-  Download,
-  Edit,
-  Delete,
-  Add,
-} from '@mui/icons-material';
 
 export interface CalendarEvent {
   id: string;
@@ -57,21 +32,6 @@ const SchoolCalendar: React.FC<SchoolCalendarProps> = ({
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [eventDetailsOpen, setEventDetailsOpen] = useState(false);
 
-  const getEventIcon = (type: string) => {
-    switch (type) {
-      case 'academic':
-        return <School sx={{ color: '#2563eb', fontSize: 20 }} />;
-      case 'holiday':
-        return <BeachAccess sx={{ color: '#f59e0b', fontSize: 20 }} />;
-      case 'exam':
-        return <Assignment sx={{ color: '#dc2626', fontSize: 20 }} />;
-      case 'event':
-        return <Celebration sx={{ color: '#10b981', fontSize: 20 }} />;
-      default:
-        return <CalendarMonth sx={{ color: '#6b7280', fontSize: 20 }} />;
-    }
-  };
-
   const getEventColor = (type: string) => {
     switch (type) {
       case 'academic':
@@ -102,7 +62,9 @@ const SchoolCalendar: React.FC<SchoolCalendarProps> = ({
     }
   };
 
-  const sortedEvents = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sortedEvents = [...events].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  );
 
   const handleEventClick = (event: CalendarEvent) => {
     setSelectedEvent(event);
@@ -120,10 +82,10 @@ const SchoolCalendar: React.FC<SchoolCalendarProps> = ({
     }));
 
     const dataStr = JSON.stringify(calendarData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
     const exportFileDefaultName = 'dpis-calendar.json';
-    
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
@@ -131,195 +93,163 @@ const SchoolCalendar: React.FC<SchoolCalendarProps> = ({
   };
 
   return (
-    <Box>
+    <div>
       {/* Header with actions */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1e3a8a' }}>
-          School Calendar Events
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-xl font-bold text-slate-900">School Calendar Events</h2>
+        <div className="flex gap-2">
           {showDownload && (
-            <Button
-              variant="outlined"
-              startIcon={<Download />}
+            <button
               onClick={downloadCalendar}
+              className="px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white hover:bg-slate-50"
             >
               Download
-            </Button>
+            </button>
           )}
           {isAdmin && onAddEvent && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<Add />}
+            <button
               onClick={onAddEvent}
+              className="px-3 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700"
             >
               Add Event
-            </Button>
+            </button>
           )}
-        </Box>
-      </Box>
+        </div>
+      </div>
 
       {/* Events List */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <div className="flex flex-col gap-2">
         {sortedEvents.map((event) => (
-          <Card
+          <div
             key={event.id}
-            sx={{
+            className="rounded-xl p-4 cursor-pointer transition-all"
+            style={{
               backgroundColor: getEventColor(event.type),
               borderLeft: `4px solid ${getEventBorderColor(event.type)}`,
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
-              },
             }}
             onClick={() => handleEventClick(event)}
           >
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                <Box sx={{ mt: 1 }}>
-                  {getEventIcon(event.type)}
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    {event.title}
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'medium' }}>
-                      {new Date(event.date).toLocaleDateString('en-US', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
-                    </Typography>
-                    {event.time && (
-                      <Typography variant="body2" color="text.secondary">
-                        Time: {event.time}
-                      </Typography>
-                    )}
-                    {event.location && (
-                      <Typography variant="body2" color="text.secondary">
-                        Location: {event.location}
-                      </Typography>
-                    )}
-                    {event.description && (
-                      <Typography variant="body2" sx={{ mt: 1 }}>
-                        {event.description}
-                      </Typography>
-                    )}
-                  </Box>
-                  <Box sx={{ mt: 2 }}>
-                    <Chip
-                      label={event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                      size="small"
-                      sx={{
-                        backgroundColor: getEventBorderColor(event.type),
-                        color: 'white',
+            <div className="flex items-start gap-3">
+              <div className="mt-1 text-slate-700">
+                {event.type === 'academic'
+                  ? '📘'
+                  : event.type === 'holiday'
+                  ? '🌴'
+                  : event.type === 'exam'
+                  ? '📝'
+                  : '📅'}
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-slate-900 mb-1">{event.title}</h3>
+                <div className="flex flex-col gap-0.5 text-sm text-slate-700">
+                  <span className="font-medium">
+                    {new Date(event.date).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
+                  {event.time && <span>Time: {event.time}</span>}
+                  {event.location && <span>Location: {event.location}</span>}
+                  {event.description && <span className="mt-1">{event.description}</span>}
+                </div>
+                <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white uppercase tracking-wide"
+                  style={{ backgroundColor: getEventBorderColor(event.type) }}
+                >
+                  {event.type}
+                </div>
+              </div>
+              {isAdmin && (
+                <div className="flex flex-col gap-1">
+                  {onEditEvent && (
+                    <button
+                      className="px-2 py-1 text-xs rounded border border-slate-300 bg-white hover:bg-slate-50"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEditEvent(event);
                       }}
-                    />
-                  </Box>
-                </Box>
-                {isAdmin && (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    {onEditEvent && (
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        startIcon={<Edit />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEditEvent(event);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    )}
-                    {onDeleteEvent && (
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="error"
-                        startIcon={<Delete />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteEvent(event.id);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </Box>
-                )}
-              </Box>
-            </CardContent>
-          </Card>
+                    >
+                      Edit
+                    </button>
+                  )}
+                  {onDeleteEvent && (
+                    <button
+                      className="px-2 py-1 text-xs rounded border border-red-300 text-red-700 bg-white hover:bg-red-50"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteEvent(event.id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         ))}
-      </Box>
+      </div>
 
       {/* Event Details Dialog */}
-      <Dialog open={eventDetailsOpen} onClose={() => setEventDetailsOpen(false)} maxWidth="sm" fullWidth>
-        {selectedEvent && (
-          <>
-            <DialogTitle>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                {getEventIcon(selectedEvent.type)}
-                <Typography variant="h6">{selectedEvent.title}</Typography>
-              </Box>
-            </DialogTitle>
-            <DialogContent>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Date</Typography>
-                  <Typography variant="body1">
-                    {new Date(selectedEvent.date).toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
-                  </Typography>
-                </Box>
-                {selectedEvent.time && (
-                  <Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Time</Typography>
-                    <Typography variant="body1">{selectedEvent.time}</Typography>
-                  </Box>
-                )}
-                {selectedEvent.location && (
-                  <Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Location</Typography>
-                    <Typography variant="body1">{selectedEvent.location}</Typography>
-                  </Box>
-                )}
-                {selectedEvent.description && (
-                  <Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Description</Typography>
-                    <Typography variant="body1">{selectedEvent.description}</Typography>
-                  </Box>
-                )}
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Event Type</Typography>
-                  <Chip
-                    label={selectedEvent.type.charAt(0).toUpperCase() + selectedEvent.type.slice(1)}
-                    size="small"
-                    sx={{
-                      backgroundColor: getEventBorderColor(selectedEvent.type),
-                      color: 'white',
-                    }}
-                  />
-                </Box>
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setEventDetailsOpen(false)}>Close</Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
-    </Box>
+      {eventDetailsOpen && selectedEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-900">
+                {selectedEvent.title}
+              </h3>
+              <button
+                onClick={() => setEventDetailsOpen(false)}
+                className="text-slate-500 hover:text-slate-800 text-sm font-medium"
+              >
+                Close
+              </button>
+            </div>
+            <div className="space-y-3 text-sm text-slate-700">
+              <div>
+                <p className="text-xs font-semibold text-slate-500 mb-1">Date</p>
+                <p>
+                  {new Date(selectedEvent.date).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+              </div>
+              {selectedEvent.time && (
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 mb-1">Time</p>
+                  <p>{selectedEvent.time}</p>
+                </div>
+              )}
+              {selectedEvent.location && (
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 mb-1">Location</p>
+                  <p>{selectedEvent.location}</p>
+                </div>
+              )}
+              {selectedEvent.description && (
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 mb-1">Description</p>
+                  <p>{selectedEvent.description}</p>
+                </div>
+              )}
+              <div>
+                <p className="text-xs font-semibold text-slate-500 mb-1">Event Type</p>
+                <span
+                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white uppercase tracking-wide"
+                  style={{ backgroundColor: getEventBorderColor(selectedEvent.type) }}
+                >
+                  {selectedEvent.type}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
