@@ -19,7 +19,7 @@ export default function NurseryPage() {
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Welcome to DPRIDE Nursery</h2>
               <p className="text-gray-600 mb-4">
-                Our nursery program provides a warm, nurturing environment where young children can explore, learn, and grow. We focus on developing the whole child through play-based learning, social interaction, and foundational academic skills for all.
+                Our nursery program provides a warm, nurturing environment where young children can explore, learn, and grow. We focus on developing the whole child through play-based learning, social interaction, and foundational academic skills.
               </p>
               <p className="text-gray-600 mb-6">
                 With experienced teachers and a carefully designed curriculum, we ensure that each child receives the attention and support they need to thrive during these crucial early years.
