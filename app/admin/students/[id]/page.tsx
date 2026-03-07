@@ -30,7 +30,7 @@ export default async function StudentView({ params }: Props) {
           <h2 className="font-semibold mb-2">Reports</h2>
           <div className="space-y-3">
             {reports.length === 0 && <div className="text-sm text-gray-500">No reports yet</div>}
-            {reports.map((r) => (
+            {reports.map((r: any) => (
               <div key={r.id} className="p-3 bg-white rounded shadow">
                 <div className="text-sm text-gray-600">{new Date(r.createdAt).toLocaleString()}</div>
                 <div className="font-medium">{r.subjectId ? `Subject ${r.subjectId}` : 'General'}</div>
