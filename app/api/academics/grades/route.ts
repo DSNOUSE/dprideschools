@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
       // Calculate average
       const scores = [firstScore, secondScore, fourthScore].filter(score => score !== undefined);
-      const average = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
+      const average = scores.length > 0 ? scores.reduce((sum: any, score: any) => sum + score, 0) / scores.length : 0;
 
       // Upsert grade
       const grade = await prisma.grade.upsert({
@@ -163,7 +163,7 @@ async function updateResultSummaries(classId: number, sessionId: number, termId:
       if (student.grades.length === 0) continue;
 
       // Calculate totals and averages
-      const totalScore = student.grades.reduce((sum, grade) => sum + grade.average, 0);
+      const totalScore = student.grades.reduce((sum: any, grade: any) => sum + grade.average, 0);
       const average = totalScore / student.grades.length;
       const maxScore = student.grades.length * 100; // Assuming max 100 per subject
 

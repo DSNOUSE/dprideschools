@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       senderId: (session.user as any).id,
       priority: (priority as any) ?? 'NORMAL',
       recipients: {
-        create: parents.map((p) => ({ parentId: p.id })),
+        create: parents.map((p: any) => ({ parentId: p.id })),
       },
     },
   });
