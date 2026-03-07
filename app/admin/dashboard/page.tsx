@@ -106,7 +106,7 @@ export default async function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {recentStudents.map((s) => (
+                  {recentStudents.map((s: any) => (
                     <tr key={s.id} className="border-t">
                       <td className="p-2">{s.admissionNo}</td>
                       <td className="p-2">{s.lastName} {s.firstName}</td>
