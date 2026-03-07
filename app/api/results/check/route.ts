@@ -267,6 +267,47 @@ const mockStudents = [
       }
     ],
     result: { position: 3, average: 86.3, totalScore: 259.0, maxScore: 300 }
+  },
+  {
+    id: 'student-6',
+    admissionNo: 'DPS2026035',
+    firstName: 'Grace',
+    lastName: 'Johnson',
+    middleName: '',
+    sex: 'F',
+    classId: 12, // Class 12 (YEAR 8)
+    sessionId: 1,
+    photo: null,
+    grades: [
+      { 
+        subjectId: 1, 
+        firstScore: 88, 
+        secondScore: 85, 
+        fourthScore: 90, 
+        average: 87.7,
+        subject: { name: 'Mathematics' },
+        term: { name: 'First Term' }
+      },
+      { 
+        subjectId: 2, 
+        firstScore: 92, 
+        secondScore: 89, 
+        fourthScore: 94, 
+        average: 91.7,
+        subject: { name: 'English' },
+        term: { name: 'First Term' }
+      },
+      { 
+        subjectId: 3, 
+        firstScore: 85, 
+        secondScore: 87, 
+        fourthScore: 88, 
+        average: 86.7,
+        subject: { name: 'Science' },
+        term: { name: 'First Term' }
+      }
+    ],
+    result: { position: 1, average: 88.7, totalScore: 266.0, maxScore: 300 }
   }
 ];
 
@@ -279,7 +320,10 @@ const mockClasses = [
   { id: 6, name: 'Primary 3' },
   { id: 7, name: 'Primary 4' },
   { id: 8, name: 'Primary 5' },
-  { id: 9, name: 'Primary 6' }
+  { id: 9, name: 'Primary 6' },
+  { id: 10, name: 'Primary 7' },
+  { id: 11, name: 'Primary 8' },
+  { id: 12, name: 'YEAR 8' }
 ];
 
 const mockSessions = [

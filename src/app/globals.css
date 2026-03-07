@@ -205,3 +205,45 @@ body {
     background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #1e3a8a 100%);
   }
 }
+
+/* Print-specific styles for stats cards */
+@media print {
+  .grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* Results page background */
+.results-bg {
+  background-image: url('/images/bg-white.png');
+  background-size: 300px 300px;
+  background-position: top left;
+  background-attachment: scroll;
+  background-repeat: repeat;
+  min-height: 100vh;
+}
+
+/* Transparent backgrounds for results pages */
+.results-bg .bg-white\/80 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.results-bg .bg-white\/60 {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.results-bg .bg-blue-50 {
+  background-color: rgba(219, 234, 254, 0.7) !important;
+}
+
+.results-bg .bg-amber-50 {
+  background-color: rgba(254, 243, 199, 0.7) !important;
+}
+
+.results-bg .bg-green-50 {
+  background-color: rgba(220, 252, 231, 0.7) !important;
+}
+
+.results-bg .bg-purple-50 {
+  background-color: rgba(233, 213, 255, 0.7) !important;
+}

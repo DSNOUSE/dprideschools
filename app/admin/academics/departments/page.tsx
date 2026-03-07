@@ -5,7 +5,9 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function DepartmentsPage() {
-  const departments = await prisma.department.findMany({ orderBy: { name: 'asc' } });
+  const prismaClient = prisma;
+  if (!prismaClient) throw new Error('Prisma client is not initialized');
+  const departments = await prismaClient.department.findMany({ orderBy: { name: 'asc' } });
   return (
     <div className="p-6">
       <div className="bg-white rounded-lg p-6 shadow space-y-6">

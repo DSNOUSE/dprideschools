@@ -15,24 +15,11 @@ function createPrisma() {
   return new PrismaClient({ adapter });
 }
 
-// Lazy initialization - only create client when actually used
-function getPrismaClient() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set at runtime');
-  }
-  if (!globalAny.prisma) {
-    globalAny.prisma = createPrisma();
-  }
-  return globalAny.prisma;
-}
+const prismaClient = globalAny.prisma ?? createPrisma();
+globalAny.prisma = prismaClient;
 
-export const prisma = new Proxy({} as PrismaClient, {
-  get(target, prop) {
-    const client = getPrismaClient();
-    return client[prop as keyof PrismaClient];
-  }
-});
+export const prisma = prismaClient;
 
 if (process.env.NODE_ENV !== 'production') {
-  globalAny.prisma = prisma;
+  globalAny.prisma = prismaClient;
 }
