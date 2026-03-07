@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 import AttendanceLineChart from '@/components/admin/AttendanceLineChart';
 import RightSidebar from '@/components/admin/RightSidebar';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function DashboardPage() {
   const [studentCount, classCount, teacherCount, staffCount] = await Promise.all([
     prisma.student.count(),
@@ -106,7 +109,7 @@ export default async function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {recentStudents.map((s: any) => (
+                  {recentStudents.map((s) => (
                     <tr key={s.id} className="border-t">
                       <td className="p-2">{s.admissionNo}</td>
                       <td className="p-2">{s.lastName} {s.firstName}</td>
@@ -128,7 +131,7 @@ export default async function DashboardPage() {
         </section>
 
         <aside>
-          <RightSidebar studentsCount={presentStudents} teachersCount={presentTeachers} staffCount={presentStaff} recent={recentStudents.map((s: any)=>({id:s.id,name:`${s.firstName} ${s.lastName}`, role:'Student', when:'7 mins ago'}))} />
+          <RightSidebar studentsCount={presentStudents} teachersCount={presentTeachers} staffCount={presentStaff} recent={recentStudents.map(s=>({id:s.id,name:`${s.firstName} ${s.lastName}`, role:'Student', when:'7 mins ago'}))} />
         </aside>
       </div>
     </div>

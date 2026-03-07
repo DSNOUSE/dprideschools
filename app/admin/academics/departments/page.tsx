@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { createDepartment, deleteDepartment } from './actions';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function DepartmentsPage() {
   const departments = await prisma.department.findMany({ orderBy: { name: 'asc' } });
   return (

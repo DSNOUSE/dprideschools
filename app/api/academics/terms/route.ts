@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+  }
+  
   try {
     const terms = await prisma.term.findMany({ orderBy: { id: 'asc' } });
     return NextResponse.json(terms);

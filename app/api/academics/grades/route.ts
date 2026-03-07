@@ -3,7 +3,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+  }
+  
   try {
     // Add authentication check
     const session = await getServerSession(authOptions);
@@ -56,6 +62,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+  }
+  
   try {
     // Add authentication check
     const session = await getServerSession(authOptions);

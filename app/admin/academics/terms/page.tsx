@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { createTerm, deleteTerm } from './actions';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function TermsPage() {
   const terms = await prisma.term.findMany({ orderBy: { id: 'asc' } });
   return (
