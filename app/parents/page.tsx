@@ -221,7 +221,7 @@ export default function ParentsPage() {
                       <div key={month} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                         <div className="flex items-center justify-between mb-4">
                           <h4 className="font-semibold text-gray-900">{month}</h4>
-                          <Description sx={{ fontSize: 20, color: '#6b7280' }} />
+                          <span className="text-2xl text-gray-500">📄</span>
                         </div>
                         <p className="text-sm text-gray-600 mb-4">Monthly school newsletter with updates and announcements</p>
                         <button className="text-blue-600 font-medium hover:text-blue-700 flex items-center">
@@ -259,7 +259,7 @@ export default function ParentsPage() {
                   </p>
                 </div>
                 <button className="w-full bg-blue-600 text-white font-medium py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center">
-                  <Description sx={{ fontSize: 18, marginRight: 1 }} />
+                  <span className="mr-2">📄</span>
                   Download Fee Schedule
                 </button>
               </div>
@@ -269,15 +269,15 @@ export default function ParentsPage() {
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Links</h3>
                 <div className="space-y-3">
                   <a href="/contact" className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                    <School sx={{ fontSize: 20, color: '#6b7280', marginRight: 2 }} />
+                    <span className="text-xl text-gray-500 mr-2">🏫</span>
                     <span className="text-gray-700">Contact School</span>
                   </a>
                   <a href="/calendar" className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                    <CalendarMonth sx={{ fontSize: 20, color: '#6b7280', marginRight: 2 }} />
+                    <span className="text-xl text-gray-500 mr-2">📅</span>
                     <span className="text-gray-700">Academic Calendar</span>
                   </a>
                   <a href="/book-visit" className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                    <TrendingUp sx={{ fontSize: 20, color: '#6b7280', marginRight: 2 }} />
+                    <span className="text-xl text-gray-500 mr-2">📈</span>
                     <span className="text-gray-700">Schedule Visit</span>
                   </a>
                 </div>
@@ -294,28 +294,28 @@ export default function ParentsPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <School sx={{ fontSize: 32, color: '#2563eb' }} />
+                <span className="text-3xl text-blue-600">🏫</span>
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Academic Excellence</h3>
               <p className="text-sm text-gray-600">Comprehensive curriculum with focus on holistic development</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp sx={{ fontSize: 32, color: '#10b981' }} />
+                <span className="text-3xl text-green-600">📈</span>
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Track Progress</h3>
               <p className="text-sm text-gray-600">Real-time access to your child's academic performance</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <NotificationsActive sx={{ fontSize: 32, color: '#f59e0b' }} />
+                <span className="text-3xl text-amber-600">🔔</span>
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Stay Updated</h3>
               <p className="text-sm text-gray-600">Instant notifications about school events and updates</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Payment sx={{ fontSize: 32, color: '#8b5cf6' }} />
+                <span className="text-3xl text-purple-600">💳</span>
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Easy Payments</h3>
               <p className="text-sm text-gray-600">Secure and convenient online payment options</p>

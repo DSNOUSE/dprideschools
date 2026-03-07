@@ -393,7 +393,7 @@ export default function ResultsPage() {
                   disabled={loading}
                   className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl backdrop-blur-sm flex items-center justify-center gap-2"
                 >
-                  <Search sx={{ fontSize: 20 }} />
+                  <span className="text-xl">🔍</span>
                   {loading ? 'Searching...' : 'Search Result'}
                 </Button>
               </form>
@@ -476,7 +476,7 @@ export default function ResultsPage() {
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-blue-100 rounded-lg">
-                <TrendingUp sx={{ fontSize: 24, color: '#2563eb' }} />
+                <span className="text-xl text-blue-600">📈</span>
               </div>
               <span className="text-2xl font-bold text-gray-900">{result.result.average.toFixed(1)}</span>
             </div>

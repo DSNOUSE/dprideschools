@@ -589,13 +589,13 @@ const CalendarPage: React.FC = () => {
                     onClick={() => navigateMonth('prev')}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
-                    <NavigateBefore />
+                    <span className="text-xl">◀</span>
                   </button>
                   <button
                     onClick={() => navigateMonth('next')}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
-                    <NavigateNext />
+                    <span className="text-xl">▶</span>
                   </button>
                   <h2 className="text-xl font-semibold text-gray-900">
                     {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
@@ -605,7 +605,6 @@ const CalendarPage: React.FC = () => {
                   onClick={goToToday}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                 >
-                  <Today sx={{ fontSize: 16, marginRight: 1 }} />
                   Today
                 </button>
               </div>

@@ -121,7 +121,7 @@ export default function OurSchoolPage() {
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                <Visibility className="text-white" sx={{ fontSize: 32 }} />
+                <span className="text-white text-2xl">👁️</span>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
               <p className="text-gray-700 leading-relaxed text-lg">
@@ -133,7 +133,7 @@ export default function OurSchoolPage() {
 
             <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center mb-6">
-                <FlashOn className="text-white" sx={{ fontSize: 32 }} />
+                <span className="text-white text-2xl">⚡</span>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
               <p className="text-gray-700 leading-relaxed text-lg">
@@ -160,42 +160,42 @@ export default function OurSchoolPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {[
               {
-                icon: <EmojiEvents className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">🏆</span>,
                 title: 'Excellence',
                 description: 'We strive for the highest standards in academics, behavior, and personal development.',
               },
               {
-                icon: <Favorite className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">❤️</span>,
                 title: 'Respect',
                 description: 'We value diversity, treat everyone with dignity, and foster a culture of mutual respect.',
               },
               {
-                icon: <Lightbulb className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">💡</span>,
                 title: 'Innovation',
                 description: 'We embrace creativity and encourage students to think critically and solve problems.',
               },
               {
-                icon: <CheckCircle className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">✅</span>,
                 title: 'Integrity',
                 description: 'We uphold honesty, responsibility, and strong moral values in all our actions.',
               },
               {
-                icon: <Star className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">⭐</span>,
                 title: 'Aspiration',
                 description: 'We inspire students to dream big and work towards achieving their goals.',
               },
               {
-                icon: <Groups className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">👥</span>,
                 title: 'Community',
                 description: 'We build strong partnerships between students, parents, staff, and the wider community.',
               },
               {
-                icon: <Security className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">🛡️</span>,
                 title: 'Safety',
                 description: 'We ensure a secure, nurturing environment where every child feels safe and valued.',
               },
               {
-                icon: <MenuBook className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">📚</span>,
                 title: 'Learning',
                 description: 'We foster a love for lifelong learning and continuous personal growth.',
               },
@@ -237,47 +237,47 @@ export default function OurSchoolPage() {
               {
                 title: 'Smart Classrooms',
                 description: 'Interactive whiteboards, projectors, and digital learning tools in every classroom.',
-                icon: <School className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">🏫</span>,
               },
               {
                 title: 'Science Laboratories',
                 description: 'Fully equipped labs for Physics, Chemistry, and Biology practical sessions.',
-                icon: <Science className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">🔬</span>,
               },
               {
                 title: 'Library & Resource Center',
                 description: 'Extensive collection of books, e-resources, and quiet study spaces.',
-                icon: <LocalLibrary className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">📚</span>,
               },
               {
                 title: 'Sports Facilities',
                 description: 'Football field, basketball court, and indoor sports hall for various activities.',
-                icon: <SportsBasketball className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">🏀</span>,
               },
               {
                 title: 'Computer Lab',
                 description: 'Modern computers with high-speed internet and latest educational software.',
-                icon: <Computer className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">💻</span>,
               },
               {
                 title: 'Art & Music Studios',
                 description: 'Creative spaces for developing artistic talents and musical abilities.',
-                icon: <Palette className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">🎨</span>,
               },
               {
                 title: 'Playground',
                 description: 'Safe, age-appropriate play areas for physical development and recreation.',
-                icon: <Attractions className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">🎠</span>,
               },
               {
                 title: 'Medical Center',
                 description: 'On-site health facility with qualified nurse for student wellbeing.',
-                icon: <LocalHospital className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">🏥</span>,
               },
               {
                 title: 'Cafeteria',
                 description: 'Clean, spacious dining area serving nutritious and balanced meals.',
-                icon: <Restaurant className="text-amber-500" sx={{ fontSize: 36 }} />,
+                icon: <span className="text-amber-500 text-3xl">🍽️</span>,
               },
             ].map((facility, index) => (
               <div
@@ -343,7 +343,7 @@ export default function OurSchoolPage() {
                   'Extracurricular activities and clubs',
                 ].map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="text-amber-500 flex-shrink-0 mt-1" sx={{ fontSize: 24 }} />
+                    <span className="text-amber-500 flex-shrink-0 mt-1 text-xl">✅</span>
                     <span className="text-gray-700">{item}</span>
                   </li>
                 ))}

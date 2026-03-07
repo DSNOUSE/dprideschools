@@ -763,7 +763,7 @@ export default function ApplyPage() {
               {/* Key Dates */}
               <div>
                 <div className="flex items-center mb-6">
-                  <DateRange sx={{ fontSize: 28, color: '#1e40af' }} className="mr-3" />
+                  <span className="text-3xl mr-3">📅</span>
                   <h2 className="text-2xl font-bold text-gray-900 mb-0">Key Dates</h2>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-6">
@@ -803,7 +803,7 @@ export default function ApplyPage() {
               {/* Downloadable Resources */}
               <div>
                 <div className="flex items-center mb-6">
-                  <Download sx={{ fontSize: 28, color: '#1e40af' }} className="mr-3" />
+                  <span className="text-3xl mr-3">📥</span>
                   <h2 className="text-2xl font-bold text-gray-900 mb-0">Downloadable Resources</h2>
                 </div>
                 <div className="space-y-4">
@@ -811,7 +811,7 @@ export default function ApplyPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-4">
-                          <PictureAsPdf sx={{ fontSize: 20, color: '#f59e0b' }} />
+                          <span className="text-xl">📄</span>
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">Application Form</h4>
@@ -819,7 +819,7 @@ export default function ApplyPage() {
                         </div>
                       </div>
                       <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        <Download sx={{ fontSize: 16, marginRight: '8px' }} />
+                        <span className="mr-2">📥</span>
                         Download
                       </button>
                     </div>
@@ -829,7 +829,7 @@ export default function ApplyPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                          <MenuBook sx={{ fontSize: 20, color: '#10b981' }} />
+                          <span className="text-xl">📚</span>
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">School Prospectus</h4>
@@ -837,7 +837,7 @@ export default function ApplyPage() {
                         </div>
                       </div>
                       <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        <Download sx={{ fontSize: 16, marginRight: '8px' }} />
+                        <span className="mr-2">📥</span>
                         Download
                       </button>
                     </div>
@@ -847,7 +847,7 @@ export default function ApplyPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                          <AttachMoney sx={{ fontSize: 20, color: '#8b5cf6' }} />
+                          <span className="text-xl">💰</span>
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">Fee Structure</h4>
@@ -855,7 +855,7 @@ export default function ApplyPage() {
                         </div>
                       </div>
                       <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        <Download sx={{ fontSize: 16, marginRight: '8px' }} />
+                        <span className="mr-2">📥</span>
                         Download
                       </button>
                     </div>
@@ -865,7 +865,7 @@ export default function ApplyPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4">
-                          <FactCheck sx={{ fontSize: 20, color: '#ef4444' }} />
+                          <span className="text-xl">📋</span>
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">Admission Checklist</h4>
@@ -873,7 +873,7 @@ export default function ApplyPage() {
                         </div>
                       </div>
                       <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        <Download sx={{ fontSize: 16, marginRight: '8px' }} />
+                        <span className="mr-2">📥</span>
                         Download
                       </button>
                     </div>

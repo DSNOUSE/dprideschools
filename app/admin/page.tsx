@@ -196,7 +196,7 @@ export default function AdminHome() {
               <Link href="/admin/calendar" className="group">
                 <div className="p-6 border border-gray-200 rounded-lg hover:border-orange-500 hover:shadow-md transition-all duration-200">
                   <div className="flex items-center mb-4">
-                    <CalendarMonth sx={{ fontSize: 32, color: '#ea580c' }} />
+                    <span className="text-3xl">📅</span>
                     <h3 className="ml-3 text-lg font-medium text-gray-900 group-hover:text-orange-600">
                       Academic Calendar
                     </h3>
@@ -217,7 +217,7 @@ export default function AdminHome() {
               <Link href="/admin/notifications" className="group">
                 <div className="p-6 border border-gray-200 rounded-lg hover:border-red-500 hover:shadow-md transition-all duration-200">
                   <div className="flex items-center mb-4">
-                    <Notifications sx={{ fontSize: 32, color: '#dc2626' }} />
+                    <span className="text-3xl">🔔</span>
                     <h3 className="ml-3 text-lg font-medium text-gray-900 group-hover:text-red-600">
                       Notifications
                     </h3>
@@ -238,7 +238,7 @@ export default function AdminHome() {
               <Link href="/admin/my-classes" className="group">
                 <div className="p-6 border border-gray-200 rounded-lg hover:border-teal-500 hover:shadow-md transition-all duration-200">
                   <div className="flex items-center mb-4">
-                    <School sx={{ fontSize: 32, color: '#0d9488' }} />
+                    <span className="text-3xl">🏫</span>
                     <h3 className="ml-3 text-lg font-medium text-gray-900 group-hover:text-teal-600">
                       My Classes
                     </h3>
@@ -266,7 +266,7 @@ export default function AdminHome() {
           </div>
           <div className="p-6">
             <div className="text-center py-8 text-gray-500">
-              <TrendingUp sx={{ fontSize: 48, color: '#9ca3af', marginBottom: 2 }} />
+              <span className="text-5xl">📈</span>
               <p>No recent activity to display</p>
               <p className="text-sm mt-2">Your actions will appear here as you use the system</p>
             </div>
