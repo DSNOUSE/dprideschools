@@ -47,7 +47,7 @@ export default async function StudentsPage({ searchParams }: { searchParams?: { 
             </tr>
           </thead>
           <tbody>
-            {students.map((s) => (
+            {students.map((s: any) => (
               <tr key={s.id} className="border-t">
                 <td className="p-2">{s.admissionNo}</td>
                 <td className="p-2">{s.lastName} {s.firstName}</td>

@@ -158,7 +158,7 @@ export default function ParentsPage() {
                 <div>
                   <h2 className="text-2xl font-bold mb-6">Recent Announcements</h2>
                   <div className="space-y-6">
-                    {announcements.map((announcement) => (
+                    {announcements.map((announcement: any) => (
                       <div key={announcement.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                         <div className="flex items-start justify-between mb-4">
                           <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${announcement.color}`}>
@@ -243,7 +243,7 @@ export default function ParentsPage() {
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Fee Information</h3>
                 <div className="space-y-3 mb-6">
-                  {feeStructure.map((fee) => (
+                  {feeStructure.map((fee: any) => (
                     <div key={fee.level} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
                       <div>
                         <p className="font-medium text-gray-900">{fee.level}</p>
