@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const results = [];
+    const results: any[] = [];
 
     for (const gradeData of grades) {
       const { studentId, subjectId, firstScore, secondScore, fourthScore } = gradeData;
@@ -230,7 +230,7 @@ async function calculateClassPosition(
     });
 
     // Count how many students have higher averages
-    const position = allResults.filter(result => result.average > studentAverage).length + 1;
+    const position = allResults.filter((result: any) => result.average > studentAverage).length + 1;
     
     return position;
   } catch (error) {
