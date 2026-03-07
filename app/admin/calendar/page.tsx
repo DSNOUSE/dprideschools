@@ -132,6 +132,21 @@ const CalendarPage: React.FC = () => {
     }
   };
 
+  const getEventBorderColor = (type: string) => {
+    switch (type) {
+      case 'academic':
+        return '#0284c7';
+      case 'holiday':
+        return '#f59e0b';
+      case 'exam':
+        return '#dc2626';
+      case 'event':
+        return '#10b981';
+      default:
+        return '#6b7280';
+    }
+  };
+
   const handleOpenDialog = (event?: CalendarEvent) => {
     if (event) {
       setEditingEvent(event);
