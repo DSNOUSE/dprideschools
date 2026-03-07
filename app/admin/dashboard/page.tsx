@@ -128,7 +128,7 @@ export default async function DashboardPage() {
         </section>
 
         <aside>
-          <RightSidebar studentsCount={presentStudents} teachersCount={presentTeachers} staffCount={presentStaff} recent={recentStudents.map(s=>({id:s.id,name:`${s.firstName} ${s.lastName}`, role:'Student', when:'7 mins ago'}))} />
+          <RightSidebar studentsCount={presentStudents} teachersCount={presentTeachers} staffCount={presentStaff} recent={recentStudents.map((s: any)=>({id:s.id,name:`${s.firstName} ${s.lastName}`, role:'Student', when:'7 mins ago'}))} />
         </aside>
       </div>
     </div>
