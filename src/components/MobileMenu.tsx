@@ -59,6 +59,7 @@ export default function MobileMenu({ open, links, onClose }: Props) {
               <Link
                 key={l.href}
                 href={l.href}
+                onClick={onClose}
                 className="block mobile-menu-item"
                 style={{ animationDelay: `${index * 100}ms` }}
               >

@@ -38,23 +38,23 @@ export default function Hero() {
         <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-blue-900/20 to-transparent" />
         
         {/* Hero Images - Bottom Left and Right */}
-        <div className="absolute bottom-0 left-4 sm:left-6 lg:left-8 xl:left-16 z-20 hidden sm:block max-h-[50%] lg:max-h-[60%]" aria-hidden="true">
+        <div className="absolute bottom-0 -left-[75px] sm:left-6 lg:left-8 xl:left-16 z-20 max-h-[40%] sm:max-h-[50%] lg:max-h-[60%]" aria-hidden="true">
           <Image 
             src="/images/hero-girls.png" 
             alt="" 
             width={404}
             height={286}
-            className="w-32 h-32 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-80 lg:h-80 xl:w-[404px] xl:h-[286px] object-contain object-bottom"
+            className="w-72 h-72 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-80 lg:h-80 xl:w-[404px] xl:h-[286px] object-contain object-bottom"
           />
         </div>
 
-        <div className="absolute bottom-0 right-4 sm:right-6 lg:right-8 xl:right-16 z-20 hidden sm:block max-h-[50%] lg:max-h-[60%]" aria-hidden="true">
+        <div className="absolute bottom-0 -right-[75px] sm:right-6 lg:right-8 xl:right-16 z-20 max-h-[40%] sm:max-h-[50%] lg:max-h-[60%]" aria-hidden="true">
           <Image 
             src="/images/hero-boy.png" 
             alt="" 
             width={251}
             height={392}
-            className="object-contain object-bottom w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-56 lg:h-56 xl:w-[251px] xl:h-[392px]"
+            className="object-contain object-bottom w-84 h-84 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-56 lg:h-56 xl:w-[251px] xl:h-[392px]"
           />
         </div>
         

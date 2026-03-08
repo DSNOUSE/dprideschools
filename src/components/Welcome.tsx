@@ -92,9 +92,9 @@ export default function Welcome({ message, name }: WelcomeProps) {
 
           {/* Director Image - Right Column */}
 
-          <div className="hidden md:flex md:items-end md:justify-end">
+          <div className="flex items-start md:items-end justify-center md:justify-end overflow-hidden">
 
-            <div className="w-96 md:w-[480px] lg:w-[576px]">
+            <div className="w-[384px] sm:w-80 md:w-[480px] lg:w-[576px] max-h-72 md:max-h-none md:translate-y-0">
 
               <Image
 

@@ -8,7 +8,7 @@ export default function Footer() {
       {/* Row 1: School Info, Logo, Email */}
       <div className="max-w-7xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-6">
         {/* School Info */}
-        <div>
+        <div className="text-center md:text-left">
           <h3 className="font-semibold text-white mb-3 text-lg">VISIT US</h3>
           <p className="text-white">DPRIDE International School</p>
           <p className="text-white mt-2">No. 30B Oke Agbe Close</p>
@@ -26,7 +26,7 @@ export default function Footer() {
         </div>
 
         {/* Email */}
-        <div className="text-right">
+        <div className="text-center md:text-right">
           <h3 className="font-semibold text-white mb-3 text-lg">CONTACT US</h3>
           <p className="text-white">
             <a href="tel:09037512828" className="hover:underline">09037512828, 08135967785</a>
@@ -42,14 +42,14 @@ export default function Footer() {
       <div className="w-full px-4 py-4 bg-[#1a2956]">
         <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-4 items-center">
           {/* Copyright */}
-          <div>
+          <div className="text-center md:text-left">
             <p className="text-white text-sm">
               © {new Date().getFullYear()} DPRIDE International School. All rights reserved.
             </p>
           </div>
 
           {/* Designed by */}
-          <div className="text-right">
+          <div className="text-center md:text-right">
             <p className="text-white text-sm">
               Designed by{' '}
               <a 
@@ -64,7 +64,7 @@ export default function Footer() {
           </div>
 
           {/* Scroll to top button */}
-          <div className="flex justify-end">
+          <div className="flex justify-center md:justify-end">
             <Button 
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               variant="yellow-pill"
