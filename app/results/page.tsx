@@ -130,6 +130,8 @@ export default function ResultsPage() {
 
   // Auto-search when all data is ready
   useEffect(() => {
+    if (!searchParams) return;
+    
     const autoStudent = searchParams.get('student');
     const autoClass = searchParams.get('class');
     const autoSession = searchParams.get('session');
