@@ -24,7 +24,9 @@
     "type-check": "tsc --noEmit",
     "verify-build": "node scripts/verify-build.js",
     "debug:auth": "node scripts/debug-auth.js",
-    "seed:academic-basic": "node scripts/seed-academic-basic.js"
+    "seed:academic-basic": "node scripts/seed-academic-basic.js",
+    "create:parent-student-accounts": "node scripts/create-parent-student-accounts.js",
+    "create:sample-accounts": "node scripts/create-sample-accounts.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
