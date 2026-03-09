@@ -601,7 +601,7 @@ export default function ResultsPage() {
 
         </div>
 
-          {/* Right Sidebar */}
+          {/* Right Sidebar Only */}
           <div className="w-full flex-shrink-0 lg:w-80">
           {/* School Event Calendar */}
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 mb-6 border border-white/20">
