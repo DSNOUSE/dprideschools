@@ -12,7 +12,14 @@ export const authOptions: NextAuthOptions = {
   providers: [
     unifiedCredentialsProvider,
   ],
-  session: { strategy: 'jwt' },
+  session: { 
+    strategy: 'jwt',
+    maxAge: 20 * 60, // 20 minutes in seconds
+    updateAge: 10 * 60, // Update session every 10 minutes
+  },
+  jwt: {
+    maxAge: 20 * 60, // 20 minutes
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -39,6 +46,7 @@ export const authOptions: NextAuthOptions = {
   },
   secret: env.NEXTAUTH_SECRET,
   pages: { signIn: '/signin' },
+  useSecureCookies: process.env.NODE_ENV === 'production',
 };
 
 export const getSession = () => getServerSession(authOptions);
