@@ -98,7 +98,7 @@ async function main() {
         const currentYear = new Date().getFullYear();
         const sessionName = `${currentYear}/${currentYear + 1}`;
         
-        await prisma.session.upsert({
+        const session = await prisma.session.upsert({
           where: { name: sessionName },
           update: {},
           create: { name: sessionName, isActive: true }
@@ -120,6 +120,101 @@ async function main() {
         }
 
         console.log('✅ Basic academic data seeded');
+
+        // Create sample students for each class
+        const sampleStudents = [
+          // Primary 1 Students
+          { admissionNo: 'DPS2024001', firstName: 'Ahmad', lastName: 'Mohammed', middleName: 'Bello', className: 'Primary 1' },
+          { admissionNo: 'DPS2024002', firstName: 'Fatima', lastName: 'Ibrahim', middleName: 'Aisha', className: 'Primary 1' },
+          { admissionNo: 'DPS2024003', firstName: 'Muhammad', lastName: 'Abubakar', middleName: 'Sani', className: 'Primary 1' },
+          { admissionNo: 'DPS2024004', firstName: 'Aisha', lastName: 'Yusuf', middleName: 'Mariam', className: 'Primary 1' },
+          { admissionNo: 'DPS2024005', firstName: 'Umar', lastName: 'Sani', middleName: 'Abdullahi', className: 'Primary 1' },
+          
+          // JSS 1 Students
+          { admissionNo: 'DPS2024011', firstName: 'Amina', lastName: 'Bello', middleName: 'Rashida', className: 'JSS 1' },
+          { admissionNo: 'DPS2024012', firstName: 'Abdullahi', lastName: 'Yusuf', middleName: 'Musa', className: 'JSS 1' },
+          { admissionNo: 'DPS2024013', firstName: 'Zainab', lastName: 'Ibrahim', middleName: 'Fatima', className: 'JSS 1' },
+          { admissionNo: 'DPS2024014', firstName: 'Ibrahim', lastName: 'Mohammed', middleName: 'Bashir', className: 'JSS 1' },
+          { admissionNo: 'DPS2024015', firstName: 'Maryam', lastName: 'Sani', middleName: 'Aisha', className: 'JSS 1' },
+        ];
+
+        // Get class and session IDs
+        const allClasses = await prisma.class.findMany();
+        const sessionObj = await prisma.session.findFirst({ where: { name: sessionName } });
+
+        for (const studentData of sampleStudents) {
+          const classObj = allClasses.find(c => c.name === studentData.className);
+          if (classObj && sessionObj) {
+            await prisma.student.upsert({
+              where: { admissionNo: studentData.admissionNo },
+              update: {
+                firstName: studentData.firstName,
+                lastName: studentData.lastName,
+                middleName: studentData.middleName,
+                classId: classObj.id,
+                sessionId: sessionObj.id
+              },
+              create: {
+                admissionNo: studentData.admissionNo,
+                firstName: studentData.firstName,
+                lastName: studentData.lastName,
+                middleName: studentData.middleName,
+                classId: classObj.id,
+                sessionId: sessionObj.id
+              }
+            });
+          }
+        }
+
+        console.log('✅ Sample students created');
+
+        // Create departments
+        const departments = [
+          { name: 'Early Years' },
+          { name: 'Primary' },
+          { name: 'Secondary' }
+        ];
+
+        for (const dept of departments) {
+          await prisma.department.upsert({
+            where: { name: dept.name },
+            update: {},
+            create: dept
+          });
+        }
+
+        // Create subjects with department associations
+        const subjects = [
+          { name: 'English Language', maxScore: 100, departmentName: 'Primary' },
+          { name: 'Mathematics', maxScore: 100, departmentName: 'Primary' },
+          { name: 'Science', maxScore: 100, departmentName: 'Primary' },
+          { name: 'Social Studies', maxScore: 100, departmentName: 'Primary' },
+          { name: 'Basic Science', maxScore: 100, departmentName: 'Secondary' },
+          { name: 'Basic Technology', maxScore: 100, departmentName: 'Secondary' },
+          { name: 'Agricultural Science', maxScore: 100, departmentName: 'Secondary' },
+          { name: 'Home Economics', maxScore: 100, departmentName: 'Secondary' },
+        ];
+
+        const allDepartments = await prisma.department.findMany();
+        for (const subjectData of subjects) {
+          const dept = allDepartments.find(d => d.name === subjectData.departmentName);
+          if (dept) {
+            await prisma.subject.upsert({
+              where: { name: subjectData.name },
+              update: {
+                maxScore: subjectData.maxScore,
+                departmentId: dept.id
+              },
+              create: {
+                name: subjectData.name,
+                maxScore: subjectData.maxScore,
+                departmentId: dept.id
+              }
+            });
+          }
+        }
+
+        console.log('✅ Departments and subjects created');
       }
     } catch (academicError) {
       console.log('⚠️ Academic seeding failed (non-critical):', academicError.message);
