@@ -79,6 +79,8 @@ export default function ResultsPage() {
 
   // Auto-populate form if redirected from login
   useEffect(() => {
+    if (!searchParams) return;
+    
     const autoStudent = searchParams.get('student');
     const autoClass = searchParams.get('class');
     const autoSession = searchParams.get('session');
