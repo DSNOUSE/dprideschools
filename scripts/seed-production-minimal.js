@@ -74,16 +74,19 @@ async function main() {
       if (classCount === 0) {
         console.log('📚 No classes found, seeding basic academic data...');
         
-        // Create basic classes
+        // Create basic classes with names that match grades system
         const classes = [
-          { name: 'Nursery 1', sort_order: 1 },
-          { name: 'Nursery 2', sort_order: 2 },
-          { name: 'Primary 1', sort_order: 3 },
-          { name: 'Primary 2', sort_order: 4 },
-          { name: 'Primary 3', sort_order: 5 },
-          { name: 'JSS 1', sort_order: 6 },
-          { name: 'JSS 2', sort_order: 7 },
-          { name: 'JSS 3', sort_order: 8 },
+          { name: 'DISCOVERY CLASS (Pre-Nursery)', sort_order: 1 },
+          { name: 'EXPLORERS (Nursery 1)', sort_order: 2 },
+          { name: 'PREPARATORY (Nursery 2)', sort_order: 3 },
+          { name: 'YEAR 1', sort_order: 4 },
+          { name: 'YEAR 2', sort_order: 5 },
+          { name: 'YEAR 3', sort_order: 6 },
+          { name: 'YEAR 4', sort_order: 7 },
+          { name: 'YEAR 5', sort_order: 8 },
+          { name: 'YEAR 7', sort_order: 9 },
+          { name: 'YEAR 8', sort_order: 10 },
+          { name: 'YEAR 9', sort_order: 11 },
         ];
 
         for (const cls of classes) {
@@ -121,21 +124,69 @@ async function main() {
 
         console.log('✅ Basic academic data seeded');
 
-        // Create sample students for each class
+        // Create sample students for each class using the actual class names
         const sampleStudents = [
-          // Primary 1 Students
-          { admissionNo: 'DPS2024001', firstName: 'Ahmad', lastName: 'Mohammed', middleName: 'Bello', className: 'Primary 1' },
-          { admissionNo: 'DPS2024002', firstName: 'Fatima', lastName: 'Ibrahim', middleName: 'Aisha', className: 'Primary 1' },
-          { admissionNo: 'DPS2024003', firstName: 'Muhammad', lastName: 'Abubakar', middleName: 'Sani', className: 'Primary 1' },
-          { admissionNo: 'DPS2024004', firstName: 'Aisha', lastName: 'Yusuf', middleName: 'Mariam', className: 'Primary 1' },
-          { admissionNo: 'DPS2024005', firstName: 'Umar', lastName: 'Sani', middleName: 'Abdullahi', className: 'Primary 1' },
+          // DISCOVERY CLASS (Pre-Nursery) Students
+          { admissionNo: 'DPS2024001', firstName: 'Fatima', lastName: 'Muhammad', middleName: 'Baba', className: 'DISCOVERY CLASS (Pre-Nursery)' },
+          { admissionNo: 'DPS2024002', firstName: 'Hafsat', lastName: 'Usman', middleName: 'Imam', className: 'DISCOVERY CLASS (Pre-Nursery)' },
+          { admissionNo: 'DPS2024003', firstName: 'Nana', lastName: 'Sa\'ad', middleName: '', className: 'DISCOVERY CLASS (Pre-Nursery)' },
+          { admissionNo: 'DPS2024004', firstName: 'Noor', lastName: 'Aliyu', middleName: 'Maina', className: 'DISCOVERY CLASS (Pre-Nursery)' },
+          { admissionNo: 'DPS2024005', firstName: 'Umar', lastName: 'Faruk', middleName: 'Yahaya', className: 'DISCOVERY CLASS (Pre-Nursery)' },
           
-          // JSS 1 Students
-          { admissionNo: 'DPS2024011', firstName: 'Amina', lastName: 'Bello', middleName: 'Rashida', className: 'JSS 1' },
-          { admissionNo: 'DPS2024012', firstName: 'Abdullahi', lastName: 'Yusuf', middleName: 'Musa', className: 'JSS 1' },
-          { admissionNo: 'DPS2024013', firstName: 'Zainab', lastName: 'Ibrahim', middleName: 'Fatima', className: 'JSS 1' },
-          { admissionNo: 'DPS2024014', firstName: 'Ibrahim', lastName: 'Mohammed', middleName: 'Bashir', className: 'JSS 1' },
-          { admissionNo: 'DPS2024015', firstName: 'Maryam', lastName: 'Sani', middleName: 'Aisha', className: 'JSS 1' },
+          // EXPLORERS (Nursery 1) Students
+          { admissionNo: 'DPS2024006', firstName: 'Amina', lastName: 'Abdulhamid', middleName: '', className: 'EXPLORERS (Nursery 1)' },
+          { admissionNo: 'DPS2024007', firstName: 'Mukhtar', lastName: 'Salihu', middleName: '', className: 'EXPLORERS (Nursery 1)' },
+          { admissionNo: 'DPS2024008', firstName: 'Ramadan', lastName: 'Ibrahim', middleName: '', className: 'EXPLORERS (Nursery 1)' },
+          { admissionNo: 'DPS2024009', firstName: 'Sani', lastName: 'Shehu', middleName: '', className: 'EXPLORERS (Nursery 1)' },
+          { admissionNo: 'DPS2024010', firstName: 'Sheriff', lastName: 'Aliyu', middleName: 'Maina', className: 'EXPLORERS (Nursery 1)' },
+          
+          // PREPARATORY (Nursery 2) Students
+          { admissionNo: 'DPS2024011', firstName: 'David', lastName: 'Oloruntola', middleName: '', className: 'PREPARATORY (Nursery 2)' },
+          { admissionNo: 'DPS2024012', firstName: 'Maryam', lastName: 'Faysal', middleName: 'Amin', className: 'PREPARATORY (Nursery 2)' },
+          
+          // YEAR 1 Students
+          { admissionNo: 'DPS2024013', firstName: 'Barata', lastName: 'Amrullah', middleName: '', className: 'YEAR 1' },
+          { admissionNo: 'DPS2024014', firstName: 'Fatima', lastName: 'Ibrahim', middleName: '', className: 'YEAR 1' },
+          
+          // YEAR 2 Students
+          { admissionNo: 'DPS2024015', firstName: 'Hafsat', lastName: 'Abubakar', middleName: '', className: 'YEAR 2' },
+          
+          // YEAR 3 Students
+          { admissionNo: 'DPS2024016', firstName: 'Aisha', lastName: 'Musa', middleName: '', className: 'YEAR 3' },
+          { admissionNo: 'DPS2024017', firstName: 'Bilikisu', lastName: 'Sani', middleName: 'Shehu', className: 'YEAR 3' },
+          { admissionNo: 'DPS2024018', firstName: 'Khadija', lastName: 'U.', middleName: 'Imam', className: 'YEAR 3' },
+          { admissionNo: 'DPS2024019', firstName: 'Zainab', lastName: 'U.', middleName: 'Imam', className: 'YEAR 3' },
+          
+          // YEAR 4 Students (largest group)
+          { admissionNo: 'DPS2024020', firstName: 'Abdallah', lastName: 'Arif', middleName: '', className: 'YEAR 4' },
+          { admissionNo: 'DPS2024021', firstName: 'Abdulhamid', lastName: 'Fatima', middleName: '', className: 'YEAR 4' },
+          { admissionNo: 'DPS2024022', firstName: 'Abdulhamid', lastName: 'Mohammed', middleName: '', className: 'YEAR 4' },
+          { admissionNo: 'DPS2024023', firstName: 'Ahmed', lastName: 'Abdullahi', middleName: 'Garba', className: 'YEAR 4' },
+          { admissionNo: 'DPS2024024', firstName: 'Bilal', lastName: 'Sani', middleName: '', className: 'YEAR 4' },
+          { admissionNo: 'DPS2024025', firstName: 'Hussaini', lastName: 'Maryam', middleName: '', className: 'YEAR 4' },
+          { admissionNo: 'DPS2024026', firstName: 'Mohammed', lastName: 'Halima', middleName: '', className: 'YEAR 4' },
+          { admissionNo: 'DPS2024027', firstName: 'Nabage', lastName: 'Ruqaiya', middleName: 'Nasiru', className: 'YEAR 4' },
+          
+          // YEAR 5 Students
+          { admissionNo: 'DPS2024028', firstName: 'Saad', lastName: 'Fatima', middleName: '', className: 'YEAR 5' },
+          { admissionNo: 'DPS2024029', firstName: 'Sanusi', lastName: 'Hafsat', middleName: '', className: 'YEAR 5' },
+          
+          // YEAR 7 Students
+          { admissionNo: 'DPS2024030', firstName: 'Aisha', lastName: 'Muhammad', middleName: '', className: 'YEAR 7' },
+          { admissionNo: 'DPS2024031', firstName: 'Imam', lastName: 'Usman', middleName: 'Nafisa', className: 'YEAR 7' },
+          
+          // YEAR 8 Students
+          { admissionNo: 'DPS2024032', firstName: 'Ali', lastName: 'Mohammed', middleName: 'B.M', className: 'YEAR 8' },
+          { admissionNo: 'DPS2024033', firstName: 'Hanan', lastName: 'Auwal', middleName: '', className: 'YEAR 8' },
+          { admissionNo: 'DPS2024034', firstName: 'Hanifa', lastName: 'Jibrin', middleName: 'Usman', className: 'YEAR 8' },
+          { admissionNo: 'DPS2024035', firstName: 'Nana', lastName: 'Aisha', middleName: 'Abubakar', className: 'YEAR 8' },
+          { admissionNo: 'DPS2024036', firstName: 'Umm\'suleim', lastName: 'Ibrahim', middleName: '', className: 'YEAR 8' },
+          
+          // YEAR 9 Students
+          { admissionNo: 'DPS2024037', firstName: 'Abdallah', lastName: 'Rabiu', middleName: '', className: 'YEAR 9' },
+          { admissionNo: 'DPS2024038', firstName: 'Ahmed', lastName: 'Abubakar', middleName: '', className: 'YEAR 9' },
+          { admissionNo: 'DPS2024039', firstName: 'Sanusi', lastName: 'Musab', middleName: '', className: 'YEAR 9' },
+          { admissionNo: 'DPS2024040', firstName: 'Zaid', lastName: 'Musa', middleName: '', className: 'YEAR 9' },
         ];
 
         // Get class and session IDs
