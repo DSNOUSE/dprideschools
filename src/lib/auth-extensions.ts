@@ -94,7 +94,7 @@ export const unifiedCredentialsProvider = Credentials({
         });
         
         if (student) {
-          if (student.admissionNo === credentials.password) {
+          if (student.admissionNo === credentials.password.toUpperCase()) {
             logger.info('Student authenticated successfully', { studentId: student.id });
             return {
               id: student.id,
@@ -122,7 +122,7 @@ export const unifiedCredentialsProvider = Credentials({
         });
         
         if (student) {
-          if (student.admissionNo === credentials.password) {
+          if (student.admissionNo === credentials.password.toUpperCase()) {
             logger.info('Student authenticated via email field', { studentId: student.id });
             return {
               id: student.id,
