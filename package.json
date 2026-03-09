@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
+    "postbuild": "node scripts/seed-production.js",
     "start": "next start",
     "lint": "eslint",
     "studio": "npx sanity dev",
@@ -21,7 +22,8 @@
     "test:coverage": "vitest --coverage",
     "test:watch": "vitest --watch",
     "type-check": "tsc --noEmit",
-    "verify-build": "node scripts/verify-build.js"
+    "verify-build": "node scripts/verify-build.js",
+    "debug:auth": "node scripts/debug-auth.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
