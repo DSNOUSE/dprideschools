@@ -10,12 +10,18 @@ import { LinkButton } from './Button';
 import { AdminPanelSettings } from '@mui/icons-material';
 
 const links = [
-  { href: '/our-school', label: 'Our School' },
-  { href: '/nursery', label: 'Our Nursery' },
-  { href: '/teaching', label: 'Teaching' },
+  { 
+    href: '/our-school', 
+    label: 'Our School',
+    children: [
+      { href: '/our-school', label: 'About Us' },
+      { href: '/nursery', label: 'Our Nursery' },
+      { href: '/teaching', label: 'Teaching' },
+      { href: '/calendar', label: 'Calendar' },
+      { href: '/results', label: 'Results' },
+    ]
+  },
   { href: '/parents', label: 'Parents' },
-  { href: '/calendar', label: 'Calendar' },
-  { href: '/results', label: 'Results' },
   {
     href: '/admin',
     label: 'Admin',

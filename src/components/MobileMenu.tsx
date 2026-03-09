@@ -1,11 +1,10 @@
 "use client";
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Logo from './Logo';
 import { Button } from './Button';
-import type NavLinksType from './NavLinks';
-
-type LinkItem = { href: string; label: string; icon?: React.ReactNode };
+import { KeyboardArrowDown } from '@mui/icons-material';
+import type { LinkItem } from './NavLinks';
 
 type Props = {
   open: boolean;
@@ -56,21 +55,12 @@ export default function MobileMenu({ open, links, onClose }: Props) {
         <nav className="flex-1 overflow-y-auto p-6">
           <div className="space-y-2">
             {links.map((l, index) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                onClick={onClose}
-                className="block mobile-menu-item"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="relative px-4 py-4 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-md group-hover:text-blue-600 transition-colors">
-                  <span className="relative z-10 inline-flex items-center gap-3 text-lg font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
-                    {l.icon ? <span className="text-blue-700">{l.icon}</span> : null}
-                    {l.label}
-                  </span>
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-                </div>
-              </Link>
+              <MobileMenuItem 
+                key={l.href} 
+                item={l} 
+                index={index} 
+                onClose={onClose}
+              />
             ))}
           </div>
         </nav>
@@ -83,5 +73,65 @@ export default function MobileMenu({ open, links, onClose }: Props) {
         </div>
       </div>
     </div>
+  );
+}
+
+// Mobile menu item with expandable children
+function MobileMenuItem({ item, index, onClose }: { item: LinkItem; index: number; onClose: () => void }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  if (item.children && item.children.length > 0) {
+    return (
+      <div className="mobile-menu-item" style={{ animationDelay: `${index * 100}ms` }}>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full relative px-4 py-4 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-md group text-left"
+        >
+          <span className="relative z-10 inline-flex items-center justify-between w-full text-lg font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
+            <span className="inline-flex items-center gap-3">
+              {item.icon ? <span className="text-blue-700">{item.icon}</span> : null}
+              {item.label}
+            </span>
+            <KeyboardArrowDown 
+              sx={{ fontSize: 20 }} 
+              className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+            />
+          </span>
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+        </button>
+        
+        {isExpanded && (
+          <div className="ml-4 mt-2 space-y-1 border-l-2 border-blue-200 pl-4">
+            {item.children.map((child) => (
+              <Link
+                key={child.href}
+                href={child.href}
+                onClick={onClose}
+                className="block px-4 py-3 rounded-lg text-base text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                {child.label}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={item.href}
+      onClick={onClose}
+      className="block mobile-menu-item"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
+      <div className="relative px-4 py-4 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-md group-hover:text-blue-600 transition-colors">
+        <span className="relative z-10 inline-flex items-center gap-3 text-lg font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
+          {item.icon ? <span className="text-blue-700">{item.icon}</span> : null}
+          {item.label}
+        </span>
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+      </div>
+    </Link>
   );
 }

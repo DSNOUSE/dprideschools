@@ -11,8 +11,8 @@ import Container from '@/components/Container';
 import SectionHeader from '@/components/SectionHeader';
 import { sanityFetch } from '@/lib/sanity';
 import { homepageQuery } from '@/lib/queries';
+import { Home, Assignment, GetApp, Phone } from '@mui/icons-material';
 import { LinkButton } from '@/components/Button';
-import { School, Edit, Download, Phone } from '@mui/icons-material';
 
 export default async function HomePage() {
   const data = (await sanityFetch(homepageQuery).catch(() => null)) as any;
@@ -137,33 +137,38 @@ At DPRIDE, we believe that every child has potential to thrive. Our motto, "Groo
               { 
                 label: 'Book a Visit', 
                 href: '/book-visit',
-                icon: <School sx={{ fontSize: 32, color: '#1e40af' }} />,
+                Icon: Home,
+                iconColor: '#FF6D1C',
                 description: 'Schedule a tour'
               },
               { 
                 label: 'Apply Now', 
                 href: '/apply',
-                icon: <Edit sx={{ fontSize: 32, color: '#1e40af' }} />,
+                Icon: Assignment,
+                iconColor: '#7763E5',
                 description: 'Start application'
               },
               { 
                 label: 'Download Brochure', 
                 href: '#',
-                icon: <Download sx={{ fontSize: 32, color: '#1e40af' }} />,
+                Icon: GetApp,
+                iconColor: '#09a24f',
                 description: 'Learn more'
               },
               { 
                 label: 'Contact Us', 
                 href: '/contact',
-                icon: <Phone sx={{ fontSize: 32, color: '#1e40af' }} />,
+                Icon: Phone,
+                iconColor: '#1c398e',
                 description: 'Get in touch'
               }
             ].map((action) => {
+              const Icon = action.Icon;
               return (
               <a key={action.label} href={action.href} className="group">
                 <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-center">
                   <div className="mb-4 flex justify-center">
-                    {action.icon}
+                    <Icon sx={{ fontSize: 40, color: action.iconColor }} />
                   </div>
                   <h3 className="font-bold text-gray-900 mb-2">{action.label}</h3>
                   <p className="text-sm text-gray-600">{action.description}</p>
