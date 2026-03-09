@@ -68,6 +68,63 @@ async function main() {
     console.log(`📧 Email: ${adminEmail}`);
     console.log('🔐 Password: [REDACTED]');
     
+    // Also seed basic academic data if needed
+    try {
+      const classCount = await prisma.class.count();
+      if (classCount === 0) {
+        console.log('📚 No classes found, seeding basic academic data...');
+        
+        // Create basic classes
+        const classes = [
+          { name: 'Nursery 1', sort_order: 1 },
+          { name: 'Nursery 2', sort_order: 2 },
+          { name: 'Primary 1', sort_order: 3 },
+          { name: 'Primary 2', sort_order: 4 },
+          { name: 'Primary 3', sort_order: 5 },
+          { name: 'JSS 1', sort_order: 6 },
+          { name: 'JSS 2', sort_order: 7 },
+          { name: 'JSS 3', sort_order: 8 },
+        ];
+
+        for (const cls of classes) {
+          await prisma.class.upsert({
+            where: { name: cls.name },
+            update: {},
+            create: cls
+          });
+        }
+
+        // Create current session
+        const currentYear = new Date().getFullYear();
+        const sessionName = `${currentYear}/${currentYear + 1}`;
+        
+        await prisma.session.upsert({
+          where: { name: sessionName },
+          update: {},
+          create: { name: sessionName, isActive: true }
+        });
+
+        // Create terms
+        const terms = [
+          { name: 'First Term', sort_order: 1 },
+          { name: 'Second Term', sort_order: 2 },
+          { name: 'Third Term', sort_order: 3 }
+        ];
+
+        for (const term of terms) {
+          await prisma.term.upsert({
+            where: { name: term.name },
+            update: {},
+            create: term
+          });
+        }
+
+        console.log('✅ Basic academic data seeded');
+      }
+    } catch (academicError) {
+      console.log('⚠️ Academic seeding failed (non-critical):', academicError.message);
+    }
+    
   } catch (error) {
     console.error('❌ Seed failed:', error.message);
     

@@ -23,7 +23,8 @@
     "test:watch": "vitest --watch",
     "type-check": "tsc --noEmit",
     "verify-build": "node scripts/verify-build.js",
-    "debug:auth": "node scripts/debug-auth.js"
+    "debug:auth": "node scripts/debug-auth.js",
+    "seed:academic-basic": "node scripts/seed-academic-basic.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
