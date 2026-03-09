@@ -1,6 +1,14 @@
 import Container from '@/components/Container';
 import SectionHeader from '@/components/SectionHeader';
 import { Button } from '@/components/Button';
+import {
+  ChildCare,
+  Palette,
+  MenuBook,
+  School,
+  Park,
+  Restaurant,
+} from '@mui/icons-material';
 
 export default function NurseryPage() {
   return (
@@ -49,7 +57,9 @@ export default function NurseryPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-yellow-50 rounded-lg p-6 text-center">
-              <div className="text-4xl mb-4">🍼</div>
+              <div className="mb-4 flex justify-center">
+                <ChildCare sx={{ fontSize: 36, color: '#b45309' }} />
+              </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Playgroup (2-3 years)</h3>
               <p className="text-gray-600 mb-4">
                 Introduction to structured play, social skills, and basic concepts through songs, stories, and hands-on activities.
@@ -63,7 +73,9 @@ export default function NurseryPage() {
             </div>
 
             <div className="bg-blue-50 rounded-lg p-6 text-center">
-              <div className="text-4xl mb-4">🎨</div>
+              <div className="mb-4 flex justify-center">
+                <Palette sx={{ fontSize: 36, color: '#2563eb' }} />
+              </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Nursery 1 (3-4 years)</h3>
               <p className="text-gray-600 mb-4">
                 Building foundational skills through structured learning, creative expression, and increased independence.
@@ -77,7 +89,9 @@ export default function NurseryPage() {
             </div>
 
             <div className="bg-green-50 rounded-lg p-6 text-center">
-              <div className="text-4xl mb-4">📚</div>
+              <div className="mb-4 flex justify-center">
+                <MenuBook sx={{ fontSize: 36, color: '#16a34a' }} />
+              </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Nursery 2 (4-5 years)</h3>
               <p className="text-gray-600 mb-4">
                 Preparing for primary school with advanced concepts, critical thinking, and school readiness skills.
@@ -143,7 +157,9 @@ export default function NurseryPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="flex items-start space-x-4">
-              <div className="text-2xl">🏫</div>
+              <div className="text-2xl">
+                <School sx={{ fontSize: 22, color: '#1e40af' }} />
+              </div>
               <div>
                 <h4 className="font-semibold text-gray-900 mb-1">Spacious Classrooms</h4>
                 <p className="text-sm text-gray-600">Bright, colorful rooms with age-appropriate learning materials</p>
@@ -151,7 +167,9 @@ export default function NurseryPage() {
             </div>
 
             <div className="flex items-start space-x-4">
-              <div className="text-2xl">🎨</div>
+              <div className="text-2xl">
+                <Palette sx={{ fontSize: 22, color: '#b45309' }} />
+              </div>
               <div>
                 <h4 className="font-semibold text-gray-900 mb-1">Art & Music Studio</h4>
                 <p className="text-sm text-gray-600">Creative spaces for artistic expression and music exploration</p>
@@ -159,7 +177,9 @@ export default function NurseryPage() {
             </div>
 
             <div className="flex items-start space-x-4">
-              <div className="text-2xl">📚</div>
+              <div className="text-2xl">
+                <MenuBook sx={{ fontSize: 22, color: '#16a34a' }} />
+              </div>
               <div>
                 <h4 className="font-semibold text-gray-900 mb-1">Library Corner</h4>
                 <p className="text-sm text-gray-600">Cozy reading area with age-appropriate books</p>
@@ -167,7 +187,9 @@ export default function NurseryPage() {
             </div>
 
             <div className="flex items-start space-x-4">
-              <div className="text-2xl">🌳</div>
+              <div className="text-2xl">
+                <Park sx={{ fontSize: 22, color: '#16a34a' }} />
+              </div>
               <div>
                 <h4 className="font-semibold text-gray-900 mb-1">Playground</h4>
                 <p className="text-sm text-gray-600">Safe outdoor equipment for physical development</p>
@@ -175,7 +197,9 @@ export default function NurseryPage() {
             </div>
 
             <div className="flex items-start space-x-4">
-              <div className="text-2xl">🥗</div>
+              <div className="text-2xl">
+                <Restaurant sx={{ fontSize: 22, color: '#b45309' }} />
+              </div>
               <div>
                 <h4 className="font-semibold text-gray-900 mb-1">Nutrition Area</h4>
                 <p className="text-sm text-gray-600">Clean space for meals and snacks with healthy options</p>

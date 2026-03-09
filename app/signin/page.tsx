@@ -5,6 +5,7 @@ import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useEffect } from 'react';
+import { Button } from '@/components/Button';
 
 export default function SignInPage() {
   const [email, setEmail] = useState('');
@@ -168,12 +169,15 @@ export default function SignInPage() {
                 </a>
               </div>
 
-              <button 
-                disabled={loading} 
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors font-medium"
+              <Button
+                disabled={loading}
+                variant="blue"
+                size="lg"
+                className="w-full"
+                type="submit"
               >
                 {loading ? 'Signing in...' : 'Sign In'}
-              </button>
+              </Button>
             </form>
 
             <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">

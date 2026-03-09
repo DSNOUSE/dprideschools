@@ -60,15 +60,15 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-semibold">Admin Dashboard</h1>
-        <div className="flex gap-2">
-          <Link href="/admin/students" className="px-3 py-2 bg-blue-600 text-white rounded">Manage Students</Link>
-          <Link href="/admin/notifications/send" className="px-3 py-2 bg-amber-500 text-white rounded">Send Notification</Link>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <h1 className="text-2xl md:text-3xl font-semibold">Admin Dashboard</h1>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Link href="/admin/students" className="px-3 py-2 bg-blue-600 text-white rounded text-sm md:text-base text-center">Manage Students</Link>
+          <Link href="/admin/notifications/send" className="px-3 py-2 bg-amber-500 text-white rounded text-sm md:text-base text-center">Send Notification</Link>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <div className="p-4 bg-white rounded shadow">
           <div className="text-sm text-gray-500">Students</div>
           <div className="text-2xl font-bold">{studentCount}</div>
@@ -83,8 +83,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6 mb-8">
-        <section className="col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <section className="lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold">Attendance</h2>
             <div className="text-sm text-gray-500">Overview</div>
@@ -96,8 +96,8 @@ export default async function DashboardPage() {
 
           <div className="mt-6">
             <h3 className="text-lg font-semibold mb-3">Students directory (recent)</h3>
-            <div className="bg-white rounded shadow overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="bg-white rounded shadow overflow-x-auto">
+              <table className="w-full text-sm min-w-[600px]">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="p-2 text-left">Admission</th>

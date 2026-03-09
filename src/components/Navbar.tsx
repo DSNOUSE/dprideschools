@@ -7,6 +7,7 @@ import HamburgerButton from './HamburgerButton';
 import NavLinks from './NavLinks';
 import MobileMenu from './MobileMenu';
 import { LinkButton } from './Button';
+import { AdminPanelSettings } from '@mui/icons-material';
 
 const links = [
   { href: '/our-school', label: 'Our School' },
@@ -15,6 +16,11 @@ const links = [
   { href: '/parents', label: 'Parents' },
   { href: '/calendar', label: 'Calendar' },
   { href: '/results', label: 'Results' },
+  {
+    href: '/admin',
+    label: 'Admin',
+    icon: <AdminPanelSettings sx={{ fontSize: 18 }} />,
+  },
 ];
 
 export default function Navbar() {

@@ -8,6 +8,11 @@ const prisma = new PrismaClient({ adapter });
 
 async function addTestStudents() {
   try {
+    if (process.env.ALLOW_TEST_DATA !== 'true') {
+      console.log('Set ALLOW_TEST_DATA=true to run this script.');
+      return;
+    }
+
     // Add test students to YEAR 1 (Class ID: 5) for 2025/2026 (Session ID: 2)
     const testStudents = [
       {

@@ -13,6 +13,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('Starting academic data seeding...');
+  const seedSampleData = process.env.SEED_SAMPLE_DATA === 'true';
 
   // 1. Create Departments
   const departments = await Promise.all([
@@ -222,166 +223,170 @@ async function main() {
 
   console.log('✓ Grade scales created');
 
-  // 7. Create Sample Students
-  const sampleStudents = [
-    { admissionNo: 'DPS2024001', firstName: 'Ahmed', lastName: 'Muhammad', sex: 'M' },
-    { admissionNo: 'DPS2024002', firstName: 'Fatima', lastName: 'Abubakar', sex: 'F' },
-    { admissionNo: 'DPS2024003', firstName: 'Chukwu', lastName: 'Okoro', sex: 'M' },
-    { admissionNo: 'DPS2024004', firstName: 'Aisha', lastName: 'Bello', sex: 'F' },
-    { admissionNo: 'DPS2024005', firstName: 'David', lastName: 'Johnson', sex: 'M' },
-    { admissionNo: 'DPS2024006', firstName: 'Mariam', lastName: 'Yusuf', sex: 'F' },
-    { admissionNo: 'DPS2024007', firstName: 'Peter', lastName: 'Eze', sex: 'M' },
-    { admissionNo: 'DPS2024008', firstName: 'Zainab', lastName: 'Ibrahim', sex: 'F' },
-    { admissionNo: 'DPS2024009', firstName: 'Samuel', lastName: 'Okafor', sex: 'M' },
-    { admissionNo: 'DPS2024010', firstName: 'Khadija', lastName: 'Garba', sex: 'F' }
-  ];
+  if (seedSampleData) {
+    // 7. Create Sample Students
+    const sampleStudents = [
+      { admissionNo: 'DPS2024001', firstName: 'Ahmed', lastName: 'Muhammad', sex: 'M' },
+      { admissionNo: 'DPS2024002', firstName: 'Fatima', lastName: 'Abubakar', sex: 'F' },
+      { admissionNo: 'DPS2024003', firstName: 'Chukwu', lastName: 'Okoro', sex: 'M' },
+      { admissionNo: 'DPS2024004', firstName: 'Aisha', lastName: 'Bello', sex: 'F' },
+      { admissionNo: 'DPS2024005', firstName: 'David', lastName: 'Johnson', sex: 'M' },
+      { admissionNo: 'DPS2024006', firstName: 'Mariam', lastName: 'Yusuf', sex: 'F' },
+      { admissionNo: 'DPS2024007', firstName: 'Peter', lastName: 'Eze', sex: 'M' },
+      { admissionNo: 'DPS2024008', firstName: 'Zainab', lastName: 'Ibrahim', sex: 'F' },
+      { admissionNo: 'DPS2024009', firstName: 'Samuel', lastName: 'Okafor', sex: 'M' },
+      { admissionNo: 'DPS2024010', firstName: 'Khadija', lastName: 'Garba', sex: 'F' }
+    ];
 
-  const students = [];
-  for (const studentData of sampleStudents) {
-    const student = await prisma.student.upsert({
-      where: { admissionNo: studentData.admissionNo },
-      update: {},
-      create: {
-        ...studentData,
-        classId: classes[3].id, // Primary 1
-        sessionId: sessions[0].id // 2024/2025
-      }
-    });
-    students.push(student);
-  }
-
-  console.log('✓ Sample students created');
-
-  // 8. Create Sample Parents
-  const parents = [];
-  for (let i = 0; i < 5; i++) {
-    const parent = await prisma.parent.upsert({
-      where: { email: `parent${i + 1}@dprideschools.com` },
-      update: {},
-      create: {
-        email: `parent${i + 1}@dprideschools.com`,
-        name: `Parent ${i + 1}`,
-        phone: `0801234567${i}`,
-        passwordHash: await argon2.hash('Password123!')
-      }
-    });
-    parents.push(parent);
-  }
-
-  console.log('✓ Sample parents created');
-
-  // 9. Link Students to Parents
-  for (let i = 0; i < students.length; i++) {
-    const parentIndex = i % parents.length;
-    await prisma.studentParent.upsert({
-      where: { 
-        studentId_parentId: {
-          studentId: students[i].id,
-          parentId: parents[parentIndex].id
+    const students = [];
+    for (const studentData of sampleStudents) {
+      const student = await prisma.student.upsert({
+        where: { admissionNo: studentData.admissionNo },
+        update: {},
+        create: {
+          ...studentData,
+          classId: classes[3].id, // Primary 1
+          sessionId: sessions[0].id // 2024/2025
         }
-      },
-      update: {},
-      create: {
-        studentId: students[i].id,
-        parentId: parents[parentIndex].id,
-        relation: i % 2 === 0 ? 'father' : 'mother'
-      }
-    });
-  }
+      });
+      students.push(student);
+    }
 
-  console.log('✓ Student-parent relationships created');
+    console.log('✓ Sample students created');
 
-  // 10. Create Sample Grades
-  for (const student of students) {
-    for (const subject of subjects.slice(0, 6)) { // First 6 subjects
-      // Generate random scores
-      const firstScore = Math.floor(Math.random() * 30) + 70; // 70-100
-      const secondScore = Math.floor(Math.random() * 30) + 70; // 70-100
-      const fourthScore = Math.floor(Math.random() * 30) + 70; // 70-100
-      const average = (firstScore + secondScore + fourthScore) / 3;
+    // 8. Create Sample Parents
+    const parents = [];
+    for (let i = 0; i < 5; i++) {
+      const parent = await prisma.parent.upsert({
+        where: { email: `parent${i + 1}@dprideschools.com` },
+        update: {},
+        create: {
+          email: `parent${i + 1}@dprideschools.com`,
+          name: `Parent ${i + 1}`,
+          phone: `0801234567${i}`,
+          passwordHash: await argon2.hash('Password123!')
+        }
+      });
+      parents.push(parent);
+    }
 
-      await prisma.grade.upsert({
+    console.log('✓ Sample parents created');
+
+    // 9. Link Students to Parents
+    for (let i = 0; i < students.length; i++) {
+      const parentIndex = i % parents.length;
+      await prisma.studentParent.upsert({
         where: {
-          studentId_subjectId_classId_termId_sessionId: {
+          studentId_parentId: {
+            studentId: students[i].id,
+            parentId: parents[parentIndex].id
+          }
+        },
+        update: {},
+        create: {
+          studentId: students[i].id,
+          parentId: parents[parentIndex].id,
+          relation: i % 2 === 0 ? 'father' : 'mother'
+        }
+      });
+    }
+
+    console.log('✓ Student-parent relationships created');
+
+    // 10. Create Sample Grades
+    for (const student of students) {
+      for (const subject of subjects.slice(0, 6)) { // First 6 subjects
+        // Generate random scores
+        const firstScore = Math.floor(Math.random() * 30) + 70; // 70-100
+        const secondScore = Math.floor(Math.random() * 30) + 70; // 70-100
+        const fourthScore = Math.floor(Math.random() * 30) + 70; // 70-100
+        const average = (firstScore + secondScore + fourthScore) / 3;
+
+        await prisma.grade.upsert({
+          where: {
+            studentId_subjectId_classId_termId_sessionId: {
+              studentId: student.id,
+              subjectId: subject.id,
+              classId: student.classId,
+              termId: terms[0].id, // First Term
+              sessionId: student.sessionId
+            }
+          },
+          update: {
+            firstScore,
+            secondScore,
+            fourthScore,
+            average
+          },
+          create: {
             studentId: student.id,
             subjectId: subject.id,
             classId: student.classId,
             termId: terms[0].id, // First Term
-            sessionId: student.sessionId
+            sessionId: student.sessionId,
+            firstScore,
+            secondScore,
+            fourthScore,
+            average
           }
-        },
-        update: {
-          firstScore,
-          secondScore,
-          fourthScore,
-          average
-        },
-        create: {
-          studentId: student.id,
-          subjectId: subject.id,
-          classId: student.classId,
-          termId: terms[0].id, // First Term
-          sessionId: student.sessionId,
-          firstScore,
-          secondScore,
-          fourthScore,
-          average
-        }
-      });
-    }
-  }
-
-  console.log('✓ Sample grades created');
-
-  // 11. Calculate and Create Results
-  for (const student of students) {
-    const grades = await prisma.grade.findMany({
-      where: {
-        studentId: student.id,
-        classId: student.classId,
-        termId: terms[0].id,
-        sessionId: student.sessionId
+        });
       }
-    });
+    }
 
-    if (grades.length > 0) {
-      const totalScore = grades.reduce((sum, grade) => sum + grade.average, 0);
-      const average = totalScore / grades.length;
-      const maxScore = grades.length * 100;
+    console.log('✓ Sample grades created');
 
-      // Calculate position (simplified)
-      const position = Math.floor(Math.random() * students.length) + 1;
-
-      await prisma.result.upsert({
+    // 11. Calculate and Create Results
+    for (const student of students) {
+      const grades = await prisma.grade.findMany({
         where: {
-          studentId_classId_termId_sessionId: {
-            studentId: student.id,
-            classId: student.classId,
-            termId: terms[0].id,
-            sessionId: student.sessionId
-          }
-        },
-        update: {
-          average,
-          totalScore,
-          maxScore,
-          position
-        },
-        create: {
           studentId: student.id,
           classId: student.classId,
           termId: terms[0].id,
-          sessionId: student.sessionId,
-          average,
-          totalScore,
-          maxScore,
-          position
+          sessionId: student.sessionId
         }
       });
-    }
-  }
 
-  console.log('✓ Sample results created');
+      if (grades.length > 0) {
+        const totalScore = grades.reduce((sum, grade) => sum + grade.average, 0);
+        const average = totalScore / grades.length;
+        const maxScore = grades.length * 100;
+
+        // Calculate position (simplified)
+        const position = Math.floor(Math.random() * students.length) + 1;
+
+        await prisma.result.upsert({
+          where: {
+            studentId_classId_termId_sessionId: {
+              studentId: student.id,
+              classId: student.classId,
+              termId: terms[0].id,
+              sessionId: student.sessionId
+            }
+          },
+          update: {
+            average,
+            totalScore,
+            maxScore,
+            position
+          },
+          create: {
+            studentId: student.id,
+            classId: student.classId,
+            termId: terms[0].id,
+            sessionId: student.sessionId,
+            average,
+            totalScore,
+            maxScore,
+            position
+          }
+        });
+      }
+    }
+
+    console.log('✓ Sample results created');
+  } else {
+    console.log('Skipping sample students, parents, grades, and results');
+  }
   console.log('\n🎉 Academic data seeding completed successfully!');
   console.log('\n📋 Summary:');
   console.log(`- Departments: ${departments.length}`);

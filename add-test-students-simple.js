@@ -4,6 +4,11 @@ async function addTestStudents() {
   console.log('🔄 Adding test students for local development...\n');
   
   try {
+    if (process.env.ALLOW_TEST_DATA !== 'true') {
+      console.log('Set ALLOW_TEST_DATA=true to run this script.');
+      return;
+    }
+
     // Get or create a class
     let testClass = await prisma.class.findFirst();
     if (!testClass) {

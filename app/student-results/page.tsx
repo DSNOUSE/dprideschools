@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
+import { WarningAmber, Print } from '@mui/icons-material';
 
 interface Grade {
   subjectId: number;
@@ -57,44 +58,9 @@ export default function StudentResultsPage() {
   // Get student admission number from URL or session
   const studentAdmissionNo = searchParams.get('student') || (session?.user as any)?.admissionNo;
 
-  // Class mapping based on admission number
-  const studentClassMap: Record<string, string> = {
-    // Nursery classes
-    'DPS2024001': '1', 'DPS2024002': '1', 'DPS2024003': '1', 'DPS2024004': '1', 'DPS2024005': '1', 'DPS2024006': '1', 'DPS2024007': '1', 'DPS2024008': '1', 'DPS2024009': '1', 'DPS2024010': '1',
-    
-    // Primary classes
-    'DPS2025001': '2', 'DPS2025002': '2', 'DPS2025003': '2', 'DPS2025004': '2', 'DPS2025005': '2', 'DPS2025006': '2', 'DPS2025007': '2', 'DPS2025008': '2', 'DPS2025009': '2', 'DPS2025010': '2',
-    
-    // Junior Secondary classes
-    'DPS2026001': '3', 'DPS2026002': '3', 'DPS2026003': '3', 'DPS2026004': '3', 'DPS2026005': '3', 'DPS2026006': '3', 'DPS2026007': '3', 'DPS2026008': '3', 'DPS2026009': '3', 'DPS2026010': '3',
-    
-    // Senior Secondary classes
-    'DPS2027001': '4', 'DPS2027002': '4', 'DPS2027003': '4', 'DPS2027004': '4', 'DPS2027005': '4', 'DPS2027006': '4', 'DPS2027007': '4', 'DPS2027008': '4', 'DPS2027009': '4', 'DPS2027010': '4',
-    
-    // Preparatory classes (Nursery 2)
-    'DPS2026011': '4', 'DPS2026012': '4',
-    
-    // Class 6 (YEAR 2)
-    'DPS2026015': '6',
-        
-    // Class 7 (YEAR 3)
-    'DPS2026016': '7', 'DPS2026017': '7', 'DPS2026018': '7', 'DPS2026019': '7',
-        
-    // Class 8 (YEAR 4)
-    'DPS2026020': '8', 'DPS2026021': '8', 'DPS2026022': '8', 'DPS2026023': '8', 'DPS2026024': '8', 'DPS2026025': '8', 'DPS2026026': '8', 'DPS2026027': '8',
-        
-    // Class 9 (YEAR 5)
-    'DPS2026028': '9', 'DPS2026029': '9',
-        
-    // Class 11 (YEAR 7)
-    'DPS2026030': '11', 'DPS2026031': '11',
-        
-    // Class 12 (YEAR 8)
-    'DPS2026032': '12', 'DPS2026033': '12', 'DPS2026034': '12', 'DPS2026035': '12', 'DPS2026036': '12',
-        
-    // Class 13 (YEAR 9)
-    'DPS2026037': '13',
-  };
+  const queryClassId = searchParams.get('class') || undefined;
+  const querySessionId = searchParams.get('session') || undefined;
+  const queryTermId = searchParams.get('term') || undefined;
 
   // Grade calculation functions
   const calculateGrade = (average: number): string => {
@@ -124,19 +90,13 @@ export default function StudentResultsPage() {
       setLoading(true);
       setError('');
       
-      // Use mapped classId if available, otherwise default to 1
-      const classId = studentClassMap[admissionNo] || '1';
-      
-      console.log(`Student ${admissionNo} mapped to classId ${classId}`);
-      
-      const requestBody = {
-        classId: classId,
-        sessionId: '1',
-        termId: '1',
+      const requestBody: Record<string, string> = {
         studentId: admissionNo.trim().toUpperCase()
       };
-      
-      console.log('Sending request with body:', requestBody);
+
+      if (queryClassId) requestBody.classId = queryClassId;
+      if (querySessionId) requestBody.sessionId = querySessionId;
+      if (queryTermId) requestBody.termId = queryTermId;
       
       const response = await fetch('/api/results/check', {
         method: 'POST',
@@ -146,19 +106,13 @@ export default function StudentResultsPage() {
 
       const data = await response.json();
       
-      console.log('Response status:', response.status);
-      console.log('Response data:', data);
-      
       if (!response.ok) {
-        console.error('Response not ok:', data.error || 'Failed to fetch results');
         setError(data.error || 'Failed to fetch results');
         setResult(null);
       } else if (!data || !data.student) {
-        console.error('No student data in response:', data);
         setError('No student data found in response');
         setResult(null);
       } else {
-        console.log('Setting result:', data);
         setResult(data);
         setError('');
       }
@@ -210,7 +164,9 @@ export default function StudentResultsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center bg-white p-8 rounded-lg shadow-md max-w-md">
-          <div className="text-red-600 text-5xl mb-4">⚠️</div>
+          <div className="text-red-600 text-5xl mb-4">
+            <WarningAmber sx={{ fontSize: 48, color: '#dc2626' }} />
+          </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Results Not Available</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <div className="flex justify-center space-x-2">
@@ -357,7 +313,8 @@ export default function StudentResultsPage() {
             variant="blue-pill"
             className="flex items-center"
           >
-            🖨️ Print
+            <Print sx={{ fontSize: 18, marginRight: 1 }} />
+            Print
           </Button>
           <Button
             onClick={handleLogout}

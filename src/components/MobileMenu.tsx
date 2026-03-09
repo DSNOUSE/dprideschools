@@ -5,7 +5,7 @@ import Logo from './Logo';
 import { Button } from './Button';
 import type NavLinksType from './NavLinks';
 
-type LinkItem = { href: string; label: string };
+type LinkItem = { href: string; label: string; icon?: React.ReactNode };
 
 type Props = {
   open: boolean;
@@ -64,7 +64,8 @@ export default function MobileMenu({ open, links, onClose }: Props) {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="relative px-4 py-4 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-md group-hover:text-blue-600 transition-colors">
-                  <span className="relative z-10 text-lg font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
+                  <span className="relative z-10 inline-flex items-center gap-3 text-lg font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
+                    {l.icon ? <span className="text-blue-700">{l.icon}</span> : null}
                     {l.label}
                   </span>
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />

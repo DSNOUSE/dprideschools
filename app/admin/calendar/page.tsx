@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { MenuBook, BeachAccess, EditNote, CalendarMonth, Celebration } from '@mui/icons-material';
 
 interface CalendarEvent {
   id: string;
@@ -219,13 +220,15 @@ const CalendarPage: React.FC = () => {
             >
               <div className="flex items-start gap-3">
                 <div className="mt-1 text-lg">
-                  {event.type === 'academic'
-                    ? '📘'
-                    : event.type === 'holiday'
-                    ? '🌴'
-                    : event.type === 'exam'
-                    ? '📝'
-                    : '📅'}
+                  {event.type === 'academic' ? (
+                    <MenuBook sx={{ fontSize: 18, color: '#0f172a' }} />
+                  ) : event.type === 'holiday' ? (
+                    <BeachAccess sx={{ fontSize: 18, color: '#0f172a' }} />
+                  ) : event.type === 'exam' ? (
+                    <EditNote sx={{ fontSize: 18, color: '#0f172a' }} />
+                  ) : (
+                    <CalendarMonth sx={{ fontSize: 18, color: '#0f172a' }} />
+                  )}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-start justify-between gap-2">
@@ -269,19 +272,19 @@ const CalendarPage: React.FC = () => {
             <h3 className="text-base font-semibold text-slate-900 mb-3">Event Types</h3>
             <ul className="space-y-2 text-sm text-slate-700">
               <li className="flex items-center gap-2">
-                <span>📘</span>
+                <MenuBook sx={{ fontSize: 18, color: '#0f172a' }} />
                 <span>Academic Events</span>
               </li>
               <li className="flex items-center gap-2">
-                <span>🌴</span>
+                <BeachAccess sx={{ fontSize: 18, color: '#0f172a' }} />
                 <span>Holidays</span>
               </li>
               <li className="flex items-center gap-2">
-                <span>📝</span>
+                <EditNote sx={{ fontSize: 18, color: '#0f172a' }} />
                 <span>Examinations</span>
               </li>
               <li className="flex items-center gap-2">
-                <span>🎉</span>
+                <Celebration sx={{ fontSize: 18, color: '#0f172a' }} />
                 <span>Events & Activities</span>
               </li>
             </ul>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
+import { School, Person, MenuBook } from '@mui/icons-material';
 
 export default function BookVisitPage() {
   const [formData, setFormData] = useState({
@@ -294,19 +295,25 @@ export default function BookVisitPage() {
             
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="text-3xl mb-4">🏫</div>
+                <div className="mb-4 flex justify-center">
+                  <School sx={{ fontSize: 40, color: '#1e40af' }} />
+                </div>
                 <h3 className="font-semibold mb-2">Campus Tour</h3>
                 <p className="text-gray-600">Explore our modern facilities, classrooms, and learning spaces</p>
               </div>
               
               <div className="text-center">
-                <div className="text-3xl mb-4">👩‍🏫</div>
+                <div className="mb-4 flex justify-center">
+                  <Person sx={{ fontSize: 40, color: '#1e40af' }} />
+                </div>
                 <h3 className="font-semibold mb-2">Meet Our Staff</h3>
                 <p className="text-gray-600">Interact with our dedicated teachers and administrative staff</p>
               </div>
               
               <div className="text-center">
-                <div className="text-3xl mb-4">📚</div>
+                <div className="mb-4 flex justify-center">
+                  <MenuBook sx={{ fontSize: 40, color: '#1e40af' }} />
+                </div>
                 <h3 className="font-semibold mb-2">Learn About Programs</h3>
                 <p className="text-gray-600">Discover our curriculum and extracurricular activities</p>
               </div>

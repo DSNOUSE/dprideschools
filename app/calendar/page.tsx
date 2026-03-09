@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Container from '@/components/Container';
+import { CalendarMonth } from '@mui/icons-material';
 
 interface CalendarEvent {
   id: string;
@@ -517,7 +518,7 @@ const CalendarPage: React.FC = () => {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-full bg-blue-600 text-white text-xl">
-                📅
+                <CalendarMonth sx={{ fontSize: 20, color: '#fff' }} />
               </div>
               <h1 className="text-3xl font-bold text-gray-900">School Calendar</h1>
             </div>

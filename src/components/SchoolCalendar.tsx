@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { MenuBook, BeachAccess, EditNote, CalendarMonth } from '@mui/icons-material';
 
 export interface CalendarEvent {
   id: string;
@@ -131,13 +132,15 @@ const SchoolCalendar: React.FC<SchoolCalendarProps> = ({
           >
             <div className="flex items-start gap-3">
               <div className="mt-1 text-slate-700">
-                {event.type === 'academic'
-                  ? '📘'
-                  : event.type === 'holiday'
-                  ? '🌴'
-                  : event.type === 'exam'
-                  ? '📝'
-                  : '📅'}
+                {event.type === 'academic' ? (
+                  <MenuBook sx={{ fontSize: 18, color: '#334155' }} />
+                ) : event.type === 'holiday' ? (
+                  <BeachAccess sx={{ fontSize: 18, color: '#334155' }} />
+                ) : event.type === 'exam' ? (
+                  <EditNote sx={{ fontSize: 18, color: '#334155' }} />
+                ) : (
+                  <CalendarMonth sx={{ fontSize: 18, color: '#334155' }} />
+                )}
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-slate-900 mb-1">{event.title}</h3>

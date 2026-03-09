@@ -8,6 +8,11 @@ const prisma = new PrismaClient({ adapter });
 
 async function createComprehensiveTestData() {
   try {
+    if (process.env.ALLOW_TEST_DATA !== 'true') {
+      console.log('Set ALLOW_TEST_DATA=true to run this script.');
+      return;
+    }
+
     console.log('🚀 Creating comprehensive test data for DPRIDE Results System...');
 
     // 1. Get existing data

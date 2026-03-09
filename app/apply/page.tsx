@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
+import { Edit, School, Description, Group, Mail, CheckCircle, Download, MenuBook, AttachMoney, CalendarMonth, Checklist } from '@mui/icons-material';
 
 export default function ApplyPage() {
   const [formData, setFormData] = useState({
@@ -203,37 +204,37 @@ export default function ApplyPage() {
               {[
                 {
                   step: 1,
-                  icon: '📝',
+                  icon: <Edit sx={{ fontSize: 24, color: '#1e40af' }} />,
                   title: 'Submit Enquiry',
                   description: 'Complete our online enquiry form or contact us directly.',
                 },
                 {
                   step: 2,
-                  icon: '🏫',
+                  icon: <School sx={{ fontSize: 24, color: '#1e40af' }} />,
                   title: 'School Visit',
                   description: 'Schedule a tour to see our facilities and meet our team.',
                 },
                 {
                   step: 3,
-                  icon: '📄',
+                  icon: <Description sx={{ fontSize: 24, color: '#1e40af' }} />,
                   title: 'Application',
                   description: 'Submit application form with required documents.',
                 },
                 {
                   step: 4,
-                  icon: '👨‍👩‍👧',
+                  icon: <Group sx={{ fontSize: 24, color: '#1e40af' }} />,
                   title: 'Assessment',
                   description: 'Your child will have a friendly introductory session.',
                 },
                 {
                   step: 5,
-                  icon: '✉️',
+                  icon: <Mail sx={{ fontSize: 24, color: '#1e40af' }} />,
                   title: 'Offer',
                   description: 'Successful applicants receive an offer letter.',
                 },
                 {
                   step: 6,
-                  icon: '✅',
+                  icon: <CheckCircle sx={{ fontSize: 24, color: '#1e40af' }} />,
                   title: 'Enrollment',
                   description: 'Accept offer and complete enrollment procedures.',
                 }
@@ -241,7 +242,7 @@ export default function ApplyPage() {
                 <div key={item.step} className="relative">
                   <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                     <div className="flex items-center mb-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4 text-2xl">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
                         {item.icon}
                       </div>
                       <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
@@ -763,7 +764,7 @@ export default function ApplyPage() {
               {/* Key Dates */}
               <div>
                 <div className="flex items-center mb-6">
-                  <span className="text-3xl mr-3">📅</span>
+                  <CalendarMonth sx={{ fontSize: 32, color: '#1e40af', marginRight: 2 }} />
                   <h2 className="text-2xl font-bold text-gray-900 mb-0">Key Dates</h2>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-6">
@@ -803,7 +804,7 @@ export default function ApplyPage() {
               {/* Downloadable Resources */}
               <div>
                 <div className="flex items-center mb-6">
-                  <span className="text-3xl mr-3">📥</span>
+                  <Download sx={{ fontSize: 32, color: '#1e40af', marginRight: 2 }} />
                   <h2 className="text-2xl font-bold text-gray-900 mb-0">Downloadable Resources</h2>
                 </div>
                 <div className="space-y-4">
@@ -811,7 +812,7 @@ export default function ApplyPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-4">
-                          <span className="text-xl">📄</span>
+                          <Description sx={{ fontSize: 20, color: '#b45309' }} />
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">Application Form</h4>
@@ -819,7 +820,7 @@ export default function ApplyPage() {
                         </div>
                       </div>
                       <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        <span className="mr-2">📥</span>
+                        <Download sx={{ fontSize: 16, color: '#fff', marginRight: 1 }} />
                         Download
                       </button>
                     </div>
@@ -829,7 +830,7 @@ export default function ApplyPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                          <span className="text-xl">📚</span>
+                          <MenuBook sx={{ fontSize: 20, color: '#15803d' }} />
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">School Prospectus</h4>
@@ -837,7 +838,7 @@ export default function ApplyPage() {
                         </div>
                       </div>
                       <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        <span className="mr-2">📥</span>
+                        <Download sx={{ fontSize: 16, color: '#fff', marginRight: 1 }} />
                         Download
                       </button>
                     </div>
@@ -847,7 +848,7 @@ export default function ApplyPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                          <span className="text-xl">💰</span>
+                          <AttachMoney sx={{ fontSize: 20, color: '#a855f7' }} />
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">Fee Structure</h4>
@@ -855,7 +856,7 @@ export default function ApplyPage() {
                         </div>
                       </div>
                       <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        <span className="mr-2">📥</span>
+                        <Download sx={{ fontSize: 16, color: '#fff', marginRight: 1 }} />
                         Download
                       </button>
                     </div>
@@ -865,7 +866,7 @@ export default function ApplyPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4">
-                          <span className="text-xl">📋</span>
+                          <Checklist sx={{ fontSize: 20, color: '#dc2626' }} />
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">Admission Checklist</h4>
@@ -873,7 +874,7 @@ export default function ApplyPage() {
                         </div>
                       </div>
                       <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        <span className="mr-2">📥</span>
+                        <Download sx={{ fontSize: 16, color: '#fff', marginRight: 1 }} />
                         Download
                       </button>
                     </div>

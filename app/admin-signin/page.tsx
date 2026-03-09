@@ -47,13 +47,14 @@ export default function AdminSignInPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#D9FFD1] bg-transparent">
-      <div className="w-full max-w-md p-6 bg-white rounded shadow">
-        <h1 className="text-2xl font-semibold mb-4">Admin Sign in</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+        <h1 className="text-2xl font-semibold mb-2 text-gray-800">Admin Sign in</h1>
+        <p className="text-sm text-gray-500 mb-6">- login with your admin details -</p>
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
             <input
-              className="mt-1 w-full border px-3 py-2 rounded"
+              className="w-full bg-gray-100 px-4 py-3 rounded-lg focus:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
@@ -61,9 +62,9 @@ export default function AdminSignInPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
             <input
-              className="mt-1 w-full border px-3 py-2 rounded"
+              className="w-full bg-gray-100 px-4 py-3 rounded-lg focus:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
@@ -73,12 +74,21 @@ export default function AdminSignInPage() {
           {error && <div className="text-sm text-red-600">{error}</div>}
           <div>
             <button
-              className="w-full bg-blue-600 text-white py-2 rounded disabled:opacity-60"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium disabled:opacity-60 transition-colors shadow-sm"
               disabled={loading}
               type="submit"
             >
               {loading ? 'Signing in…' : 'Sign in'}
             </button>
+          </div>
+          <div className="text-center text-sm text-gray-600">
+            Having issues, contact the{' '}
+            <a 
+              href="mailto:dsnousee@gmail.com" 
+              className="text-blue-600 hover:text-blue-700 underline"
+            >
+              Tech Team
+            </a>
           </div>
         </form>
       </div>

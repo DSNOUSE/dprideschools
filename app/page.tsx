@@ -12,6 +12,7 @@ import SectionHeader from '@/components/SectionHeader';
 import { sanityFetch } from '@/lib/sanity';
 import { homepageQuery } from '@/lib/queries';
 import { LinkButton } from '@/components/Button';
+import { School, Edit, Download, Phone } from '@mui/icons-material';
 
 export default async function HomePage() {
   const data = (await sanityFetch(homepageQuery).catch(() => null)) as any;
@@ -136,33 +137,33 @@ At DPRIDE, we believe that every child has potential to thrive. Our motto, "Groo
               { 
                 label: 'Book a Visit', 
                 href: '/book-visit',
-                icon: '🏫',
+                icon: <School sx={{ fontSize: 32, color: '#1e40af' }} />,
                 description: 'Schedule a tour'
               },
               { 
                 label: 'Apply Now', 
                 href: '/apply',
-                icon: '📝',
+                icon: <Edit sx={{ fontSize: 32, color: '#1e40af' }} />,
                 description: 'Start application'
               },
               { 
                 label: 'Download Brochure', 
                 href: '#',
-                icon: '⬇️',
+                icon: <Download sx={{ fontSize: 32, color: '#1e40af' }} />,
                 description: 'Learn more'
               },
               { 
                 label: 'Contact Us', 
                 href: '/contact',
-                icon: '📞',
+                icon: <Phone sx={{ fontSize: 32, color: '#1e40af' }} />,
                 description: 'Get in touch'
               }
             ].map((action) => {
               return (
               <a key={action.label} href={action.href} className="group">
                 <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-center">
-                  <div className="mb-4 flex justify-center text-3xl">
-                    <span>{action.icon}</span>
+                  <div className="mb-4 flex justify-center">
+                    {action.icon}
                   </div>
                   <h3 className="font-bold text-gray-900 mb-2">{action.label}</h3>
                   <p className="text-sm text-gray-600">{action.description}</p>

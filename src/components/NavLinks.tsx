@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import React from 'react';
 
-type LinkItem = { href: string; label: string };
+type LinkItem = { href: string; label: string; icon?: React.ReactNode };
 
 type Props = {
   links: LinkItem[];
@@ -21,7 +21,10 @@ export default function NavLinks({ links, className = '', onItemClick, vertical 
           onClick={() => onItemClick?.()}
           className={`nav-button ${vertical ? 'w-full' : ''}`}
         >
-          <span>{l.label}</span>
+          <span className="inline-flex items-center gap-2">
+            {l.icon ? <span className="text-blue-700">{l.icon}</span> : null}
+            <span>{l.label}</span>
+          </span>
         </Link>
       ))}
     </nav>

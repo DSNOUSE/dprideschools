@@ -5,6 +5,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
+import { TrendingUp, Print } from '@mui/icons-material';
 interface ResultData {
   student: {
     admissionNo: string;
@@ -472,7 +473,7 @@ export default function ResultsPage() {
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
             <div className="flex flex-col items-center text-center">
               <div className="p-2 bg-blue-100 rounded-lg mb-2">
-                <span className="text-lg text-blue-600">📈</span>
+                <TrendingUp sx={{ fontSize: 18, color: '#2563eb' }} />
               </div>
               <span className="text-xl font-bold text-gray-900">{result.result.average.toFixed(1)}</span>
               <p className="text-gray-600 text-xs mt-1">Overall Average</p>
@@ -575,7 +576,8 @@ export default function ResultsPage() {
             onClick={() => window.print()}
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl print:hidden"
           >
-            🖨️ Print Result
+            <Print sx={{ fontSize: 18 }} />
+            Print Result
           </button>
 
           <button

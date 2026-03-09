@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Container from '@/components/Container';
 import Image from 'next/image';
+import { Assessment, Notifications, CalendarMonth, Description, Payment, DirectionsBus, School, TrendingUp, EventAvailable } from '@mui/icons-material';
 
 export default function ParentsPage() {
   const [activeTab, setActiveTab] = useState('announcements');
@@ -43,42 +44,42 @@ export default function ParentsPage() {
 
   const portalCards = [
     {
-      icon: '📊',
+      icon: <Assessment sx={{ fontSize: 32, color: '#fff' }} />,
       title: 'View Results',
       description: "Access your child's academic performance and grades",
       color: 'from-blue-500 to-blue-600',
       href: '/results',
     },
     {
-      icon: '🔔',
+      icon: <Notifications sx={{ fontSize: 32, color: '#fff' }} />,
       title: 'Announcements',
       description: 'Stay updated with latest school news and notices',
       color: 'from-amber-500 to-amber-600',
       href: '#announcements',
     },
     {
-      icon: '🗓️',
+      icon: <CalendarMonth sx={{ fontSize: 32, color: '#fff' }} />,
       title: 'Calendar',
       description: 'View school events, holidays, and important dates',
       color: 'from-purple-500 to-purple-600',
       href: '/calendar',
     },
     {
-      icon: '📄',
+      icon: <Description sx={{ fontSize: 32, color: '#fff' }} />,
       title: 'Newsletters',
       description: 'Download monthly newsletters and school updates',
       color: 'from-green-500 to-green-600',
       href: '#newsletters',
     },
     {
-      icon: '💳',
+      icon: <Payment sx={{ fontSize: 32, color: '#fff' }} />,
       title: 'Fee Payment',
       description: 'Pay school fees and view payment history',
       color: 'from-red-500 to-red-600',
       href: '#fees',
     },
     {
-      icon: '🚌',
+      icon: <DirectionsBus sx={{ fontSize: 32, color: '#fff' }} />,
       title: 'Transport',
       description: 'Manage transportation services and routes',
       color: 'from-indigo-500 to-indigo-600',
@@ -221,7 +222,7 @@ export default function ParentsPage() {
                       <div key={month} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                         <div className="flex items-center justify-between mb-4">
                           <h4 className="font-semibold text-gray-900">{month}</h4>
-                          <span className="text-2xl text-gray-500">📄</span>
+                          <Description sx={{ fontSize: 24, color: '#6b7280' }} />
                         </div>
                         <p className="text-sm text-gray-600 mb-4">Monthly school newsletter with updates and announcements</p>
                         <button className="text-blue-600 font-medium hover:text-blue-700 flex items-center">
@@ -259,7 +260,7 @@ export default function ParentsPage() {
                   </p>
                 </div>
                 <button className="w-full bg-blue-600 text-white font-medium py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center">
-                  <span className="mr-2">📄</span>
+                  <Description sx={{ fontSize: 20, color: '#fff', marginRight: 1 }} />
                   Download Fee Schedule
                 </button>
               </div>
@@ -269,15 +270,15 @@ export default function ParentsPage() {
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Links</h3>
                 <div className="space-y-3">
                   <a href="/contact" className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                    <span className="text-xl text-gray-500 mr-2">🏫</span>
+                    <School sx={{ fontSize: 20, color: '#6b7280', marginRight: 1 }} />
                     <span className="text-gray-700">Contact School</span>
                   </a>
                   <a href="/calendar" className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                    <span className="text-xl text-gray-500 mr-2">📅</span>
+                    <CalendarMonth sx={{ fontSize: 20, color: '#6b7280', marginRight: 1 }} />
                     <span className="text-gray-700">Academic Calendar</span>
                   </a>
                   <a href="/book-visit" className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                    <span className="text-xl text-gray-500 mr-2">📈</span>
+                    <EventAvailable sx={{ fontSize: 20, color: '#6b7280', marginRight: 1 }} />
                     <span className="text-gray-700">Schedule Visit</span>
                   </a>
                 </div>
@@ -294,28 +295,28 @@ export default function ParentsPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-blue-600">🏫</span>
+                <School sx={{ fontSize: 32, color: '#2563eb' }} />
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Academic Excellence</h3>
               <p className="text-sm text-gray-600">Comprehensive curriculum with focus on holistic development</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-green-600">📈</span>
+                <TrendingUp sx={{ fontSize: 32, color: '#16a34a' }} />
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Track Progress</h3>
               <p className="text-sm text-gray-600">Real-time access to your child's academic performance</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-amber-600">🔔</span>
+                <Notifications sx={{ fontSize: 32, color: '#d97706' }} />
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Stay Updated</h3>
               <p className="text-sm text-gray-600">Instant notifications about school events and updates</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-purple-600">💳</span>
+                <Payment sx={{ fontSize: 32, color: '#a855f7' }} />
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Easy Payments</h3>
               <p className="text-sm text-gray-600">Secure and convenient online payment options</p>

@@ -3,6 +3,7 @@
 import React from 'react';
 import { LinkButton } from './Button';
 import type { CalendarEvent } from './SchoolCalendar';
+import { MenuBook, BeachAccess, EditNote, CalendarMonth } from '@mui/icons-material';
 
 const CurrentMonthEvents: React.FC = () => {
   // Get current month and year
@@ -107,13 +108,15 @@ const CurrentMonthEvents: React.FC = () => {
             >
               <div className="flex items-start gap-3">
                 <div className="mt-1 text-white text-lg font-bold">
-                  {event.type === 'academic'
-                    ? '📘'
-                    : event.type === 'holiday'
-                    ? '🌴'
-                    : event.type === 'exam'
-                    ? '📝'
-                    : '📅'}
+                  {event.type === 'academic' ? (
+                    <MenuBook sx={{ fontSize: 18, color: '#fff' }} />
+                  ) : event.type === 'holiday' ? (
+                    <BeachAccess sx={{ fontSize: 18, color: '#fff' }} />
+                  ) : event.type === 'exam' ? (
+                    <EditNote sx={{ fontSize: 18, color: '#fff' }} />
+                  ) : (
+                    <CalendarMonth sx={{ fontSize: 18, color: '#fff' }} />
+                  )}
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-white mb-2">

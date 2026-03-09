@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/Button';
 
 export default function AdminSignInPage() {
   const [email, setEmail] = useState('');
@@ -56,13 +57,15 @@ export default function AdminSignInPage() {
           </div>
           {error && <div className="text-sm text-red-600">{error}</div>}
           <div>
-            <button
-              className="w-full bg-blue-600 text-white py-2 rounded disabled:opacity-60"
+            <Button
               disabled={loading}
+              variant="blue"
+              size="md"
+              className="w-full"
               type="submit"
             >
               {loading ? 'Signing in…' : 'Sign in'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

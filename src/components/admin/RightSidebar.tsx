@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { MenuBook, School, Person, Group } from '@mui/icons-material';
 
 type Recent = { id: string; name: string; role?: string; when?: string };
 
@@ -12,7 +13,7 @@ export default function RightSidebar({ studentsCount, teachersCount, staffCount,
         <div className="mt-3 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="text-2xl">📚</div>
+              <MenuBook sx={{ fontSize: 28, color: '#1e40af' }} />
               <div>
                 <div className="text-xs text-gray-500">Students</div>
                 <div className="font-bold">{studentsCount}</div>
@@ -23,7 +24,7 @@ export default function RightSidebar({ studentsCount, teachersCount, staffCount,
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="text-2xl">👩‍🏫</div>
+              <School sx={{ fontSize: 28, color: '#b45309' }} />
               <div>
                 <div className="text-xs text-gray-500">Teachers</div>
                 <div className="font-bold">{teachersCount}</div>
@@ -34,7 +35,7 @@ export default function RightSidebar({ studentsCount, teachersCount, staffCount,
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="text-2xl">🧑‍💼</div>
+              <Person sx={{ fontSize: 28, color: '#06b6d4' }} />
               <div>
                 <div className="text-xs text-gray-500">Staff</div>
                 <div className="font-bold">{staffCount}</div>
@@ -50,7 +51,7 @@ export default function RightSidebar({ studentsCount, teachersCount, staffCount,
         <div className="mt-3 space-y-2">
           {recent.length ? recent.map(r => (
             <div key={r.id} className="flex items-center gap-3">
-              <div className="text-2xl">👤</div>
+              <Person sx={{ fontSize: 28, color: '#6b7280' }} />
               <div>
                 <div className="text-sm font-medium">{r.name}</div>
                 <div className="text-xs text-gray-500">{r.role} • {r.when}</div>
