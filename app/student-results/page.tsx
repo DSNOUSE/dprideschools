@@ -56,11 +56,11 @@ export default function StudentResultsPage() {
   const [error, setError] = useState('');
 
   // Get student admission number from URL or session
-  const studentAdmissionNo = searchParams.get('student') || (session?.user as any)?.admissionNo;
+  const studentAdmissionNo = searchParams?.get('student') || (session?.user as any)?.admissionNo;
 
-  const queryClassId = searchParams.get('class') || undefined;
-  const querySessionId = searchParams.get('session') || undefined;
-  const queryTermId = searchParams.get('term') || undefined;
+  const queryClassId = searchParams?.get('class') || undefined;
+  const querySessionId = searchParams?.get('session') || undefined;
+  const queryTermId = searchParams?.get('term') || undefined;
 
   // Grade calculation functions
   const calculateGrade = (average: number): string => {
