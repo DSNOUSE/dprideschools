@@ -2,6 +2,8 @@ import Credentials from 'next-auth/providers/credentials';
 import { prisma } from './prisma';
 import argon2 from 'argon2';
 
+console.log('🔍 Auth extensions module loaded');
+
 // Unified authentication provider for both students and parents
 export const unifiedCredentialsProvider = Credentials({
   name: 'Credentials',

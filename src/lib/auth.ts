@@ -3,10 +3,14 @@ import { getServerSession } from 'next-auth';
 import { unifiedCredentialsProvider } from './auth-extensions';
 import { env } from './env';
 
+console.log('🔍 Auth module loading...');
+
 // Validate environment variables on import
 if (!env.NEXTAUTH_SECRET) {
   throw new Error('NEXTAUTH_SECRET is required but not set in environment variables');
 }
+
+console.log('🔍 Environment variables validated');
 
 export const authOptions: NextAuthOptions = {
   providers: [
