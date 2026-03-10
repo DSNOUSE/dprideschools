@@ -218,7 +218,7 @@ export async function POST(request: NextRequest) {
         },
         firstScore: grade.firstScore ?? undefined,
         secondScore: grade.secondScore ?? undefined,
-        fourthScore: grade.fourthScore ?? undefined,
+        examScore: grade.fourthScore ?? undefined,
         average: grade.average
       })),
       result: {

@@ -28,7 +28,7 @@ interface ResultData {
     subject: { name: string };
     firstScore?: number;
     secondScore?: number;
-    fourthScore?: number;
+    examScore?: number;
     average: number;
     gradeId?: number;
   }[];
@@ -532,7 +532,7 @@ export default function ResultsPage() {
                         <div className="grid grid-cols-3 gap-2 mt-2 text-sm text-gray-600 md:flex md:items-center md:gap-4">
                           <span className="text-center md:text-left">1st: {grade.firstScore || '-'}</span>
                           <span className="text-center md:text-left">2nd: {grade.secondScore || '-'}</span>
-                          <span className="text-center md:text-left">Exam: {grade.fourthScore || '-'}</span>
+                          <span className="text-center md:text-left">Exam: {grade.examScore || '-'}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 md:gap-4">

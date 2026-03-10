@@ -12,7 +12,7 @@ interface Grade {
   subjectId: number;
   firstScore: number;
   secondScore: number;
-  fourthScore: number;
+  examScore: number;
   average: number;
   subject: { name: string };
   term: { name: string };
@@ -343,7 +343,7 @@ export default function StudentResultsPage() {
                   </div>
                   <div className="bg-purple-50 rounded-lg p-3 text-center">
                     <div className="text-purple-600 text-xs font-medium mb-1">Exam</div>
-                    <div className="text-purple-900 font-bold text-lg">{grade.fourthScore}</div>
+                    <div className="text-purple-900 font-bold text-lg">{grade.examScore}</div>
                   </div>
                 </div>
                 
@@ -389,7 +389,7 @@ export default function StudentResultsPage() {
                       <td className="border border-gray-300 px-4 py-2 font-medium">{grade.subject.name}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.firstScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.secondScore}</td>
-                      <td className="border border-gray-300 px-4 py-2 text-center">{grade.fourthScore}</td>
+                      <td className="border border-gray-300 px-4 py-2 text-center">{grade.examScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center font-bold">{grade.average.toFixed(1)}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">
                         <span className={`px-2 py-1 rounded-full text-sm font-bold ${gradeColor}`}>
