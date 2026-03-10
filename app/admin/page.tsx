@@ -19,7 +19,7 @@ export default function AdminHome() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.push('/signin');
+      router.push('/admin-signin');
     }
   }, [status, router]);
 
