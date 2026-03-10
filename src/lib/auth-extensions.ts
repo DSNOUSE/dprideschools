@@ -25,8 +25,12 @@ export const unifiedCredentialsProvider = Credentials({
     }
     
     try {
+      // Check if the email field contains an admission number (starts with DPS)
+      const isAdmissionNumber = credentials.email && /^DPS\d+/i.test(credentials.email);
+      const admissionNumber = isAdmissionNumber ? credentials.email.toUpperCase() : credentials.admissionNo?.toUpperCase();
+      
       // Try application user (admin/teacher) login first (email-based)
-      if (credentials.email) {
+      if (credentials.email && !isAdmissionNumber) {
         console.log('🔍 Checking admin user for:', credentials.email);
         
         const appUser = await prisma.user.findUnique({
@@ -68,7 +72,7 @@ export const unifiedCredentialsProvider = Credentials({
       }
 
       // Try parent login next (email-based)
-      if (credentials.email) {
+      if (credentials.email && !isAdmissionNumber) {
         console.log('🔍 Checking parent for:', credentials.email);
         const parent = await prisma.parent.findUnique({
           where: { email: credentials.email.toLowerCase() },
@@ -102,28 +106,39 @@ export const unifiedCredentialsProvider = Credentials({
       }
       
       // Try student login (admission number-based)
-      if (credentials.admissionNo) {
-        console.log('🔍 Checking student with admission number:', credentials.admissionNo);
+      if (admissionNumber) {
+        console.log('🔍 Checking student with admission number:', admissionNumber);
         const student = await prisma.student.findUnique({
-          where: { admissionNo: credentials.admissionNo.toUpperCase() },
+          where: { admissionNo: admissionNumber },
           include: {
             class: true,
             session: true
           }
         });
         
-        if (student && student.admissionNo === credentials.password.toUpperCase()) {
-          console.log('✅ Authenticated student:', student.admissionNo);
-          return {
-            id: student.id.toString(),
-            admissionNo: student.admissionNo,
-            name: `${student.firstName} ${student.lastName}`,
-            roles: ['student'],
-            classId: student.classId,
-            sessionId: student.sessionId,
-            class: student.class,
-            session: student.session
-          } as any;
+        if (student) {
+          console.log('🔍 Student found, verifying password');
+          // For students, password is typically the admission number
+          const studentPasswordMatch = student.admissionNo === credentials.password.toUpperCase();
+          console.log('Student password match result:', studentPasswordMatch);
+          
+          if (studentPasswordMatch) {
+            console.log('✅ Authenticated student:', student.admissionNo);
+            return {
+              id: student.id.toString(),
+              admissionNo: student.admissionNo,
+              name: `${student.firstName} ${student.lastName}`,
+              roles: ['student'],
+              classId: student.classId,
+              sessionId: student.sessionId,
+              class: student.class,
+              session: student.session
+            } as any;
+          } else {
+            console.log('❌ Student password mismatch');
+          }
+        } else {
+          console.log('❌ No student found with admission number:', admissionNumber);
         }
       }
       

@@ -79,6 +79,7 @@ export default function SignInPage() {
           src="/images/toddler-girl.jpg"
           alt="DPRIDE International School"
           fill
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover"
           priority
         />
