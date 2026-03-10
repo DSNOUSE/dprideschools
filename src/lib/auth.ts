@@ -20,6 +20,7 @@ export const authOptions: NextAuthOptions = {
   jwt: {
     maxAge: 8 * 60 * 60, // 8 hours
   },
+  debug: process.env.NODE_ENV === 'development',
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -45,7 +46,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   secret: env.NEXTAUTH_SECRET,
-  pages: { signIn: '/signin' },
+  pages: { 
+    signIn: '/admin-signin',
+    error: '/admin-signin'
+  },
   useSecureCookies: process.env.NODE_ENV === 'production',
 };
 
