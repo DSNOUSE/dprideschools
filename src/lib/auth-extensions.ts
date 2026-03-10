@@ -27,6 +27,7 @@ export const unifiedCredentialsProvider = Credentials({
           const userPasswordMatch = await argon2.verify(appUser.passwordHash, credentials.password).catch(() => false);
           if (userPasswordMatch) {
             const roles = (appUser.roles || []).map(r => r.role?.name).filter(Boolean);
+            console.log('Authenticated admin user:', appUser.email, 'Roles:', roles);
             return {
               id: appUser.id,
               email: appUser.email,

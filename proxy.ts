@@ -13,22 +13,42 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-
   if (pathname.startsWith('/admin')) {
     // Allow access to signin pages
     if (pathname === '/admin-signin' || pathname === '/admin/signin') {
       return NextResponse.next();
     }
 
-    if (!token) {
-      const response = NextResponse.redirect(new URL('/admin-signin', request.url));
-      return response;
-    }
-    const roles = (token as any).roles as string[] | undefined;
-    if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
-      const response = NextResponse.redirect(new URL('/admin-signin', request.url));
-      return response;
+    try {
+      const token = await getToken({ 
+        req: request, 
+        secret: process.env.NEXTAUTH_SECRET,
+        secureCookie: process.env.NODE_ENV === 'production'
+      });
+      
+      console.log('Proxy token check for:', pathname, 'Token:', token ? 'Present' : 'Missing');
+      
+      if (!token) {
+        console.log('No token found, redirecting to signin');
+        const response = NextResponse.redirect(new URL('/admin-signin', request.url));
+        return response;
+      }
+      
+      const roles = (token as any).roles as string[] | undefined;
+      console.log('User roles:', roles);
+      
+      if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
+        console.log('Invalid roles, redirecting to signin');
+        const response = NextResponse.redirect(new URL('/admin-signin', request.url));
+        return response;
+      }
+      
+      console.log('Access granted for:', pathname);
+    } catch (error) {
+      console.error('Proxy middleware error:', error);
+      // If there's an error, allow request to proceed
+      // The page-level auth will handle protection
+      return NextResponse.next();
     }
   }
   

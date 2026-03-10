@@ -29,6 +29,7 @@ export const authOptions: NextAuthOptions = {
         (token as any).roles = (user as any).roles || [];
         (token as any).admissionNo = (user as any).admissionNo;
         (token as any).students = (user as any).students;
+        console.log('JWT callback - User:', (user as any).email, 'Roles:', (user as any).roles);
       }
       return token;
     },
@@ -39,6 +40,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).roles = (token as any).roles || [];
         (session.user as any).admissionNo = (token as any).admissionNo;
         (session.user as any).students = (token as any).students;
+        console.log('Session callback - User:', (token as any).email, 'Roles:', (token as any).roles);
       }
       return session;
     },
