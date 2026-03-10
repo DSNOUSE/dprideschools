@@ -180,13 +180,13 @@ async function main() {
   const sessions = await Promise.all([
     prisma.session.upsert({
       where: { name: '2024/2025' },
-      update: { isActive: true },
-      create: { name: '2024/2025', isActive: true }
+      update: { isActive: false },
+      create: { name: '2024/2025', isActive: false }
     }),
     prisma.session.upsert({
       where: { name: '2025/2026' },
-      update: { isActive: false },
-      create: { name: '2025/2026', isActive: false }
+      update: { isActive: true },
+      create: { name: '2025/2026', isActive: true }
     })
   ]);
 
@@ -246,7 +246,7 @@ async function main() {
         create: {
           ...studentData,
           classId: classes[3].id, // Primary 1
-          sessionId: sessions[0].id // 2024/2025
+          sessionId: sessions[1].id // 2025/2026
         }
       });
       students.push(student);
