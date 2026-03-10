@@ -342,7 +342,7 @@ export default function StudentResultsPage() {
                     <div className="text-green-900 font-bold text-lg">{grade.secondScore}</div>
                   </div>
                   <div className="bg-purple-50 rounded-lg p-3 text-center">
-                    <div className="text-purple-600 text-xs font-medium mb-1">4th</div>
+                    <div className="text-purple-600 text-xs font-medium mb-1">Exam</div>
                     <div className="text-purple-900 font-bold text-lg">{grade.fourthScore}</div>
                   </div>
                 </div>
@@ -375,7 +375,7 @@ export default function StudentResultsPage() {
                   <th className="border border-gray-300 px-4 py-2 text-left">Subject</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">1st Score</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">2nd Score</th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">4th Score</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">Exam Score</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">Average</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">Grade</th>
                 </tr>
