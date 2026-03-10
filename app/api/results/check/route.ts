@@ -138,10 +138,29 @@ export async function POST(request: NextRequest) {
     });
 
     if (grades.length === 0) {
-      return NextResponse.json(
-        { error: 'Student not found or no results available for this term/session' },
-        { status: 404 }
-      );
+      return NextResponse.json({
+        hasResults: false,
+        message: 'No results available for this term/session yet',
+        student: {
+          admissionNo: student.admissionNo,
+          firstName: student.firstName,
+          middleName: student.middleName || '',
+          lastName: student.lastName,
+          sex: student.sex || '',
+          photo: null
+        },
+        class: {
+          name: student.class.name
+        },
+        session: {
+          name: student.session.name
+        },
+        term: {
+          name: termInfo.name
+        },
+        grades: [],
+        result: null
+      });
     }
 
     const result = await prisma.result.findUnique({
