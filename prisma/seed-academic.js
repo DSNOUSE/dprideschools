@@ -179,9 +179,9 @@ async function main() {
   // 5. Create Sessions
   const sessions = await Promise.all([
     prisma.session.upsert({
-      where: { name: '2024/2025' },
+      where: { name: '2026/2027' },
       update: { isActive: false },
-      create: { name: '2024/2025', isActive: false }
+      create: { name: '2026/2027', isActive: false }
     }),
     prisma.session.upsert({
       where: { name: '2025/2026' },

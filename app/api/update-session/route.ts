@@ -5,11 +5,11 @@ export const dynamic = 'force-dynamic';
 
 export async function POST() {
   try {
-    console.log('🔄 Updating active session to 2025/2026...');
+    console.log('🔄 Updating active session from 2026/2027 to 2025/2026...');
     
-    // Set 2024/2025 as inactive
+    // Set 2026/2027 as inactive
     await prisma.session.update({
-      where: { name: '2024/2025' },
+      where: { name: '2026/2027' },
       data: { isActive: false }
     });
     
@@ -20,6 +20,7 @@ export async function POST() {
     });
     
     console.log('✅ Session updated successfully!');
+    console.log('🎯 2025/2026 is now the active session');
     
     // Verify the change
     const activeSession = await prisma.session.findFirst({
@@ -28,8 +29,9 @@ export async function POST() {
     
     return NextResponse.json({
       success: true,
-      message: '2025/2026 is now the active session',
-      activeSession: activeSession?.name
+      message: 'Changed from 2026/2027 to 2025/2026',
+      previousSession: '2026/2027',
+      newSession: activeSession?.name
     });
     
   } catch (error) {
