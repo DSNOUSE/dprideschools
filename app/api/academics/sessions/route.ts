@@ -1,14 +1,19 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
-// Mock data for testing without database
-const mockSessions = [
-  { id: 1, name: '2024/2025', isActive: false },
-  { id: 2, name: '2025/2026', isActive: true }
-];
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    return NextResponse.json(mockSessions);
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+    }
+    
+    const sessions = await prisma.session.findMany({
+      orderBy: { id: 'desc' }
+    });
+    
+    return NextResponse.json(sessions);
   } catch (error) {
     console.error('Error fetching sessions:', error);
     return NextResponse.json(
