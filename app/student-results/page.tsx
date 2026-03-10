@@ -250,24 +250,31 @@ export default function StudentResultsPage() {
 
         {/* Results Summary */}
         <div className="bg-blue-50 rounded-lg p-4 mb-6">
+          {result.result ? (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
               <div>
                 <p className="text-sm text-gray-600">Position</p>
-                <p className="text-2xl font-bold text-blue-600">{result.result.position}</p>
+                <p className="text-2xl font-bold text-blue-600">{result.result.position || '-'}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Average</p>
-                <p className="text-2xl font-bold text-blue-600">{result.result.average}%</p>
+                <p className="text-2xl font-bold text-blue-600">{result.result.average?.toFixed(2)}%</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Score</p>
-                <p className="text-2xl font-bold text-blue-600">{result.result.totalScore}</p>
+                <p className="text-2xl font-bold text-blue-600">{result.result.totalScore || 0}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Max Score</p>
-                <p className="text-2xl font-bold text-blue-600">{result.result.maxScore}</p>
+                <p className="text-2xl font-bold text-blue-600">{result.result.maxScore || 0}</p>
               </div>
             </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-lg text-gray-600">No results available yet for this term/session</p>
+              <p className="text-sm text-gray-500 mt-2">Please check back later or contact your teacher</p>
+            </div>
+          )}
           </div>
 
         {/* Subject Grades */}
