@@ -195,6 +195,127 @@ export async function POST(request: NextRequest) {
       create: { userId: adminUser.id, roleId: adminRole.id },
     });
 
+    // 7. Seed Students
+    console.log('👥 Seeding students...');
+    
+    const studentsData = [
+      // DISCOVERY CLASS (Pre-Nursery)
+      { fullName: 'Fatima Muhammad Baba', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)' },
+      { fullName: 'Hafsat Usman Imam', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)' },
+      { fullName: 'Nana Sa\'ad', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)' },
+      { fullName: 'Noor Aliyu Maina', gender: 'Male', class: 'DISCOVERY CLASS (Pre-Nursery)' },
+      { fullName: 'Umar Faruk Yahaya', gender: 'Male', class: 'DISCOVERY CLASS (Pre-Nursery)' },
+      
+      // EXPLORERS (Nursery 1)
+      { fullName: 'Amina Abdulhamid', gender: 'Female', class: 'EXPLORERS (Nursery 1)' },
+      { fullName: 'Mukhtar Salihu', gender: 'Male', class: 'EXPLORERS (Nursery 1)' },
+      { fullName: 'Ramadan Ibrahim', gender: 'Male', class: 'EXPLORERS (Nursery 1)' },
+      { fullName: 'Sani Shehu', gender: 'Male', class: 'EXPLORERS (Nursery 1)' },
+      { fullName: 'Sheriff Aliyu Maina', gender: 'Male', class: 'EXPLORERS (Nursery 1)' },
+      
+      // PREPARATORY (Nursery 2)
+      { fullName: 'David Oloruntola', gender: 'Male', class: 'PREPARATORY (Nursery 2)' },
+      { fullName: 'Maryam Faysal Amin', gender: 'Female', class: 'PREPARATORY (Nursery 2)' },
+      
+      // YEAR 1
+      { fullName: 'Barata Amrullah', gender: 'Male', class: 'YEAR 1' },
+      { fullName: 'Fatima Ibrahim', gender: 'Female', class: 'YEAR 1' },
+      
+      // YEAR 2
+      { fullName: 'Hafsat Abubakar', gender: 'Female', class: 'YEAR 2' },
+      
+      // YEAR 3
+      { fullName: 'Aisha Musa', gender: 'Female', class: 'YEAR 3' },
+      { fullName: 'Bilikisu Sani Shehu', gender: 'Female', class: 'YEAR 3' },
+      { fullName: 'Khadija U. Imam', gender: 'Female', class: 'YEAR 3' },
+      { fullName: 'Zainab U. Imam', gender: 'Female', class: 'YEAR 3' },
+      
+      // YEAR 4
+      { fullName: 'Abdallah Arif', gender: 'Male', class: 'YEAR 4' },
+      { fullName: 'Abdulhamid Fatima', gender: 'Female', class: 'YEAR 4' },
+      { fullName: 'Abdulhamid Mohammed', gender: 'Male', class: 'YEAR 4' },
+      { fullName: 'Ahmed Abdullahi Garba', gender: 'Male', class: 'YEAR 4' },
+      { fullName: 'Bilal Sani', gender: 'Male', class: 'YEAR 4' },
+      { fullName: 'Hussaini Maryam', gender: 'Female', class: 'YEAR 4' },
+      { fullName: 'Mohammed Halima', gender: 'Female', class: 'YEAR 4' },
+      { fullName: 'Nabage Ruqaiya Nasiru', gender: 'Female', class: 'YEAR 4' },
+      
+      // YEAR 5
+      { fullName: 'Saad Fatima', gender: 'Female', class: 'YEAR 5' },
+      { fullName: 'Sanusi Hafsat', gender: 'Female', class: 'YEAR 5' },
+      
+      // YEAR 7
+      { fullName: 'Aisha Muhammad', gender: 'Female', class: 'YEAR 7' },
+      { fullName: 'Imam Usman Nafisa', gender: 'Female', class: 'YEAR 7' },
+      
+      // YEAR 8
+      { fullName: 'Ali Mohammed B.M', gender: 'Male', class: 'YEAR 8' },
+      { fullName: 'Hanan Auwal', gender: 'Female', class: 'YEAR 8' },
+      { fullName: 'Hanifa Jibrin Usman', gender: 'Female', class: 'YEAR 8' },
+      { fullName: 'Nana Aisha Abubakar', gender: 'Female', class: 'YEAR 8' },
+      { fullName: 'Umm\'suleim Ibrahim', gender: 'Female', class: 'YEAR 8' },
+      
+      // YEAR 9
+      { fullName: 'Abdallah Rabiu', gender: 'Male', class: 'YEAR 9' },
+      { fullName: 'Ahmed Abubakar', gender: 'Male', class: 'YEAR 9' },
+      { fullName: 'Sanusi Musab', gender: 'Male', class: 'YEAR 9' },
+      { fullName: 'Zaid Musa', gender: 'Male', class: 'YEAR 9' }
+    ];
+    
+    // Get active session
+    const activeSession = await prisma.session.findFirst({
+      where: { isActive: true }
+    });
+    
+    let studentCount = 0;
+    if (activeSession) {
+      // Get all classes for mapping
+      const allClasses = await prisma.class.findMany();
+      const classMap: Record<string, number> = {};
+      allClasses.forEach(cls => {
+        classMap[cls.name] = cls.id;
+      });
+      
+      const year = new Date().getFullYear();
+      
+      for (let i = 0; i < studentsData.length; i++) {
+        const studentData = studentsData[i];
+        const admissionNo = `DPS${year}${(i + 1).toString().padStart(3, '0')}`;
+        
+        const classId = classMap[studentData.class];
+        if (!classId) {
+          console.log(`⚠️ Class not found: ${studentData.class}, skipping ${studentData.fullName}`);
+          continue;
+        }
+        
+        // Parse first and last name
+        const nameParts = studentData.fullName.trim().split(/\s+/);
+        const firstName = nameParts[0];
+        const lastName = nameParts.slice(1).join(' ') || firstName;
+        
+        await prisma.student.upsert({
+          where: { admissionNo },
+          update: {
+            firstName,
+            lastName,
+            sex: studentData.gender,
+            classId,
+            sessionId: activeSession.id
+          },
+          create: {
+            admissionNo,
+            firstName,
+            lastName,
+            sex: studentData.gender,
+            classId,
+            sessionId: activeSession.id
+          }
+        });
+        
+        studentCount++;
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Academic data seeded successfully',
@@ -204,7 +325,8 @@ export async function POST(request: NextRequest) {
         subjects: subjectCount,
         terms: terms.length,
         session: sessionName,
-        adminEmail
+        adminEmail,
+        students: studentCount
       }
     });
 
