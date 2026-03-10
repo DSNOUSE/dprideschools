@@ -11,35 +11,63 @@ export const unifiedCredentialsProvider = Credentials({
     password: { label: 'Password', type: 'password' },
   },
   async authorize(credentials) {
+    console.log('🔍 Auth provider called with:', {
+      email: credentials?.email,
+      admissionNo: credentials?.admissionNo,
+      hasPassword: !!credentials?.password
+    });
+
     if (!credentials?.password) {
+      console.log('❌ No password provided');
       return null;
     }
     
     try {
       // Try application user (admin/teacher) login first (email-based)
       if (credentials.email) {
+        console.log('🔍 Checking admin user for:', credentials.email);
+        
         const appUser = await prisma.user.findUnique({
           where: { email: credentials.email.toLowerCase() },
           include: { roles: { include: { role: true } } }
         });
 
+        console.log('Database query result:', appUser ? 'User found' : 'User not found');
+
         if (appUser) {
-          const userPasswordMatch = await argon2.verify(appUser.passwordHash, credentials.password).catch(() => false);
+          console.log('🔍 Verifying password for user:', appUser.email);
+          
+          const userPasswordMatch = await argon2.verify(appUser.passwordHash, credentials.password)
+            .catch((error) => {
+              console.error('❌ Password verification error:', error);
+              return false;
+            });
+            
+          console.log('Password match result:', userPasswordMatch);
+          
           if (userPasswordMatch) {
             const roles = (appUser.roles || []).map(r => r.role?.name).filter(Boolean);
-            console.log('Authenticated admin user:', appUser.email, 'Roles:', roles);
-            return {
-              id: appUser.id,
+            console.log('✅ Authenticated admin user:', appUser.email, 'Roles:', roles);
+            
+            const result = {
+              id: appUser.id.toString(),
               email: appUser.email,
               name: appUser.name,
               roles,
-            } as any;
+            };
+            console.log('✅ Returning user object:', result);
+            return result as any;
+          } else {
+            console.log('❌ Password mismatch for:', appUser.email);
           }
+        } else {
+          console.log('❌ No user found with email:', credentials.email);
         }
       }
 
       // Try parent login next (email-based)
       if (credentials.email) {
+        console.log('🔍 Checking parent for:', credentials.email);
         const parent = await prisma.parent.findUnique({
           where: { email: credentials.email.toLowerCase() },
           include: {
@@ -59,8 +87,9 @@ export const unifiedCredentialsProvider = Credentials({
         if (parent) {
           const parentPasswordMatch = await argon2.verify(parent.passwordHash, credentials.password).catch(() => false);
           if (parentPasswordMatch) {
+            console.log('✅ Authenticated parent:', parent.email);
             return {
-              id: parent.id,
+              id: parent.id.toString(),
               email: parent.email,
               name: parent.name,
               roles: ['parent'],
@@ -72,6 +101,7 @@ export const unifiedCredentialsProvider = Credentials({
       
       // Try student login (admission number-based)
       if (credentials.admissionNo) {
+        console.log('🔍 Checking student with admission number:', credentials.admissionNo);
         const student = await prisma.student.findUnique({
           where: { admissionNo: credentials.admissionNo.toUpperCase() },
           include: {
@@ -81,8 +111,9 @@ export const unifiedCredentialsProvider = Credentials({
         });
         
         if (student && student.admissionNo === credentials.password.toUpperCase()) {
+          console.log('✅ Authenticated student:', student.admissionNo);
           return {
-            id: student.id,
+            id: student.id.toString(),
             admissionNo: student.admissionNo,
             name: `${student.firstName} ${student.lastName}`,
             roles: ['student'],
@@ -95,10 +126,11 @@ export const unifiedCredentialsProvider = Credentials({
       }
       
     } catch (error) {
-      console.error('Authentication error:', error);
+      console.error('❌ Authentication error:', error);
       return null;
     }
 
+    console.log('❌ Authentication failed - no matching credentials');
     return null;
   },
 });
