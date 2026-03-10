@@ -1,10 +1,20 @@
 import Link from 'next/link';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function StudentsPage({ searchParams }: { searchParams?: Promise<{ page?: string; q?: string }> }) {
+  // Check authentication at the page level
+  const session = await getServerSession(authOptions);
+  const roles = (session?.user as any)?.roles as string[] | undefined;
+  
+  if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
+    redirect('/admin-signin');
+  }
   const resolvedSearchParams = await searchParams;
   const page = Number(resolvedSearchParams?.page ?? '1');
   const q = resolvedSearchParams?.q ?? '';

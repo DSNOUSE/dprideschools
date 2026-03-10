@@ -1,4 +1,7 @@
 import Link from 'next/link';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import AttendanceLineChart from '@/components/admin/AttendanceLineChart';
 import RightSidebar from '@/components/admin/RightSidebar';
@@ -7,6 +10,13 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function DashboardPage() {
+  // Check authentication at the page level
+  const session = await getServerSession(authOptions);
+  const roles = (session?.user as any)?.roles as string[] | undefined;
+  
+  if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
+    redirect('/admin-signin');
+  }
   const [studentCount, classCount, teacherCount, staffCount] = await Promise.all([
     prisma.student.count(),
     prisma.class.count(),

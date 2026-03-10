@@ -1,10 +1,20 @@
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 import { createTerm, deleteTerm } from './actions';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function TermsPage() {
+  // Check authentication at the page level
+  const session = await getServerSession(authOptions);
+  const roles = (session?.user as any)?.roles as string[] | undefined;
+  
+  if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
+    redirect('/admin-signin');
+  }
   const terms = await prisma.term.findMany({ orderBy: { id: 'asc' } });
   return (
     <div className="p-6">

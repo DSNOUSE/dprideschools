@@ -1,10 +1,20 @@
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 import { createDepartment, deleteDepartment } from './actions';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function DepartmentsPage() {
+  // Check authentication at the page level
+  const session = await getServerSession(authOptions);
+  const roles = (session?.user as any)?.roles as string[] | undefined;
+  
+  if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
+    redirect('/admin-signin');
+  }
   const prismaClient = prisma;
   if (!prismaClient) throw new Error('Prisma client is not initialized');
   const departments = await prismaClient.department.findMany({ orderBy: { name: 'asc' } });
