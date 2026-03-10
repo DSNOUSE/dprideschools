@@ -15,13 +15,29 @@ export async function GET(request: NextRequest) {
     let subjects;
 
     if (classId) {
-      // Get subjects specific to this class
+      // Get the class to determine its section
+      const classInfo = await prisma.class.findUnique({
+        where: { id: parseInt(classId) },
+        include: { department: true }
+      });
+
+      if (!classInfo) {
+        return NextResponse.json({ error: 'Class not found' }, { status: 404 });
+      }
+
+      // Determine section based on department name
+      let section = 'Primary'; // default
+      if (classInfo.department.name.toLowerCase().includes('nursery') || 
+          classInfo.department.name.toLowerCase().includes('early years')) {
+        section = 'Nursery';
+      } else if (classInfo.department.name.toLowerCase().includes('secondary')) {
+        section = 'Secondary';
+      }
+
+      // Get subjects specific to this section
       subjects = await prisma.subject.findMany({
         where: {
-          OR: [
-            { classId: parseInt(classId) },
-            { classId: null }
-          ]
+          section: section
         },
         orderBy: {
           name: 'asc'

@@ -103,10 +103,10 @@ async function main() {
       for (const subjName of group.subjects) {
         await prisma.subject.upsert({
           where: { name_departmentId: { name: subjName, departmentId: dept.id } },
-          update: {},
-          create: { name: subjName, departmentId: dept.id, maxScore: 100 }
+          update: { section: group.section },
+          create: { name: subjName, departmentId: dept.id, section: group.section, maxScore: 100 }
         });
-        console.log(`  ✓ ${subjName} -> ${deptName}`);
+        console.log(`  ✓ ${subjName} -> ${deptName} (${group.section})`);
         total++;
       }
     }
