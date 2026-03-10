@@ -15,31 +15,29 @@ export const authOptions: NextAuthOptions = {
   session: { 
     strategy: 'jwt',
     maxAge: 8 * 60 * 60, // 8 hours in seconds
-    updateAge: 60 * 60, // Update session every 1 hour
   },
   jwt: {
     maxAge: 8 * 60 * 60, // 8 hours
   },
-  debug: process.env.NODE_ENV === 'development',
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        // normalize roles: support `role` (string/array) and `roles` (array)
-        const userRoles = (user as any).roles || (user as any).role || [];
-        (token as any).roles = Array.isArray(userRoles) ? userRoles : [userRoles];
-        (token as any).role = Array.isArray(userRoles) ? (userRoles.length === 1 ? userRoles[0] : userRoles) : userRoles;
-        (token as any).admissionNo = (user as any).admissionNo;
+        // Store basic user information in token
+        (token as any).id = (user as any).id;
         (token as any).email = (user as any).email;
+        (token as any).name = (user as any).name;
+        (token as any).roles = (user as any).roles || [];
+        (token as any).admissionNo = (user as any).admissionNo;
         (token as any).students = (user as any).students;
       }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
-        (session.user as any).roles = (token as any).roles || [];
-        (session.user as any).role = (token as any).role || ((token as any).roles ? ((token as any).roles.length === 1 ? (token as any).roles[0] : (token as any).roles) : []);
-        (session.user as any).admissionNo = (token as any).admissionNo;
+      if (session.user && token) {
+        (session.user as any).id = (token as any).id;
         (session.user as any).email = (token as any).email;
+        (session.user as any).roles = (token as any).roles || [];
+        (session.user as any).admissionNo = (token as any).admissionNo;
         (session.user as any).students = (token as any).students;
       }
       return session;
@@ -48,9 +46,7 @@ export const authOptions: NextAuthOptions = {
   secret: env.NEXTAUTH_SECRET,
   pages: { 
     signIn: '/admin-signin',
-    error: '/admin-signin'
   },
-  useSecureCookies: process.env.NODE_ENV === 'production',
 };
 
 export const getSession = () => getServerSession(authOptions);
