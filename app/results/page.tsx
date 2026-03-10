@@ -410,14 +410,14 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-screen results-bg">
-      <div className="py-8">
+      <div className="py-4 md:py-8">
         <Container>
           <div className="flex flex-col gap-8 lg:flex-row">
             {/* Main Content */}
             <div className="flex-1 min-w-0">
 
         {/* Student Info Card */}
-        <div className="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl mb-8 border border-white/20">
+        <div className="bg-white/80 backdrop-blur-md p-4 md:p-8 rounded-2xl shadow-xl mb-8 border border-white/20">
           <div className="flex flex-col md:flex-row gap-8">
             {/* Student Photo */}
             <div className="flex-shrink-0">
@@ -473,50 +473,50 @@ export default function ResultsPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 gap-6 mb-8 md:grid-cols-4">
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
+        <div className="grid grid-cols-2 gap-4 mb-8 md:grid-cols-4">
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-3 md:p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
             <div className="flex flex-col items-center text-center">
               <div className="p-2 bg-blue-100 rounded-lg mb-2">
-                <TrendingUp sx={{ fontSize: 18, color: '#2563eb' }} />
+                <TrendingUp sx={{ fontSize: 16, color: '#2563eb' }} />
               </div>
-              <span className="text-xl font-bold text-gray-900">{result.result.average.toFixed(1)}</span>
+              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result.average.toFixed(1)}</span>
               <p className="text-gray-600 text-xs mt-1">Overall Average</p>
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-3 md:p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
             <div className="flex flex-col items-center text-center">
-              <div className="p-2 bg-amber-100 rounded-lg mb-2 text-amber-700 text-lg font-bold">
+              <div className="p-2 bg-amber-100 rounded-lg mb-2 text-amber-700 text-lg md:text-lg font-bold">
                 ★
               </div>
-              <span className="text-xl font-bold text-gray-900">{result.result.totalScore}</span>
+              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result.totalScore}</span>
               <p className="text-gray-600 text-xs mt-1">Total Score</p>
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-3 md:p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
             <div className="flex flex-col items-center text-center">
-              <div className="p-2 bg-blue-100 rounded-lg mb-2 text-blue-800 text-lg font-bold">
+              <div className="p-2 bg-blue-100 rounded-lg mb-2 text-blue-800 text-lg md:text-lg font-bold">
                 Σ
               </div>
-              <span className="text-xl font-bold text-gray-900">{result.result.maxScore}</span>
+              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result.maxScore}</span>
               <p className="text-gray-600 text-xs mt-1">Max Score</p>
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-3 md:p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
             <div className="flex flex-col items-center text-center">
-              <div className="p-2 bg-amber-100 rounded-lg mb-2 text-amber-700 text-lg font-bold">
+              <div className="p-2 bg-amber-100 rounded-lg mb-2 text-amber-700 text-lg md:text-lg font-bold">
                 #
               </div>
-              <span className="text-xl font-bold text-gray-900">{result.result.position || '-'}</span>
+              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result.position || '-'}</span>
               <p className="text-gray-600 text-xs mt-1">Class Position</p>
             </div>
           </div>
         </div>
 
         {/* Subject Results + Teacher Comment (Two-column layout) */}
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8 mb-8 border border-white/20">
+        <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-4 md:p-8 mb-8 border border-white/20">
           <div className="grid md:grid-cols-3 gap-6">
             {/* Left: Subject Results (span 2 columns) */}
             <div className="md:col-span-2">
@@ -524,21 +524,23 @@ export default function ResultsPage() {
               <div className="grid gap-4">
                 {result.grades.map((grade, index) => (
                   <div key={index} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-300 bg-white/70 hover:bg-white/80 hover:-translate-y-1">
-                    <div className="flex items-center justify-between">
+                    {/* Mobile-first layout - Stacked on mobile, side-by-side on desktop */}
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{grade.subject.name}</h3>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                          <span>1st: {grade.firstScore || '-'}</span>
-                          <span>2nd: {grade.secondScore || '-'}</span>
-                          <span>4th: {grade.fourthScore || '-'}</span>
+                        <h3 className="font-semibold text-gray-900 text-sm md:text-base">{grade.subject.name}</h3>
+                        {/* Mobile: Stack scores vertically | Desktop: Horizontal */}
+                        <div className="grid grid-cols-3 gap-2 mt-2 text-sm text-gray-600 md:flex md:items-center md:gap-4">
+                          <span className="text-center md:text-left">1st: {grade.firstScore || '-'}</span>
+                          <span className="text-center md:text-left">2nd: {grade.secondScore || '-'}</span>
+                          <span className="text-center md:text-left">4th: {grade.fourthScore || '-'}</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 md:gap-4">
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-gray-900">{grade.average.toFixed(1)}</div>
-                          <div className="text-sm text-gray-600">Average</div>
+                          <div className="text-xl md:text-2xl font-bold text-gray-900">{grade.average.toFixed(1)}</div>
+                          <div className="text-xs md:text-sm text-gray-600">Average</div>
                         </div>
-                        <div className={`px-3 py-1 rounded-full text-sm font-medium ${getGradeColor(calculateGrade(grade.average))}`}>
+                        <div className={`px-2 py-1 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-medium ${getGradeColor(calculateGrade(grade.average))}`}>
                           {calculateGrade(grade.average)}
                         </div>
                       </div>
