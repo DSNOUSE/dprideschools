@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import AttendanceLineChart from '@/components/admin/AttendanceLineChart';
 import RightSidebar from '@/components/admin/RightSidebar';
+import QuickActions from '@/components/admin/QuickActions';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -146,6 +147,9 @@ export default async function DashboardPage() {
           <RightSidebar studentsCount={presentStudents} teachersCount={presentTeachers} staffCount={presentStaff} recent={recentStudents.map(s=>({id:s.id,name:`${s.firstName} ${s.lastName}`, role:'Student', when:'7 mins ago'}))} />
         </aside>
       </div>
+
+      {/* Quick Actions */}
+      <QuickActions />
     </div>
   );
 }
