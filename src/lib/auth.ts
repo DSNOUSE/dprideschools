@@ -10,7 +10,13 @@ if (!env.NEXTAUTH_SECRET) {
   throw new Error('NEXTAUTH_SECRET is required but not set in environment variables');
 }
 
+// Use production URL when deployed to Vercel
+const nextAuthUrl = process.env.NODE_ENV === 'production' 
+  ? 'https://www.dprideschools.com'
+  : env.NEXTAUTH_URL;
+
 console.log('🔍 Environment variables validated');
+console.log('🔍 Using NextAuth URL:', nextAuthUrl);
 
 export const authOptions: NextAuthOptions = {
   providers: [
