@@ -6,41 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
 import { TrendingUp, Print } from '@mui/icons-material';
-interface ResultData {
-  student: {
-    admissionNo: string;
-    firstName: string;
-    lastName: string;
-    middleName?: string;
-    sex?: string;
-    photo?: string | null;
-  };
-  class: {
-    name: string;
-  };
-  session: {
-    name: string;
-  };
-  term: {
-    name: string;
-  };
-  grades: {
-    subject: { name: string };
-    firstScore?: number;
-    secondScore?: number;
-    examScore?: number;
-    average: number;
-    gradeId?: number;
-  }[];
-  result: {
-    position?: number;
-    average: number;
-    totalScore: number;
-    maxScore: number;
-    gradeId?: number;
-    comment?: string;
-  };
-}
+import { checkResult, calculateGrade, getGradeColor } from '@/lib/results';
+import type { ResultData, SelectOption } from '@/lib/results';
 
 export default function ResultsPage() {
   const { data: session, status } = useSession();
@@ -53,11 +20,6 @@ export default function ResultsPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ResultData | null>(null);
   const [error, setError] = useState('');
-  interface SelectOption {
-    id: number;
-    name: string;
-  }
-
   const [classes, setClasses] = useState<SelectOption[]>([]);
   const [sessions, setSessions] = useState<SelectOption[]>([]);
   const [terms, setTerms] = useState<SelectOption[]>([]);
@@ -86,8 +48,6 @@ export default function ResultsPage() {
     const autoSession = searchParams.get('session');
     const autoFlag = searchParams.get('auto');
 
-    console.log('Auto-redirect params:', { autoStudent, autoClass, autoSession, autoFlag });
-
     if (autoStudent && autoFlag === 'true') {
       // Set the student ID
       setStudentId(autoStudent);
@@ -96,7 +56,6 @@ export default function ResultsPage() {
         // If class and session are provided, set them directly
         setSelectedClass(autoClass);
         setSelectedSession(autoSession);
-        console.log('Form values set with provided class/session');
       } else {
         // If only student is provided, fetch their class/session
         fetchStudentData(autoStudent);
@@ -107,24 +66,19 @@ export default function ResultsPage() {
   // Fetch student data when only admission number is provided
   const fetchStudentData = async (admissionNo: string) => {
     try {
-      console.log('Fetching student data for:', admissionNo);
-      const response = await fetch('http://localhost:3000/api/academics/students');
+      const response = await fetch('/api/academics/students');
       
       if (response.ok) {
-        const allStudents = (await response.json()) as any[];
-        const student = allStudents.find((s: any) => s.admissionNo === admissionNo);
+        const allStudents = (await response.json()) as { admissionNo: string; classId: number; sessionId: number }[];
+        const student = allStudents.find((s) => s.admissionNo === admissionNo);
         
         if (student) {
-          console.log('Found student data:', student);
           setSelectedClass(student.classId.toString());
           setSelectedSession(student.sessionId.toString());
-          console.log('Set class/session from student data');
-        } else {
-          console.log('Student not found in API');
         }
       }
-    } catch (error) {
-      console.error('Error fetching student data:', error);
+    } catch {
+      // Silently fail — user can still fill in manually
     }
   };
 
@@ -137,15 +91,6 @@ export default function ResultsPage() {
     const autoSession = searchParams.get('session');
     const autoFlag = searchParams.get('auto');
 
-    console.log('Auto-search check:', { 
-      hasAutoFlag: autoFlag === 'true',
-      hasStudent: !!autoStudent,
-      hasClass: !!autoClass,
-      hasSession: !!autoSession,
-      hasTerms: terms.length > 0,
-      hasFormValues: !!(studentId && selectedClass && selectedSession)
-    });
-
     // For smart redirect: either we have all params OR we have student + fetched data + terms
     const shouldAutoSearch = autoFlag === 'true' && 
                           autoStudent && 
@@ -157,8 +102,6 @@ export default function ResultsPage() {
     if (shouldAutoSearch) {
       const termId = terms[0].id.toString();
       setSelectedTerm(termId);
-      
-      console.log('All conditions met, triggering auto-search NOW');
       
       // Auto-search immediately
       handleAutoSearch(autoStudent, selectedClass, selectedSession, termId);
@@ -176,8 +119,8 @@ export default function ResultsPage() {
       if (classesRes.ok) setClasses(await classesRes.json());
       if (sessionsRes.ok) setSessions(await sessionsRes.json());
       if (termsRes.ok) setTerms(await termsRes.json());
-    } catch (err) {
-      console.error('Failed to fetch dropdown data:', err);
+    } catch {
+      // Dropdown fetch failures are non-critical; user sees empty selects
     }
   };
 
@@ -193,89 +136,43 @@ export default function ResultsPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/results/check', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          classId: selectedClass,
-          sessionId: selectedSession,
-          termId: selectedTerm,
-          studentId: studentId.trim().toUpperCase()
-        })
+      const res = await checkResult({
+        studentId,
+        classId: selectedClass,
+        sessionId: selectedSession,
+        termId: selectedTerm,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || 'Failed to fetch results');
-        setResult(null);
-      } else {
-        setResult(data);
+      if (res.ok) {
+        setResult(res.data);
         setError('');
+      } else {
+        setError(res.error);
+        setResult(null);
       }
-    } catch (err) {
-      setError('Network error. Please try again.');
-      setResult(null);
     } finally {
       setLoading(false);
     }
   };
 
   const handleAutoSearch = async (student: string, classId: string, sessionId: string, termId: string) => {
-    console.log('Starting auto-search with:', { student, classId, sessionId, termId });
-    
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch('/api/results/check', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          classId: classId,
-          sessionId: sessionId,
-          termId: termId,
-          studentId: student.trim().toUpperCase()
-        })
-      });
-
-      const data = await response.json();
-      console.log('Auto-search response:', { status: response.status, data });
-
-      if (!response.ok) {
-        setError(data.error || 'Failed to fetch results');
-        setResult(null);
-      } else {
-        setResult(data);
+      const res = await checkResult({ studentId: student, classId, sessionId, termId });
+      if (res.ok) {
+        setResult(res.data);
         setError('');
-        console.log('Auto-search successful!');
+      } else {
+        setError(res.error);
+        setResult(null);
       }
-    } catch (err) {
-      console.error('Auto-search error:', err);
-      setError('Network error. Please try again.');
-      setResult(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const calculateGrade = (score: number): string => {
-    if (score >= 80) return 'A';
-    if (score >= 70) return 'B';
-    if (score >= 60) return 'C';
-    if (score >= 50) return 'D';
-    return 'F';
-  };
-
-  const getGradeColor = (grade: string): string => {
-    switch (grade) {
-      case 'A': return 'text-green-600 bg-green-100';
-      case 'B': return 'text-blue-600 bg-blue-100';
-      case 'C': return 'text-yellow-600 bg-yellow-100';
-      case 'D': return 'text-orange-600 bg-orange-100';
-      default: return 'text-red-600 bg-red-100';
-    }
-  };
+  // calculateGrade and getGradeColor are imported from @/lib/results
 
   if (status === 'loading') {
     return (
@@ -325,7 +222,7 @@ export default function ResultsPage() {
                       required
                     >
                       <option value="">Select a Class</option>
-                      {classes.map((cls: any) => (
+                      {classes.map((cls) => (
                         <option key={cls.id} value={cls.id}>
                           {cls.name}
                         </option>
@@ -344,7 +241,7 @@ export default function ResultsPage() {
                       required
                     >
                       <option value="">Select a Session</option>
-                      {sessions.map((sess: any) => (
+                      {sessions.map((sess) => (
                         <option key={sess.id} value={sess.id}>
                           {sess.name}
                         </option>
@@ -363,7 +260,7 @@ export default function ResultsPage() {
                       required
                     >
                       <option value="">Select a Term</option>
-                      {terms.map((term: any) => (
+                      {terms.map((term) => (
                         <option key={term.id} value={term.id}>
                           {term.name}
                         </option>
@@ -479,7 +376,7 @@ export default function ResultsPage() {
               <div className="p-2 bg-blue-100 rounded-lg mb-2">
                 <TrendingUp sx={{ fontSize: 16, color: '#2563eb' }} />
               </div>
-              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result.average.toFixed(1)}</span>
+              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result?.average.toFixed(1)}</span>
               <p className="text-gray-600 text-xs mt-1">Overall Average</p>
             </div>
           </div>
@@ -489,7 +386,7 @@ export default function ResultsPage() {
               <div className="p-2 bg-amber-100 rounded-lg mb-2 text-amber-700 text-lg md:text-lg font-bold">
                 ★
               </div>
-              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result.totalScore}</span>
+              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result?.totalScore}</span>
               <p className="text-gray-600 text-xs mt-1">Total Score</p>
             </div>
           </div>
@@ -499,7 +396,7 @@ export default function ResultsPage() {
               <div className="p-2 bg-blue-100 rounded-lg mb-2 text-blue-800 text-lg md:text-lg font-bold">
                 Σ
               </div>
-              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result.maxScore}</span>
+              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result?.maxScore}</span>
               <p className="text-gray-600 text-xs mt-1">Max Score</p>
             </div>
           </div>
@@ -509,7 +406,7 @@ export default function ResultsPage() {
               <div className="p-2 bg-amber-100 rounded-lg mb-2 text-amber-700 text-lg md:text-lg font-bold">
                 #
               </div>
-              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result.position || '-'}</span>
+              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result?.position || '-'}</span>
               <p className="text-gray-600 text-xs mt-1">Class Position</p>
             </div>
           </div>
@@ -550,7 +447,7 @@ export default function ResultsPage() {
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
                           className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${(grade.average / result.result.maxScore) * 100}%` }}
+                          style={{ width: `${(grade.average / (result.result?.maxScore || 100)) * 100}%` }}
                         />
                       </div>
                     </div>
@@ -563,7 +460,7 @@ export default function ResultsPage() {
             <aside className="md:col-span-1 bg-white/60 p-6 rounded-xl border border-white/20 h-full flex flex-col">
               <h3 className="text-lg font-semibold mb-4">Teacher's Comment</h3>
               <div className="text-sm text-gray-700 mb-4 flex-1">
-                {result.result.comment ? (
+                {result.result?.comment ? (
                   <p>{result.result.comment}</p>
                 ) : (
                   <p className="text-gray-500">No comment yet. Comments added from the teacher's admin area will appear here.</p>

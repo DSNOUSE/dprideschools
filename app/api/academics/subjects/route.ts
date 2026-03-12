@@ -39,16 +39,27 @@ export async function GET(request: NextRequest) {
         where: {
           section: section
         },
-        orderBy: {
-          name: 'asc'
-        }
+        include: {
+          class: { include: { department: true } },
+          department: true,
+        },
+        orderBy: [
+          { class: { sort_order: 'asc' } },
+          { name: 'asc' },
+        ],
       });
     } else {
       // Get all subjects
       subjects = await prisma.subject.findMany({
-        orderBy: {
-          name: 'asc'
-        }
+        include: {
+          class: { include: { department: true } },
+          department: true,
+        },
+        orderBy: [
+          { section: 'asc' },
+          { class: { sort_order: 'asc' } },
+          { name: 'asc' },
+        ],
       });
     }
 

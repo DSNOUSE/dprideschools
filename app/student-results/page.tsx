@@ -7,45 +7,8 @@ import { signOut } from 'next-auth/react';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
 import { WarningAmber, Print, EmojiEvents, TrendingUp, Assessment, Star } from '@mui/icons-material';
-
-interface Grade {
-  subjectId: number;
-  firstScore: number;
-  secondScore: number;
-  examScore: number;
-  average: number;
-  subject: { name: string };
-  term: { name: string };
-}
-
-interface ResultData {
-  student: {
-    admissionNo: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    sex: string;
-    classId: number;
-    sessionId: number;
-    photo?: string;
-  };
-  class: {
-    name: string;
-  };
-  session: {
-    name: string;
-  };
-  term: {
-    name: string;
-  };
-  grades: Grade[];
-  result: {
-    position: number;
-    average: number;
-    totalScore: number;
-    maxScore: number;
-  };
-}
+import { checkResult, calculateGrade, getGradeColor } from '@/lib/results';
+import type { ResultData } from '@/lib/results';
 
 export default function StudentResultsPage() {
   const { data: session, status } = useSession();
@@ -62,63 +25,28 @@ export default function StudentResultsPage() {
   const querySessionId = searchParams?.get('session') || undefined;
   const queryTermId = searchParams?.get('term') || undefined;
 
-  // Grade calculation functions
-  const calculateGrade = (average: number): string => {
-    if (average >= 90) return 'A';
-    if (average >= 80) return 'B';
-    if (average >= 70) return 'C';
-    if (average >= 60) return 'D';
-    if (average >= 50) return 'E';
-    return 'F';
-  };
-
-  const getGradeColor = (grade: string): string => {
-    switch (grade) {
-      case 'A': return 'text-green-600';
-      case 'B': return 'text-blue-600';
-      case 'C': return 'text-yellow-600';
-      case 'D': return 'text-orange-600';
-      case 'E': return 'text-red-600';
-      case 'F': return 'text-red-800';
-      default: return 'text-gray-600';
-    }
-  };
+  // Grade calculation functions imported from @/lib/results
 
   // Fetch student results
   const fetchStudentResults = async (admissionNo: string) => {
     try {
       setLoading(true);
       setError('');
-      
-      const requestBody: Record<string, string> = {
-        studentId: admissionNo.trim().toUpperCase()
-      };
 
-      if (queryClassId) requestBody.classId = queryClassId;
-      if (querySessionId) requestBody.sessionId = querySessionId;
-      if (queryTermId) requestBody.termId = queryTermId;
-      
-      const response = await fetch('/api/results/check', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
+      const res = await checkResult({
+        studentId: admissionNo,
+        classId: queryClassId,
+        sessionId: querySessionId,
+        termId: queryTermId,
       });
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        setError(data.error || 'Failed to fetch results');
-        setResult(null);
-      } else if (!data || !data.student) {
-        setError('No student data found in response');
-        setResult(null);
-      } else {
-        setResult(data);
+      if (res.ok) {
+        setResult(res.data);
         setError('');
+      } else {
+        setError(res.error);
+        setResult(null);
       }
-    } catch (err) {
-      setError('Network error. Please try again.');
-      setResult(null);
     } finally {
       setLoading(false);
     }

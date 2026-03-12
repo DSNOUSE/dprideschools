@@ -44,45 +44,39 @@ export default function ParentsPage() {
 
   const portalCards = [
     {
-      icon: <Assessment sx={{ fontSize: 32, color: '#fff' }} />,
+      icon: <Assessment sx={{ fontSize: 36, color: '#1e3a8a' }} />,
       title: 'View Results',
       description: "Access your child's academic performance and grades",
-      color: 'from-blue-500 to-blue-600',
       href: '/results',
     },
     {
-      icon: <Notifications sx={{ fontSize: 32, color: '#fff' }} />,
+      icon: <Notifications sx={{ fontSize: 36, color: '#1e3a8a' }} />,
       title: 'Announcements',
       description: 'Stay updated with latest school news and notices',
-      color: 'from-amber-500 to-amber-600',
       href: '#announcements',
     },
     {
-      icon: <CalendarMonth sx={{ fontSize: 32, color: '#fff' }} />,
+      icon: <CalendarMonth sx={{ fontSize: 36, color: '#1e3a8a' }} />,
       title: 'Calendar',
       description: 'View school events, holidays, and important dates',
-      color: 'from-purple-500 to-purple-600',
       href: '/calendar',
     },
     {
-      icon: <Description sx={{ fontSize: 32, color: '#fff' }} />,
+      icon: <Description sx={{ fontSize: 36, color: '#1e3a8a' }} />,
       title: 'Newsletters',
       description: 'Download monthly newsletters and school updates',
-      color: 'from-green-500 to-green-600',
       href: '#newsletters',
     },
     {
-      icon: <Payment sx={{ fontSize: 32, color: '#fff' }} />,
+      icon: <Payment sx={{ fontSize: 36, color: '#1e3a8a' }} />,
       title: 'Fee Payment',
       description: 'Pay school fees and view payment history',
-      color: 'from-red-500 to-red-600',
       href: '#fees',
     },
     {
-      icon: <DirectionsBus sx={{ fontSize: 32, color: '#fff' }} />,
+      icon: <DirectionsBus sx={{ fontSize: 36, color: '#1e3a8a' }} />,
       title: 'Transport',
       description: 'Manage transportation services and routes',
-      color: 'from-indigo-500 to-indigo-600',
       href: '#transport',
     },
   ];
@@ -110,8 +104,8 @@ export default function ParentsPage() {
                 href={card.href}
                 className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
               >
-                <div className={`flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${card.color} mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <span className="text-2xl text-white">{card.icon}</span>
+                <div className="mb-6 group-hover:scale-110 transition-transform duration-300">
+                  {card.icon}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{card.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{card.description}</p>
@@ -294,29 +288,29 @@ export default function ParentsPage() {
         <Container>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <School sx={{ fontSize: 32, color: '#2563eb' }} />
+              <div className="mx-auto mb-4">
+                <School sx={{ fontSize: 40, color: '#1e3a8a' }} />
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Academic Excellence</h3>
               <p className="text-sm text-gray-600">Comprehensive curriculum with focus on holistic development</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp sx={{ fontSize: 32, color: '#16a34a' }} />
+              <div className="mx-auto mb-4">
+                <TrendingUp sx={{ fontSize: 40, color: '#1e3a8a' }} />
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Track Progress</h3>
               <p className="text-sm text-gray-600">Real-time access to your child's academic performance</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Notifications sx={{ fontSize: 32, color: '#d97706' }} />
+              <div className="mx-auto mb-4">
+                <Notifications sx={{ fontSize: 40, color: '#1e3a8a' }} />
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Stay Updated</h3>
               <p className="text-sm text-gray-600">Instant notifications about school events and updates</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Payment sx={{ fontSize: 32, color: '#a855f7' }} />
+              <div className="mx-auto mb-4">
+                <Payment sx={{ fontSize: 40, color: '#1e3a8a' }} />
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Easy Payments</h3>
               <p className="text-sm text-gray-600">Secure and convenient online payment options</p>
