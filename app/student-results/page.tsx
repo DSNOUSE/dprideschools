@@ -17,6 +17,8 @@ export default function StudentResultsPage() {
   const [result, setResult] = useState<ResultData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [terms, setTerms] = useState<any[]>([]);
+  const [selectedTerm, setSelectedTerm] = useState<string>('');
 
   // Get student admission number from URL or session
   const studentAdmissionNo = searchParams?.get('student') || (session?.user as any)?.admissionNo;
@@ -26,6 +28,23 @@ export default function StudentResultsPage() {
   const queryTermId = searchParams?.get('term') || undefined;
 
   // Grade calculation functions imported from @/lib/results
+
+  // Fetch available terms
+  const fetchTerms = async () => {
+    try {
+      const response = await fetch('/api/academics/terms');
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setTerms(data);
+        // Set default term to first term if none selected
+        if (!selectedTerm && data.length > 0) {
+          setSelectedTerm(data[0].id.toString());
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching terms:', error);
+    }
+  };
 
   // Fetch student results
   const fetchStudentResults = async (admissionNo: string) => {
@@ -37,7 +56,7 @@ export default function StudentResultsPage() {
         studentId: admissionNo,
         classId: queryClassId,
         sessionId: querySessionId,
-        termId: queryTermId,
+        termId: selectedTerm || queryTermId,
       });
 
       if (res.ok) {
@@ -68,7 +87,19 @@ export default function StudentResultsPage() {
     if (studentAdmissionNo) {
       fetchStudentResults(studentAdmissionNo);
     }
-  }, [studentAdmissionNo]);
+  }, [studentAdmissionNo, selectedTerm]);
+
+  // Fetch terms on component mount
+  useEffect(() => {
+    fetchTerms();
+  }, []);
+
+  // Set initial selected term from URL params
+  useEffect(() => {
+    if (queryTermId && !selectedTerm) {
+      setSelectedTerm(queryTermId);
+    }
+  }, [queryTermId, selectedTerm]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -132,8 +163,29 @@ export default function StudentResultsPage() {
       {/* Header */}
       <div className="bg-white shadow-sm border-b print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-2 md:py-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between py-2 md:py-4 gap-4">
             <h1 className="text-lg md:text-2xl font-bold text-gray-900 truncate">{result.student.firstName} {result.student.lastName}'s Results</h1>
+            
+            {/* Term Selector */}
+            {terms.length > 0 && (
+              <div className="flex items-center gap-2">
+                <label htmlFor="term-select" className="text-sm font-medium text-gray-700">
+                  Select Term:
+                </label>
+                <select
+                  id="term-select"
+                  value={selectedTerm}
+                  onChange={(e) => setSelectedTerm(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {terms.map((term) => (
+                    <option key={term.id} value={term.id.toString()}>
+                      {term.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
       </div>
