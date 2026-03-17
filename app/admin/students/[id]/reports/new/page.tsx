@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function NewReportPage({ params }: { params: { id: string } }) {
+export default async function NewReportPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
+  const { id } = await params
   const [formData, setFormData] = useState({
     subjectId: "",
     termId: "",
@@ -30,12 +31,12 @@ export default function NewReportPage({ params }: { params: { id: string } }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...formData,
-        studentId: params.id
+        studentId: id
       })
     })
 
     if (response.ok) {
-      router.push(`/admin/students/${params.id}`)
+      router.push(`/admin/students/${id}`)
     } else {
       alert('Failed to save report')
     }
