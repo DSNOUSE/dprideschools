@@ -12,7 +12,7 @@ interface GradeEntry {
   subjectId: number;
   firstScore?: number;
   secondScore?: number;
-  examScore?: number;
+  fourthScore?: number;  // Changed from examScore to fourthScore
   average?: number;
 }
 
@@ -182,7 +182,7 @@ export default function GradeManagementPage() {
           subjectId: grade.subjectId,
           firstScore: grade.firstScore || undefined,
           secondScore: grade.secondScore || undefined,
-          examScore: grade.fourthScore || undefined,
+          fourthScore: grade.fourthScore || undefined,  // Changed from examScore to fourthScore
         }));
 
         // Merge with existing grades
@@ -193,7 +193,7 @@ export default function GradeManagementPage() {
             subjectId: parseInt(selectedSubject),
             firstScore: undefined,
             secondScore: undefined,
-            examScore: undefined,
+            fourthScore: undefined,  // Changed from examScore to fourthScore
           };
         });
 
@@ -224,8 +224,8 @@ export default function GradeManagementPage() {
         // Calculate average if all scores are present
         if (updated.firstScore !== undefined && 
             updated.secondScore !== undefined && 
-            updated.examScore !== undefined) {
-          const scores = [updated.firstScore, updated.secondScore, updated.examScore];
+            updated.fourthScore !== undefined) {
+          const scores = [updated.firstScore, updated.secondScore, updated.fourthScore];
           updated.average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
         }
         
@@ -250,7 +250,7 @@ export default function GradeManagementPage() {
           grades: grades.filter(grade => 
             grade.firstScore !== undefined || 
             grade.secondScore !== undefined || 
-            grade.examScore !== undefined
+            grade.fourthScore !== undefined  // Changed from examScore to fourthScore
           )
         })
       });
@@ -459,8 +459,8 @@ export default function GradeManagementPage() {
                                   step="0.1"
                                   min="0"
                                   max="100"
-                                  value={grade?.examScore || ''}
-                                  onChange={(e) => handleGradeChange(student.id, 'examScore', e.target.value)}
+                                  value={grade?.fourthScore || ''}
+                                  onChange={(e) => handleGradeChange(student.id, 'fourthScore', e.target.value)}
                                   className="w-full px-2 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   placeholder="0"
                                 />
@@ -563,8 +563,8 @@ export default function GradeManagementPage() {
                             step="0.1"
                             min="0"
                             max="100"
-                            value={grade?.examScore || ''}
-                            onChange={(e) => handleGradeChange(student.id, 'examScore', e.target.value)}
+                            value={grade?.fourthScore || ''}
+                            onChange={(e) => handleGradeChange(student.id, 'fourthScore', e.target.value)}
                             className="w-16 sm:w-20 px-1 sm:px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </td>
