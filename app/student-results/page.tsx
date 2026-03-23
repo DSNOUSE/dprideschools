@@ -292,6 +292,21 @@ export default function StudentResultsPage() {
           )}
         </div>
 
+        {/* Teacher's Comment */}
+        {result.result?.comment && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 md:p-6 mb-6 border border-amber-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+              </svg>
+              Teacher's Comment
+            </h3>
+            <div className="bg-white rounded-lg p-4 border border-amber-100">
+              <p className="text-gray-700 leading-relaxed">{result.result.comment}</p>
+            </div>
+          </div>
+        )}
+
         {/* Subject Grades */}
         {/* Mobile Card View */}
         <div className="block md:hidden space-y-4">
@@ -300,15 +315,10 @@ export default function StudentResultsPage() {
             const gradeColor = getGradeColor(letterGrade);
             return (
               <div key={`${grade.subjectId}-${index}`} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                {/* Header with Subject and Grade */}
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 text-base">{grade.subject.name}</h3>
-                    <div className="text-xs text-gray-500 mt-1">Subject Performance</div>
-                  </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-bold ${gradeColor} shadow-sm`}>
-                    {letterGrade}
-                  </span>
+                {/* Header with Subject */}
+                <div className="mb-4">
+                  <h3 className="font-semibold text-gray-900 text-base">{grade.subject.name}</h3>
+                  <div className="text-xs text-gray-500 mt-1">Subject Performance</div>
                 </div>
                 
                 {/* Scores Grid */}
@@ -329,17 +339,9 @@ export default function StudentResultsPage() {
                 
                 {/* Average Section */}
                 <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <div className="text-gray-600 text-xs">Overall Average</div>
-                      <div className="text-gray-900 font-bold text-xl">{grade.average.toFixed(1)}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-gray-600 text-xs">Performance</div>
-                      <div className={`text-sm font-semibold ${letterGrade === 'A' ? 'text-green-600' : letterGrade === 'B' ? 'text-blue-600' : 'text-orange-600'}`}>
-                        {letterGrade === 'A' ? 'Excellent' : letterGrade === 'B' ? 'Good' : 'Needs Improvement'}
-                      </div>
-                    </div>
+                  <div className="text-center">
+                    <div className="text-gray-600 text-xs mb-1">Overall Average</div>
+                    <div className="text-gray-900 font-bold text-xl">{grade.average.toFixed(1)}</div>
                   </div>
                 </div>
               </div>
@@ -357,7 +359,6 @@ export default function StudentResultsPage() {
                   <th className="border border-gray-300 px-4 py-2 text-center">2nd Score</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">Exam Score</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">Average</th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">Grade</th>
                 </tr>
               </thead>
               <tbody>
@@ -371,11 +372,6 @@ export default function StudentResultsPage() {
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.secondScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.examScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center font-bold">{grade.average.toFixed(1)}</td>
-                      <td className="border border-gray-300 px-4 py-2 text-center">
-                        <span className={`px-2 py-1 rounded-full text-sm font-bold ${gradeColor}`}>
-                          {letterGrade}
-                        </span>
-                      </td>
                     </tr>
               );
               })}

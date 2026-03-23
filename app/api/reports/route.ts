@@ -5,6 +5,43 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
+export async function GET(request: Request) {
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const studentId = searchParams.get('studentId');
+
+    let reports;
+    
+    if (studentId) {
+      reports = await prisma.report.findMany({
+        where: { studentId },
+        include: { 
+          subject: true, 
+          teacher: { select: { name: true } } 
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    } else {
+      reports = await prisma.report.findMany({
+        include: { 
+          subject: true, 
+          teacher: { select: { name: true } } 
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    }
+
+    return NextResponse.json(reports);
+  } catch (error) {
+    console.error('Error fetching reports:', error);
+    return NextResponse.json({ error: 'Failed to fetch reports' }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   if (!process.env.DATABASE_URL) {
     return NextResponse.json({ error: 'Database not available' }, { status: 503 });

@@ -461,7 +461,12 @@ export default function ResultsPage() {
               <h3 className="text-lg font-semibold mb-4">Teacher's Comment</h3>
               <div className="text-sm text-gray-700 mb-4 flex-1">
                 {result.result?.comment ? (
-                  <p>{result.result.comment}</p>
+                  <div className="space-y-3">
+                    <p>{result.result.comment}</p>
+                    <div className="text-xs text-gray-500 italic">
+                      Added by teacher for this term
+                    </div>
+                  </div>
                 ) : (
                   <p className="text-gray-500">No comment yet. Comments added from the teacher's admin area will appear here.</p>
                 )}

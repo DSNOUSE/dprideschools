@@ -82,8 +82,8 @@ model Subject {
   name         String
   departmentId Int?
   classId      Int?
-  section      String?     // 'Nursery', 'Primary', 'Secondary'
   maxScore     Float       @default(100.0)
+  section      String?
   grades       Grade[]
   reports      Report[]
   class        Class?      @relation(fields: [classId], references: [id])

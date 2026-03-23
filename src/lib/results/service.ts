@@ -134,6 +134,23 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
     }
   }
 
+  // ── Teacher Comments ───────────────────────────────────────
+  const reports = await prisma.report.findMany({
+    where: {
+      studentId: student.id,
+      termId: resolvedTermId,
+      status: 'PUBLISHED', // Only show published comments
+      subjectId: null, // Only get general comments (not subject-specific)
+    },
+    include: { 
+      teacher: { select: { name: true } } 
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  // Get the most recent general comment
+  const generalComment = reports.length > 0 ? reports[0].comment : null;
+
   return {
     student: studentPayload,
     class: { name: student.class.name },
@@ -151,6 +168,7 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
       average: result?.average ?? average,
       totalScore: result?.totalScore ?? totalScore,
       maxScore: result?.maxScore ?? maxScore,
+      comment: generalComment || undefined, // Get comment from Report table
     },
   };
 }
