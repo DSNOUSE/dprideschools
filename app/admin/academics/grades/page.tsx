@@ -226,7 +226,7 @@ export default function GradeManagementPage() {
             updated.secondScore !== undefined && 
             updated.fourthScore !== undefined) {
           const scores = [updated.firstScore, updated.secondScore, updated.fourthScore];
-          updated.average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+          updated.average = scores.reduce((sum, score) => sum + score, 0);
         }
         
         return updated;

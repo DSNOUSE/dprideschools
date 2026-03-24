@@ -10,6 +10,7 @@ const mockPrisma = vi.hoisted(() => ({
   session: { findFirst: vi.fn() },
   grade: { findMany: vi.fn() },
   result: { findUnique: vi.fn(), findMany: vi.fn() },
+  report: { findMany: vi.fn() },
 }));
 
 vi.mock('@/lib/prisma', () => ({ prisma: mockPrisma }));
@@ -235,6 +236,7 @@ describe('getStudentResult', () => {
       totalScore: 150,
       maxScore: 200,
     });
+    mockPrisma.report.findMany.mockResolvedValue([]);
 
     const result = await getStudentResult({
       studentId: 'STU001',
@@ -262,6 +264,7 @@ describe('getStudentResult', () => {
       { average: 80 },
       { average: 50 },
     ]);
+    mockPrisma.report.findMany.mockResolvedValue([]);
 
     const result = await getStudentResult({
       studentId: 'STU001',

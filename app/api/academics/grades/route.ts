@@ -93,9 +93,9 @@ export async function POST(request: NextRequest) {
     for (const gradeData of grades) {
       const { studentId, subjectId, firstScore, secondScore, fourthScore } = gradeData;
 
-      // Calculate average
+      // Calculate total (sum of component scores, each subject out of 100)
       const scores = [firstScore, secondScore, fourthScore].filter(score => score !== undefined);
-      const average = scores.length > 0 ? scores.reduce((sum: any, score: any) => sum + score, 0) / scores.length : 0;
+      const average = scores.length > 0 ? scores.reduce((sum: any, score: any) => sum + score, 0) : 0;
 
       // Upsert grade
       const grade = await prisma.grade.upsert({

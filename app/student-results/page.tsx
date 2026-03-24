@@ -7,7 +7,7 @@ import { signOut } from 'next-auth/react';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
 import { WarningAmber, Print, EmojiEvents, TrendingUp, Assessment, Star } from '@mui/icons-material';
-import { checkResult, calculateGrade, getGradeColor } from '@/lib/results';
+import { checkResult, calculateGrade, getGradeColor, formatStudentName } from '@/lib/results';
 import type { ResultData } from '@/lib/results';
 
 export default function StudentResultsPage() {
@@ -164,7 +164,7 @@ export default function StudentResultsPage() {
       <div className="bg-white shadow-sm border-b print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between py-2 md:py-4 gap-4">
-            <h1 className="text-lg md:text-2xl font-bold text-gray-900 truncate">{result.student.firstName} {result.student.lastName}'s Results</h1>
+            <h1 className="text-lg md:text-2xl font-bold text-gray-900 truncate">{formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}'s Results</h1>
             
             {/* Term Selector */}
             {terms.length > 0 && (
@@ -202,21 +202,21 @@ export default function StudentResultsPage() {
             {result.student.photo ? (
               <img
                 src={result.student.photo}
-                alt={`${result.student.firstName} ${result.student.lastName}`}
+                alt={formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}
                 className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover flex-shrink-0"
               />
             ) : (
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden flex-shrink-0">
                 <img
-                  src={result.student.sex === 'M' ? '/images/pp-result-boy.png' : '/images/pp-result-girl.png'}
-                  alt={`${result.student.firstName} ${result.student.lastName}`}
+                  src={result.student.sex?.toLowerCase() === 'male' ? '/images/pp-result-boy.png' : '/images/pp-result-girl.png'}
+                  alt={formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}
                   className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover"
                 />
               </div>
             )}
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-semibold text-gray-900 truncate">
-                {result.student.firstName} {result.student.lastName}
+                {formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}
               </h3>
               <p className="text-sm text-gray-600">{result.student.admissionNo}</p>
               <p className="text-gray-600">Class: {result.class.name}</p>
@@ -236,22 +236,22 @@ export default function StudentResultsPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Academic Performance Summary</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <div className="bg-white rounded-lg p-3 text-center shadow-sm">
-                  <EmojiEvents sx={{ fontSize: 28, color: '#2563eb', marginBottom: 1 }} />
+                  <EmojiEvents sx={{ fontSize: 28, color: '#1e3a8a', marginBottom: 1 }} />
                   <p className="text-xs text-gray-600 mb-1">Position</p>
                   <p className="text-lg md:text-2xl font-bold text-blue-600">{result.result.position || '-'}</p>
                 </div>
                 <div className="bg-white rounded-lg p-3 text-center shadow-sm">
-                  <TrendingUp sx={{ fontSize: 28, color: '#16a34a', marginBottom: 1 }} />
+                  <TrendingUp sx={{ fontSize: 28, color: '#1e3a8a', marginBottom: 1 }} />
                   <p className="text-xs text-gray-600 mb-1">Average</p>
                   <p className="text-lg md:text-2xl font-bold text-green-600">{result.result.average?.toFixed(1)}%</p>
                 </div>
                 <div className="bg-white rounded-lg p-3 text-center shadow-sm">
-                  <Assessment sx={{ fontSize: 28, color: '#9333ea', marginBottom: 1 }} />
+                  <Assessment sx={{ fontSize: 28, color: '#1e3a8a', marginBottom: 1 }} />
                   <p className="text-xs text-gray-600 mb-1">Total</p>
-                  <p className="text-lg md:text-2xl font-bold text-purple-600">{result.result.totalScore?.toFixed(1) || 0}</p>
+                  <p className="text-lg md:text-2xl font-bold text-purple-600">{result.result.totalScore != null ? Math.ceil(result.result.totalScore) : 0}</p>
                 </div>
                 <div className="bg-white rounded-lg p-3 text-center shadow-sm">
-                  <Star sx={{ fontSize: 28, color: '#ea580c', marginBottom: 1 }} />
+                  <Star sx={{ fontSize: 28, color: '#1e3a8a', marginBottom: 1 }} />
                   <p className="text-xs text-gray-600 mb-1">Max Score</p>
                   <p className="text-lg md:text-2xl font-bold text-orange-600">{result.result.maxScore || 0}</p>
                 </div>

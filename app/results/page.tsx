@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
 import { TrendingUp, Print } from '@mui/icons-material';
-import { checkResult, calculateGrade, getGradeColor } from '@/lib/results';
+import { checkResult, calculateGrade, getGradeColor, formatStudentName } from '@/lib/results';
 import type { ResultData, SelectOption } from '@/lib/results';
 
 export default function ResultsPage() {
@@ -322,16 +322,16 @@ export default function ResultsPage() {
                 {result.student.photo ? (
                   <img 
                     src={result.student.photo}
-                    alt={`${result.student.firstName} ${result.student.lastName}`}
+                    alt={formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${result.student.firstName}+${result.student.lastName}&background=2563eb&color=fff&size=128`;
+                      e.currentTarget.src = result.student.sex?.toLowerCase() === 'male' ? '/images/pp-result-boy.png' : '/images/pp-result-girl.png';
                     }}
                   />
                 ) : (
                   <img 
-                    src={`https://ui-avatars.com/api/?name=${result.student.firstName}+${result.student.lastName}&background=2563eb&color=fff&size=128`}
-                    alt={`${result.student.firstName} ${result.student.lastName}`}
+                    src={result.student.sex?.toLowerCase() === 'male' ? '/images/pp-result-boy.png' : '/images/pp-result-girl.png'}
+                    alt={formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}
                     className="w-full h-full object-cover"
                   />
                 )}
@@ -341,7 +341,7 @@ export default function ResultsPage() {
             {/* Student Details */}
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                {result.student.firstName} {result.student.middleName} {result.student.lastName}
+                {formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}
               </h2>
               <div className="grid md:grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center gap-2">
@@ -383,10 +383,10 @@ export default function ResultsPage() {
 
           <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-3 md:p-4 border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 print:shadow-none print:rounded-none print:border-2 print:border-black print:bg-white">
             <div className="flex flex-col items-center text-center">
-              <div className="p-2 bg-amber-100 rounded-lg mb-2 text-amber-700 text-lg md:text-lg font-bold">
+              <div className="p-2 rounded-lg mb-2 text-lg md:text-lg font-bold" style={{ backgroundColor: '#1e3a8a20', color: '#1e3a8a' }}>
                 ★
               </div>
-              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result?.totalScore}</span>
+              <span className="text-lg md:text-xl font-bold text-gray-900">{result.result?.totalScore != null ? Math.ceil(result.result.totalScore) : 0}</span>
               <p className="text-gray-600 text-xs mt-1">Total Score</p>
             </div>
           </div>
