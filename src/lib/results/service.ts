@@ -143,13 +143,22 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
       subjectId: null, // Only get general comments (not subject-specific)
     },
     include: { 
-      teacher: { select: { name: true } } 
+      teacher: { select: { name: true, teacherId: true } } 
     },
     orderBy: { createdAt: 'desc' },
   });
 
-  // Get the most recent general comment
-  const generalComment = reports.length > 0 ? reports[0].comment : null;
+  // Get the most recent general comment and teacher attribution
+  const latestCommentReport = reports.length > 0 ? reports[0] : null;
+  const generalComment = latestCommentReport?.comment ?? null;
+  /** Always set when a comment exists so the UI can show "Comment by …" (name, staff ID, or "Teacher"). */
+  const commentAuthor =
+    latestCommentReport?.teacher != null
+      ? {
+          name: latestCommentReport.teacher.name ?? null,
+          teacherId: latestCommentReport.teacher.teacherId ?? null,
+        }
+      : { name: null, teacherId: null };
 
   return {
     student: studentPayload,
@@ -168,7 +177,8 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
       average: result?.average ?? average,
       totalScore: result?.totalScore ?? totalScore,
       maxScore: result?.maxScore ?? maxScore,
-      comment: generalComment || undefined, // Get comment from Report table
+      comment: generalComment || undefined,
+      ...(generalComment ? { commentAuthor } : {}),
     },
   };
 }

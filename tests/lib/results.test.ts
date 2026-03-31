@@ -18,7 +18,12 @@ vi.mock('@/lib/prisma', () => ({ prisma: mockPrisma }));
 import { getStudentResult } from '@/lib/results/service';
 import { checkResultSchema } from '@/lib/results/schema';
 import { rateLimiter } from '@/lib/results/rate-limiter';
-import { calculateGrade, getGradeColor, formatStudentName } from '@/lib/results/utils';
+import {
+  calculateGrade,
+  getGradeColor,
+  formatStudentName,
+  formatCommentAttribution,
+} from '@/lib/results/utils';
 
 // ──────────────────────────────────────────────────────────────
 // Helpers
@@ -284,5 +289,72 @@ describe('getStudentResult', () => {
     await expect(
       getStudentResult({ studentId: 'STU001', classId: 1, sessionId: 1, termId: 999 }),
     ).rejects.toMatchObject({ status: 400, code: 'INVALID_TERM' });
+  });
+
+  it('includes commentAuthor when a published general report exists', async () => {
+    const student = fakeStudent();
+    mockPrisma.student.findFirst.mockResolvedValue(student);
+    mockPrisma.term.findUnique.mockResolvedValue({ id: 1, name: 'First Term' });
+    mockPrisma.grade.findMany.mockResolvedValue([fakeGrade('Maths', 70)]);
+    mockPrisma.result.findUnique.mockResolvedValue({ position: 1, average: 70, totalScore: 70, maxScore: 100 });
+    mockPrisma.report.findMany.mockResolvedValue([
+      {
+        comment: 'Excellent term.',
+        teacher: { name: 'Dr. Ada Okafor', teacherId: 'TCH-1001' },
+      },
+    ]);
+
+    const result = await getStudentResult({
+      studentId: 'STU001',
+      classId: 1,
+      sessionId: 1,
+      termId: 1,
+    });
+
+    expect(result.result?.comment).toBe('Excellent term.');
+    expect(result.result?.commentAuthor).toEqual({
+      name: 'Dr. Ada Okafor',
+      teacherId: 'TCH-1001',
+    });
+  });
+
+  it('includes fallback commentAuthor when a published general report has no teacher row', async () => {
+    const student = fakeStudent();
+    mockPrisma.student.findFirst.mockResolvedValue(student);
+    mockPrisma.term.findUnique.mockResolvedValue({ id: 1, name: 'First Term' });
+    mockPrisma.grade.findMany.mockResolvedValue([fakeGrade('Maths', 70)]);
+    mockPrisma.result.findUnique.mockResolvedValue({ position: 1, average: 70, totalScore: 70, maxScore: 100 });
+    mockPrisma.report.findMany.mockResolvedValue([
+      {
+        comment: 'Legacy comment.',
+        teacher: null,
+      },
+    ]);
+
+    const result = await getStudentResult({
+      studentId: 'STU001',
+      classId: 1,
+      sessionId: 1,
+      termId: 1,
+    });
+
+    expect(result.result?.comment).toBe('Legacy comment.');
+    expect(result.result?.commentAuthor).toEqual({ name: null, teacherId: null });
+  });
+});
+
+describe('formatCommentAttribution', () => {
+  it('prefers full name', () => {
+    expect(
+      formatCommentAttribution({ name: 'Jane Smith', teacherId: 'T-1' }),
+    ).toBe('Jane Smith');
+  });
+
+  it('falls back to staff id when name empty', () => {
+    expect(formatCommentAttribution({ name: null, teacherId: 'EMP-9' })).toBe('Staff ID: EMP-9');
+  });
+
+  it('falls back to generic label when both missing', () => {
+    expect(formatCommentAttribution({ name: null, teacherId: null })).toBe('Teacher');
   });
 });

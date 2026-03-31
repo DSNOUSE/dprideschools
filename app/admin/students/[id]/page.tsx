@@ -170,6 +170,17 @@ export default function StudentView({ params }: Props) {
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <div className="text-sm text-gray-600">{new Date(r.createdAt).toLocaleString()}</div>
+                    {r.teacher && (
+                      <div className="text-sm text-gray-700 mt-1">
+                        <span className="text-gray-500">Teacher: </span>
+                        <span className="font-medium">
+                          {r.teacher.name?.trim() || '—'}
+                        </span>
+                        {r.teacher.teacherId ? (
+                          <span className="text-gray-500"> ({r.teacher.teacherId})</span>
+                        ) : null}
+                      </div>
+                    )}
                     <div className="font-medium">{r.subjectId ? `Subject ${r.subjectId}` : 'General'}</div>
                     <div>Grade: {r.grade}</div>
                     <div className="mt-2 text-sm">{r.comment}</div>

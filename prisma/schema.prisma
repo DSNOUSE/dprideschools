@@ -7,15 +7,21 @@ datasource db {
 }
 
 model User {
-  id                String         @id @default(cuid())
-  email             String         @unique
-  name              String?
-  passwordHash      String
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  sentNotifications Notification[] @relation("SentNotifications")
-  reports           Report[]
-  roles             UserRole[]
+  id                 String               @id @default(cuid())
+  email              String               @unique
+  name               String?
+  passwordHash       String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  teacherId          String?
+  sentNotifications  Notification[]       @relation("SentNotifications")
+  reports            Report[]
+  roles              UserRole[]
+  approvedApprovals  ResultApproval[]     @relation("ApprovedApprovals")
+  rejectedApprovals  ResultApproval[]     @relation("RejectedApprovals")
+  submittedApprovals ResultApproval[]     @relation("SubmittedApprovals")
+  auditLogs          ResultAuditLog[]     @relation("AuditLogs")
+  teacherActivities  TeacherActivityLog[] @relation("TeacherActivities")
 }
 
 model Role {
@@ -62,56 +68,61 @@ model Department {
 }
 
 model Class {
-  id            Int            @id @default(autoincrement())
-  name          String
-  departmentId  Int
-  level         String?
-  sort_order    Int?
-  department    Department     @relation(fields: [departmentId], references: [id])
-  grades        Grade[]
-  notifications Notification[]
-  results       Result[]
-  students      Student[]
-  subjects      Subject[]
+  id                Int                  @id @default(autoincrement())
+  name              String
+  departmentId      Int
+  level             String?
+  sort_order        Int?
+  department        Department           @relation(fields: [departmentId], references: [id])
+  grades            Grade[]
+  notifications     Notification[]
+  results           Result[]
+  students          Student[]
+  subjects          Subject[]
+  auditLogs         ResultAuditLog[]
+  teacherActivities TeacherActivityLog[] @relation("TeacherActivityClass")
 
   @@unique([name, departmentId])
 }
 
 model Subject {
-  id           Int         @id @default(autoincrement())
+  id           Int              @id @default(autoincrement())
   name         String
   departmentId Int?
   classId      Int?
-  maxScore     Float       @default(100.0)
+  maxScore     Float            @default(100.0)
   section      String?
   grades       Grade[]
   reports      Report[]
-  class        Class?      @relation(fields: [classId], references: [id])
-  department   Department? @relation(fields: [departmentId], references: [id])
+  class        Class?           @relation(fields: [classId], references: [id])
+  department   Department?      @relation(fields: [departmentId], references: [id])
+  auditLogs    ResultAuditLog[]
 
   @@unique([name, departmentId])
 }
 
 model Term {
-  id      Int      @id @default(autoincrement())
-  name    String   @unique
-  grades  Grade[]
-  reports Report[]
-  results Result[]
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  grades    Grade[]
+  reports   Report[]
+  results   Result[]
+  auditLogs ResultAuditLog[]
 }
 
 model Session {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
-  isActive Boolean   @default(false)
-  grades   Grade[]
-  results  Result[]
-  students Student[]
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  isActive  Boolean          @default(false)
+  grades    Grade[]
+  results   Result[]
+  students  Student[]
+  auditLogs ResultAuditLog[] @relation("AcademicSessionAudit")
 }
 
 model Student {
-  id          String          @id @default(cuid())
-  admissionNo String          @unique
+  id          String           @id @default(cuid())
+  admissionNo String           @unique
   firstName   String
   lastName    String
   middleName  String?
@@ -119,14 +130,15 @@ model Student {
   birthDate   DateTime?
   classId     Int
   sessionId   Int
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
   grades      Grade[]
   reports     Report[]
   results     Result[]
-  class       Class           @relation(fields: [classId], references: [id])
-  session     Session         @relation(fields: [sessionId], references: [id])
+  class       Class            @relation(fields: [classId], references: [id])
+  session     Session          @relation(fields: [sessionId], references: [id])
   parents     StudentParent[]
+  auditLogs   ResultAuditLog[]
 }
 
 model Parent {
@@ -251,6 +263,112 @@ model NotificationRecipient {
   parent         Parent       @relation(fields: [parentId], references: [id])
 
   @@unique([notificationId, parentId])
+}
+
+model ResultAuditLog {
+  id                String   @id @default(cuid())
+  entityType        String
+  entityId          String
+  action            String
+  oldValues         Json?
+  newValues         Json
+  changedFields     String[]
+  userId            String
+  userName          String
+  userEmail         String
+  userRole          String
+  sessionId         String
+  ipAddress         String
+  userAgent         String?
+  classId           Int?
+  studentId         String?
+  subjectId         Int?
+  termId            Int?
+  sessionIdAcademic Int?
+  timestamp         DateTime @default(now())
+  source            String   @default("WEB")
+  batchId           String?
+  notes             String?
+  teacherFullName   String?
+  teacherId         String?
+  class             Class?   @relation(fields: [classId], references: [id])
+  academicSession   Session? @relation("AcademicSessionAudit", fields: [sessionIdAcademic], references: [id])
+  student           Student? @relation(fields: [studentId], references: [id])
+  subject           Subject? @relation(fields: [subjectId], references: [id])
+  term              Term?    @relation(fields: [termId], references: [id])
+  user              User     @relation("AuditLogs", fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([userId, timestamp])
+  @@index([classId, timestamp])
+  @@index([studentId, timestamp])
+  @@index([teacherId, timestamp])
+  @@index([timestamp])
+  @@map("result_audit_logs")
+}
+
+model TeacherActivityLog {
+  id                String   @id @default(cuid())
+  userId            String
+  action            String
+  resourceType      String
+  resourceId        String?
+  details           Json?
+  duration          Int?
+  recordsAffected   Int?
+  ipAddress         String
+  userAgent         String?
+  sessionId         String
+  classId           Int?
+  termId            Int?
+  sessionIdAcademic Int?
+  timestamp         DateTime @default(now())
+  teacherFullName   String?
+  teacherId         String?
+  class             Class?   @relation("TeacherActivityClass", fields: [classId], references: [id])
+  user              User     @relation("TeacherActivities", fields: [userId], references: [id])
+
+  @@index([userId, timestamp])
+  @@index([action, timestamp])
+  @@index([classId, timestamp])
+  @@index([teacherId, timestamp])
+  @@map("teacher_activity_logs")
+}
+
+model ResultApproval {
+  id                     String    @id @default(cuid())
+  entityType             String
+  entityId               String
+  entityTypeFull         String
+  submittedBy            String
+  submittedAt            DateTime  @default(now())
+  approvedBy             String?
+  approvedAt             DateTime?
+  rejectedBy             String?
+  rejectedAt             DateTime?
+  rejectionReason        String?
+  status                 String    @default("PENDING")
+  classId                Int?
+  studentId              String?
+  termId                 Int?
+  sessionIdAcademic      Int?
+  submitterNotes         String?
+  approverNotes          String?
+  approvedByTeacherId    String?
+  approvedByTeacherName  String?
+  rejectedByTeacherId    String?
+  rejectedByTeacherName  String?
+  submittedByTeacherId   String?
+  submittedByTeacherName String?
+  approver               User?     @relation("ApprovedApprovals", fields: [approvedBy], references: [id])
+  rejecter               User?     @relation("RejectedApprovals", fields: [rejectedBy], references: [id])
+  submitter              User      @relation("SubmittedApprovals", fields: [submittedBy], references: [id])
+
+  @@index([status, submittedAt])
+  @@index([submittedBy, submittedAt])
+  @@index([classId, status])
+  @@index([submittedByTeacherId, submittedAt])
+  @@map("result_approvals")
 }
 
 enum ReportStatus {

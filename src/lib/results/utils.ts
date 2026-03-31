@@ -42,3 +42,16 @@ export function formatStudentName(
 ): string {
   return [firstName, middleName, lastName].filter(Boolean).join(' ');
 }
+
+/**
+ * Line shown under a result comment: full name when set, else staff ID, else a generic label.
+ */
+export function formatCommentAttribution(author: {
+  name: string | null;
+  teacherId: string | null;
+}): string {
+  const trimmed = author.name?.trim();
+  if (trimmed) return trimmed;
+  if (author.teacherId?.trim()) return `Staff ID: ${author.teacherId.trim()}`;
+  return 'Teacher';
+}

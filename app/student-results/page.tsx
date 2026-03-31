@@ -7,7 +7,13 @@ import { signOut } from 'next-auth/react';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
 import { WarningAmber, Print, EmojiEvents, TrendingUp, Assessment, Star } from '@mui/icons-material';
-import { checkResult, calculateGrade, getGradeColor, formatStudentName } from '@/lib/results';
+import {
+  checkResult,
+  calculateGrade,
+  getGradeColor,
+  formatStudentName,
+  formatCommentAttribution,
+} from '@/lib/results';
 import type { ResultData } from '@/lib/results';
 
 export default function StudentResultsPage() {
@@ -303,6 +309,14 @@ export default function StudentResultsPage() {
             </h3>
             <div className="bg-white rounded-lg p-4 border border-amber-100">
               <p className="text-gray-700 leading-relaxed">{result.result.comment}</p>
+              <p className="text-sm text-gray-600 mt-3 not-italic">
+                <span className="text-gray-500">Comment by </span>
+                <span className="font-medium text-gray-800">
+                  {formatCommentAttribution(
+                    result.result.commentAuthor ?? { name: null, teacherId: null },
+                  )}
+                </span>
+              </p>
             </div>
           </div>
         )}

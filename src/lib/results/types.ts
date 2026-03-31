@@ -12,6 +12,12 @@ export interface GradeDTO {
   average: number;
 }
 
+/** Teacher attribution for a published result comment (from `Report.teacher`). */
+export interface CommentAuthorDTO {
+  name: string | null;
+  teacherId: string | null;
+}
+
 /** Shape of the result summary returned from the results API. */
 export interface ResultSummaryDTO {
   position?: number;
@@ -19,6 +25,8 @@ export interface ResultSummaryDTO {
   totalScore: number;
   maxScore: number;
   comment?: string;
+  /** Present when a published general report comment exists; names come from `User`. */
+  commentAuthor?: CommentAuthorDTO;
 }
 
 /** Full result payload returned by POST /api/results/check. */

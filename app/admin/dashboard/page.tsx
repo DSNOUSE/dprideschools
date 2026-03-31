@@ -77,6 +77,8 @@ export default async function DashboardPage() {
           <Link href="/admin/academics/grades" className="px-3 py-2 text-white rounded text-sm md:text-base text-center">Grade Management</Link>
           <Link href="/admin/academics/classes" className="px-3 py-2 bg-purple-600 text-white rounded text-sm md:text-base text-center">Academic Classes</Link>
           <Link href="/admin/students" className="px-3 py-2 bg-blue-600 text-white rounded text-sm md:text-base text-center">Manage Students</Link>
+          <Link href="/admin/teachers" className="px-3 py-2 bg-green-600 text-white rounded text-sm md:text-base text-center">Teachers</Link>
+          <Link href="/admin/audit" className="px-3 py-2 bg-red-600 text-white rounded text-sm md:text-base text-center">Audit Dashboard</Link>
           <Link href="/admin/notifications/send" className="px-3 py-2 bg-amber-500 text-white rounded text-sm md:text-base text-center">Send Notification</Link>
         </div>
       </div>

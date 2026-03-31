@@ -1,0 +1,165 @@
+// ========================================
+// AUDIT TRAIL MODELS FOR RESULT TRACKING
+// ========================================
+
+model ResultAuditLog {
+  id              String    @id @default(cuid())
+  entityType      String    // 'Grade' or 'Result'
+  entityId        String    // ID of the affected entity
+  action          String    // 'CREATE', 'UPDATE', 'DELETE'
+  oldValues       Json?     // Previous values (for updates)
+  newValues       Json      // New values
+  changedFields   String[]  // List of fields that changed
+  
+  // User tracking
+  userId          String    // Who made the change
+  userName        String    // Cached user name
+  userEmail       String    // Cached user email
+  userRole        String    // User role at time of change
+  
+  // Session & Security tracking
+  sessionId       String    // User session ID
+  ipAddress       String    // User IP address
+  userAgent       String?   // Browser/device info
+  
+  // Context
+  classId         Int?      // Affected class
+  studentId       String?   // Affected student
+  subjectId       Int?      // Affected subject (for grades)
+  termId          Int?      // Academic term
+  sessionIdAcademic Int?    // Academic session (rename to avoid conflict)
+  
+  // Metadata
+  timestamp       DateTime  @default(now())
+  source          String    @default("WEB") // 'WEB', 'API', 'BULK_IMPORT'
+  batchId         String?   // For bulk operations
+  notes           String?   // Additional context
+  
+  // Relations
+  user            User      @relation("AuditLogs", fields: [userId], references: [id])
+  class           Class?    @relation(fields: [classId], references: [id])
+  student         Student?  @relation(fields: [studentId], references: [id])
+  subject         Subject?  @relation(fields: [subjectId], references: [id])
+  term            Term?     @relation(fields: [termId], references: [id])
+  academicSession Session?  @relation("AcademicSessionAudit", fields: [sessionIdAcademic], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([userId, timestamp])
+  @@index([classId, timestamp])
+  @@index([studentId, timestamp])
+  @@index([timestamp])
+  @@map("result_audit_logs")
+}
+
+model TeacherActivityLog {
+  id              String    @id @default(cuid())
+  userId          String    // Teacher who performed action
+  action          String    // 'LOGIN', 'GRADE_ENTRY', 'BULK_UPLOAD', 'EXPORT', 'VIEW_REPORTS'
+  resourceType    String    // 'GRADES', 'RESULTS', 'STUDENTS', 'REPORTS'
+  resourceId      String?   // Specific resource ID
+  details         Json?     // Action-specific details
+  
+  // Performance metrics
+  duration        Int?      // Time taken in milliseconds
+  recordsAffected Int?      // Number of records processed
+  
+  // Security tracking
+  ipAddress       String
+  userAgent       String?
+  sessionId       String
+  
+  // Context
+  classId         Int?
+  termId          Int?
+  sessionIdAcademic Int?
+  
+  timestamp       DateTime  @default(now())
+  
+  // Relations
+  user            User      @relation("TeacherActivities", fields: [userId], references: [id])
+  class           Class?    @relation("TeacherActivityClass", fields: [classId], references: [id])
+  
+  @@index([userId, timestamp])
+  @@index([action, timestamp])
+  @@index([classId, timestamp])
+  @@map("teacher_activity_logs")
+}
+
+model ResultApproval {
+  id              String    @id @default(cuid())
+  entityType      String    // 'Grade' or 'Result'
+  entityId        String    // ID of entity to approve
+  entityTypeFull  String    // Full entity details for audit
+  
+  // Approval workflow
+  submittedBy     String    // Who submitted for approval
+  submittedAt     DateTime  @default(now())
+  approvedBy      String?   // Who approved
+  approvedAt      DateTime?
+  rejectedBy      String?   // Who rejected
+  rejectedAt      DateTime?
+  rejectionReason String?
+  
+  // Status
+  status          String    @default("PENDING") // 'PENDING', 'APPROVED', 'REJECTED'
+  
+  // Context
+  classId         Int?
+  studentId       String?
+  termId          Int?
+  sessionIdAcademic Int?
+  
+  // Comments
+  submitterNotes  String?
+  approverNotes   String?
+  
+  // Relations
+  submitter       User      @relation("SubmittedApprovals", fields: [submittedBy], references: [id])
+  approver        User?     @relation("ApprovedApprovals", fields: [approvedBy], references: [id])
+  rejecter        User?     @relation("RejectedApprovals", fields: [rejectedBy], references: [id])
+  
+  @@index([status, submittedAt])
+  @@index([submittedBy, submittedAt])
+  @@index([classId, status])
+  @@map("result_approvals")
+}
+
+// ========================================
+// UPDATES TO EXISTING MODELS
+// ========================================
+
+// Add audit relations to existing models
+model User {
+  // ... existing fields ...
+  auditLogs       ResultAuditLog[]     @relation("AuditLogs")
+  teacherActivities TeacherActivityLog[] @relation("TeacherActivities")
+  submittedApprovals ResultApproval[]   @relation("SubmittedApprovals")
+  approvedApprovals   ResultApproval[]  @relation("ApprovedApprovals")
+  rejectedApprovals   ResultApproval[]  @relation("RejectedApprovals")
+}
+
+model Class {
+  // ... existing fields ...
+  auditLogs       ResultAuditLog[]
+  teacherActivities TeacherActivityLog[] @relation("TeacherActivityClass")
+}
+
+model Student {
+  // ... existing fields ...
+  auditLogs       ResultAuditLog[]
+}
+
+model Subject {
+  // ... existing fields ...
+  auditLogs       ResultAuditLog[]
+}
+
+model Term {
+  // ... existing fields ...
+  auditLogs       ResultAuditLog[]
+}
+
+model Session {
+  // ... existing fields ...
+  auditLogs       ResultAuditLog[]     @relation("AcademicSessionAudit")
+}

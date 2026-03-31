@@ -6,7 +6,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/Button';
 import Container from '@/components/Container';
 import { TrendingUp, Print } from '@mui/icons-material';
-import { checkResult, calculateGrade, getGradeColor, formatStudentName } from '@/lib/results';
+import {
+  checkResult,
+  calculateGrade,
+  getGradeColor,
+  formatStudentName,
+  formatCommentAttribution,
+} from '@/lib/results';
 import type { ResultData, SelectOption } from '@/lib/results';
 
 export default function ResultsPage() {
@@ -463,8 +469,20 @@ export default function ResultsPage() {
                 {result.result?.comment ? (
                   <div className="space-y-3">
                     <p>{result.result.comment}</p>
-                    <div className="text-xs text-gray-500 italic">
-                      Added by teacher for this term
+                    <div className="text-xs text-gray-600">
+                      Comment by{' '}
+                      <span className="font-medium">
+                        {formatCommentAttribution(
+                          result.result.commentAuthor ?? { name: null, teacherId: null },
+                        )}
+                      </span>
+                      {result.result.commentAuthor?.teacherId &&
+                      result.result.commentAuthor?.name ? (
+                        <span className="text-gray-500">
+                          {' '}
+                          (ID: {result.result.commentAuthor.teacherId})
+                        </span>
+                      ) : null}
                     </div>
                   </div>
                 ) : (

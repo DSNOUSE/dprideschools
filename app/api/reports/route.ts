@@ -21,7 +21,7 @@ export async function GET(request: Request) {
         where: { studentId },
         include: { 
           subject: true, 
-          teacher: { select: { name: true } } 
+          teacher: { select: { name: true, teacherId: true } } 
         },
         orderBy: { createdAt: 'desc' },
       });
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
       reports = await prisma.report.findMany({
         include: { 
           subject: true, 
-          teacher: { select: { name: true } } 
+          teacher: { select: { name: true, teacherId: true } } 
         },
         orderBy: { createdAt: 'desc' },
       });

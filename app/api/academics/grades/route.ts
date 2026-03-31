@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { createAuditLog, logTeacherActivity, extractRequestInfo, extractTeacherInfo } from '@/lib/audit/service';
 
 export const dynamic = 'force-dynamic';
 
@@ -66,6 +67,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Database not available' }, { status: 503 });
   }
   
+  const startTime = Date.now();
+  
   try {
     // Add authentication check
     const session = await getServerSession(authOptions);
@@ -88,7 +91,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Extract request information for audit logging
+    const requestInfo = extractRequestInfo(request, session);
+    const batchId = `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Get user information safely
+    const userId = (session.user as any)?.id || 'unknown';
+    const userName = (session.user as any)?.name || 'Unknown';
+    const userEmail = (session.user as any)?.email || 'unknown@example.com';
+    
+    // Extract teacher information
+    const teacherInfo = extractTeacherInfo(session);
+
     const results: any[] = [];
+    const auditPromises: Promise<any>[] = [];
 
     for (const gradeData of grades) {
       const { studentId, subjectId, firstScore, secondScore, fourthScore } = gradeData;
@@ -96,6 +112,31 @@ export async function POST(request: NextRequest) {
       // Calculate total (sum of component scores, each subject out of 100)
       const scores = [firstScore, secondScore, fourthScore].filter(score => score !== undefined);
       const average = scores.length > 0 ? scores.reduce((sum: any, score: any) => sum + score, 0) : 0;
+
+      // Check if this is an update or create operation
+      const existingGrade = await prisma.grade.findUnique({
+        where: {
+          studentId_subjectId_classId_termId_sessionId: {
+            studentId,
+            subjectId,
+            classId,
+            termId,
+            sessionId
+          }
+        }
+      });
+
+      const newValues = {
+        studentId,
+        subjectId,
+        classId,
+        termId,
+        sessionId,
+        firstScore: firstScore || null,
+        secondScore: secondScore || null,
+        fourthScore: fourthScore || null,
+        average
+      };
 
       // Upsert grade
       const grade = await prisma.grade.upsert({
@@ -114,28 +155,80 @@ export async function POST(request: NextRequest) {
           fourthScore: fourthScore || null,
           average
         },
-        create: {
-          studentId,
-          subjectId,
-          classId,
-          termId,
-          sessionId,
-          firstScore: firstScore || null,
-          secondScore: secondScore || null,
-          fourthScore: fourthScore || null,
-          average
-        }
+        create: newValues
       });
 
+      // Create audit log entry
+      const auditPromise = createAuditLog({
+        entityType: 'Grade',
+        entityId: grade.id,
+        action: existingGrade ? 'UPDATE' : 'CREATE',
+        oldValues: existingGrade ? {
+          firstScore: existingGrade.firstScore,
+          secondScore: existingGrade.secondScore,
+          fourthScore: existingGrade.fourthScore,
+          average: existingGrade.average
+        } : undefined,
+        newValues,
+        userId,
+        userName,
+        userEmail,
+        userRole: roles?.join(', ') || 'unknown',
+        teacherId: teacherInfo.teacherId,
+        teacherFullName: teacherInfo.teacherFullName,
+        sessionId: requestInfo.sessionId,
+        ipAddress: requestInfo.ipAddress,
+        userAgent: requestInfo.userAgent,
+        classId,
+        studentId,
+        subjectId,
+        termId,
+        sessionIdAcademic: sessionId,
+        source: 'WEB',
+        batchId,
+        notes: `Grade ${existingGrade ? 'updated' : 'created'} for student ${studentId}, subject ${subjectId}`
+      });
+
+      auditPromises.push(auditPromise);
       results.push(grade);
     }
+
+    // Wait for all audit logs to be created
+    await Promise.all(auditPromises);
 
     // Update result summaries for affected students
     await updateResultSummaries(classId, sessionId, termId);
 
+    // Log teacher activity
+    const duration = Date.now() - startTime;
+    await logTeacherActivity({
+      userId,
+      action: 'GRADE_ENTRY',
+      resourceType: 'GRADES',
+      resourceId: batchId,
+      details: {
+        classId,
+        sessionId,
+        termId,
+        gradesCount: grades.length,
+        batchId
+      },
+      teacherId: teacherInfo.teacherId,
+      teacherFullName: teacherInfo.teacherFullName,
+      duration,
+      recordsAffected: grades.length,
+      ipAddress: requestInfo.ipAddress,
+      userAgent: requestInfo.userAgent,
+      sessionId: requestInfo.sessionId,
+      classId,
+      termId,
+      sessionIdAcademic: sessionId
+    });
+
     return NextResponse.json({ 
       message: 'Grades saved successfully',
-      count: results.length 
+      count: results.length,
+      batchId
     });
 
   } catch (error) {
