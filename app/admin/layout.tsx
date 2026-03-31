@@ -19,32 +19,46 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             
             <nav className="flex flex-col gap-3">
               <Link href="/admin/dashboard" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6"/></svg>
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6"/>
+                </svg>
                 <span>Dashboard</span>
               </Link>
               <Link href="/admin/messenger" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.31 0-2.548-.226-3.69-.642L3 21l1.642-4.31A8.962 8.962 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.31 0-2.548-.226-3.69-.642L3 21l1.642-4.31A8.962 8.962 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
                 <span>Messenger</span>
               </Link>
               <Link href="/admin/calendar" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/>
+                </svg>
                 <span>Calendar</span>
               </Link>
               <div className="mt-4 text-xs text-gray-400">Academics</div>
               <Link href="/admin/academics/departments" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
-                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18"/></svg>
+                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18"/>
+                </svg>
                 <span>Departments</span>
               </Link>
               <Link href="/admin/academics/classes" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
-                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
                 <span>Classes</span>
               </Link>
               <Link href="/admin/academics/subjects" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
-                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 20l9-5-9-5-9 5 9 5z"/></svg>
+                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 20l9-5-9-5-9 5 9 5z"/>
+                </svg>
                 <span>Subjects</span>
               </Link>
               <Link href="/admin/academics/sessions" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
-                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3"/></svg>
+                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3"/>
+                </svg>
                 <span>Sessions</span>
               </Link>
             </nav>
