@@ -333,6 +333,9 @@ export default function StudentResultsPage() {
                 <div className="mb-4">
                   <h3 className="font-semibold text-gray-900 text-base">{grade.subject.name}</h3>
                   <div className="text-xs text-gray-500 mt-1">Subject Performance</div>
+                  {grade.teacher?.name && (
+                    <div className="text-xs text-blue-600 mt-1">Teacher: {grade.teacher.name}</div>
+                  )}
                 </div>
                 
                 {/* Scores Grid */}
@@ -369,6 +372,7 @@ export default function StudentResultsPage() {
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-2 text-left">Subject</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Teacher</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">1st Score</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">2nd Score</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">Exam Score</th>
@@ -382,6 +386,7 @@ export default function StudentResultsPage() {
                   return (
                     <tr key={`${grade.subjectId}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                       <td className="border border-gray-300 px-4 py-2 font-medium">{grade.subject.name}</td>
+                      <td className="border border-gray-300 px-4 py-2 text-blue-600">{grade.teacher?.name || '-'}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.firstScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.secondScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.examScore}</td>

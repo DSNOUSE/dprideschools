@@ -74,7 +74,13 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
       sessionId: resolvedSessionId,
       termId: resolvedTermId,
     },
-    include: { subject: true, term: true },
+    include: { 
+      subject: true, 
+      term: true,
+      teacher: {
+        select: { name: true, teacherId: true }
+      }
+    },
     orderBy: { subject: { name: 'asc' } },
   });
 
@@ -171,6 +177,10 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
       secondScore: g.secondScore ?? undefined,
       examScore: g.fourthScore ?? undefined,            // DB column is `fourthScore`
       average: g.average,
+      teacher: g.teacher ? {
+        name: g.teacher.name,
+        teacherId: g.teacher.teacherId
+      } : null,
     })),
     result: {
       position: position ?? undefined,

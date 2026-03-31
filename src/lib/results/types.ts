@@ -2,7 +2,7 @@
  * Shared types/DTOs for the results feature area.
  */
 
-/** Shape of a single grade returned from the results API. */
+/** Shape of a single grade returned from results API. */
 export interface GradeDTO {
   subjectId?: number;
   subject: { name: string };
@@ -10,6 +10,10 @@ export interface GradeDTO {
   secondScore?: number;
   examScore?: number;
   average: number;
+  teacher?: {
+    name: string | null;
+    teacherId: string | null;
+  } | null;
 }
 
 /** Teacher attribution for a published result comment (from `Report.teacher`). */

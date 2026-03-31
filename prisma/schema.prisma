@@ -16,6 +16,7 @@ model User {
   teacherId          String?
   sentNotifications  Notification[]       @relation("SentNotifications")
   reports            Report[]
+  grades             Grade[]
   roles              UserRole[]
   approvedApprovals  ResultApproval[]     @relation("ApprovedApprovals")
   rejectedApprovals  ResultApproval[]     @relation("RejectedApprovals")
@@ -170,6 +171,7 @@ model Grade {
   classId     Int
   termId      Int
   sessionId   Int
+  teacherId   String?
   firstScore  Float?
   secondScore Float?
   fourthScore Float?
@@ -182,6 +184,7 @@ model Grade {
   student     Student  @relation(fields: [studentId], references: [id])
   subject     Subject  @relation(fields: [subjectId], references: [id])
   term        Term     @relation(fields: [termId], references: [id])
+  teacher     User?    @relation(fields: [teacherId], references: [id])
 
   @@unique([studentId, subjectId, classId, termId, sessionId])
 }
