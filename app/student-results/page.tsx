@@ -329,17 +329,10 @@ export default function StudentResultsPage() {
             const gradeColor = getGradeColor(letterGrade);
             return (
               <div key={`${grade.subjectId}-${index}`} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                {/* Header with Subject and Teacher */}
+                {/* Header with Subject */}
                 <div className="mb-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900 text-base flex-1">
-                      {grade.subject.name}
-                      {grade.teacher?.name && (
-                        <span className="text-blue-600 font-normal text-sm ml-2">({grade.teacher.name})</span>
-                      )}
-                    </h3>
-                    <div className="text-xs text-gray-500">Subject Performance</div>
-                  </div>
+                  <h3 className="font-semibold text-gray-900 text-base">{grade.subject.name}</h3>
+                  <div className="text-xs text-gray-500 mt-1">Subject Performance</div>
                 </div>
                 
                 {/* Scores Grid */}
@@ -388,12 +381,7 @@ export default function StudentResultsPage() {
                   const gradeColor = getGradeColor(letterGrade);
                   return (
                     <tr key={`${grade.subjectId}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="border border-gray-300 px-4 py-2 font-medium">
-                        {grade.subject.name}
-                        {grade.teacher?.name && (
-                          <span className="text-blue-600 font-normal text-sm ml-2">({grade.teacher.name})</span>
-                        )}
-                      </td>
+                      <td className="border border-gray-300 px-4 py-2 font-medium">{grade.subject.name}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.firstScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.secondScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.examScore}</td>
