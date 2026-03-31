@@ -13,9 +13,9 @@
  */
 export function calculateGrade(average: number): string {
   if (average >= 80) return 'A';
-  if (average >= 70) return 'B';
-  if (average >= 60) return 'C';
-  if (average >= 50) return 'D';
+  if (average >= 60) return 'B';
+  if (average >= 50) return 'C';
+  if (average >= 40) return 'D';
   return 'F';
 }
 
