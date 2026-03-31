@@ -20,15 +20,15 @@ export function calculateGrade(average: number): string {
 }
 
 /**
- * Return Tailwind CSS colour classes for a letter grade.
+ * Return Tailwind CSS colour classes for a letter grade (outline only).
  */
 export function getGradeColor(grade: string): string {
   switch (grade) {
-    case 'A': return 'text-green-600 bg-green-100';
-    case 'B': return 'text-blue-600 bg-blue-100';
-    case 'C': return 'text-yellow-600 bg-yellow-100';
-    case 'D': return 'text-orange-600 bg-orange-100';
-    default:  return 'text-red-600 bg-red-100';
+    case 'A': return 'text-green-600 border-green-600';
+    case 'B': return 'text-blue-600 border-blue-600';
+    case 'C': return 'text-yellow-600 border-yellow-600';
+    case 'D': return 'text-orange-600 border-orange-600';
+    default:  return 'text-red-600 border-red-600';
   }
 }
 

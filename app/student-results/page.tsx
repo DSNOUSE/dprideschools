@@ -268,7 +268,7 @@ export default function StudentResultsPage() {
                     const overallGrade = calculateGrade(result.result.average || 0);
                     const overallGradeColor = getGradeColor(overallGrade);
                     return (
-                      <p className={`text-lg md:text-2xl font-bold ${overallGradeColor.split(' ')[0]}`}>
+                      <p className={`text-lg md:text-2xl font-bold border-2 px-3 py-1 rounded ${overallGradeColor.split(' ')[0]}`}>
                         {overallGrade}
                       </p>
                     );
@@ -388,7 +388,7 @@ export default function StudentResultsPage() {
                   <div className="text-center">
                     <div className="text-gray-600 text-xs mb-1">Overall Average</div>
                     <div className="text-gray-900 font-bold text-xl">{grade.average.toFixed(1)}</div>
-                    <div className={`mt-2 inline-block px-3 py-1 rounded-full text-sm font-bold ${gradeColor}`}>
+                    <div className={`mt-2 inline-block px-3 py-1 rounded-full text-sm font-bold border-2 ${gradeColor}`}>
                       Grade: {letterGrade}
                     </div>
                   </div>
@@ -423,7 +423,7 @@ export default function StudentResultsPage() {
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.examScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center font-bold">{grade.average.toFixed(1)}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">
-                        <span className={`inline-block px-2 py-1 rounded text-sm font-bold ${gradeColor}`}>
+                        <span className={`inline-block px-2 py-1 rounded text-sm font-bold border-2 ${gradeColor}`}>
                           {letterGrade}
                         </span>
                       </td>
