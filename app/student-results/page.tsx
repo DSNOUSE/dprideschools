@@ -240,7 +240,7 @@ export default function StudentResultsPage() {
           {result.result ? (
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Academic Performance Summary</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                 <div className="bg-white rounded-lg p-3 text-center shadow-sm">
                   <EmojiEvents sx={{ fontSize: 28, color: '#1e3a8a', marginBottom: 1 }} />
                   <p className="text-xs text-gray-600 mb-1">Position</p>
@@ -260,6 +260,19 @@ export default function StudentResultsPage() {
                   <Star sx={{ fontSize: 28, color: '#1e3a8a', marginBottom: 1 }} />
                   <p className="text-xs text-gray-600 mb-1">Max Score</p>
                   <p className="text-lg md:text-2xl font-bold text-orange-600">{result.result.maxScore || 0}</p>
+                </div>
+                <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+                  <Assessment sx={{ fontSize: 28, color: '#1e3a8a', marginBottom: 1 }} />
+                  <p className="text-xs text-gray-600 mb-1">Grade</p>
+                  {(() => {
+                    const overallGrade = calculateGrade(result.result.average || 0);
+                    const overallGradeColor = getGradeColor(overallGrade);
+                    return (
+                      <p className={`text-lg md:text-2xl font-bold ${overallGradeColor.split(' ')[0]}`}>
+                        {overallGrade}
+                      </p>
+                    );
+                  })()}
                 </div>
               </div>
               {/* Performance Indicator */}
@@ -370,11 +383,14 @@ export default function StudentResultsPage() {
                   </div>
                 </div>
                 
-                {/* Average Section */}
+                {/* Average and Grade Section */}
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="text-center">
                     <div className="text-gray-600 text-xs mb-1">Overall Average</div>
                     <div className="text-gray-900 font-bold text-xl">{grade.average.toFixed(1)}</div>
+                    <div className={`mt-2 inline-block px-3 py-1 rounded-full text-sm font-bold ${gradeColor}`}>
+                      Grade: {letterGrade}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -392,6 +408,7 @@ export default function StudentResultsPage() {
                   <th className="border border-gray-300 px-4 py-2 text-center">2nd Score</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">Exam Score</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">Average</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">Grade</th>
                 </tr>
               </thead>
               <tbody>
@@ -405,6 +422,11 @@ export default function StudentResultsPage() {
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.secondScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.examScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center font-bold">{grade.average.toFixed(1)}</td>
+                      <td className="border border-gray-300 px-4 py-2 text-center">
+                        <span className={`inline-block px-2 py-1 rounded text-sm font-bold ${gradeColor}`}>
+                          {letterGrade}
+                        </span>
+                      </td>
                     </tr>
               );
               })}
