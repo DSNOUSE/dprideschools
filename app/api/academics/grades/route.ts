@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { createAuditLog, logTeacherActivity, extractRequestInfo, extractTeacherInfo } from '@/lib/audit/service';
+import { updateClassPositions } from '@/lib/results/positions';
 
 export const dynamic = 'force-dynamic';
 
@@ -196,8 +197,20 @@ export async function POST(request: NextRequest) {
     // Wait for all audit logs to be created
     await Promise.all(auditPromises);
 
-    // Update result summaries for affected students
+    // Update result summaries and recalculate positions
     await updateResultSummaries(classId, sessionId, termId);
+    
+    // Recalculate class positions based on total scores
+    try {
+      await updateClassPositions({
+        classId,
+        sessionId,
+        termId,
+      });
+    } catch (positionError) {
+      console.error('Error recalculating class positions:', positionError);
+      // Don't fail the grade update if position calculation fails
+    }
 
     // Log teacher activity
     const duration = Date.now() - startTime;
@@ -270,16 +283,7 @@ async function updateResultSummaries(classId: number, sessionId: number, termId:
       const average = totalScore / student.grades.length;
       const maxScore = student.grades.length * 100; // Assuming max 100 per subject
 
-      // Calculate position
-      const position = await calculateClassPosition(
-        student.id,
-        classId,
-        termId,
-        sessionId,
-        average
-      );
-
-      // Upsert result
+      // Upsert result (position will be calculated separately)
       await prisma.result.upsert({
         where: {
           studentId_classId_termId_sessionId: {
@@ -293,7 +297,7 @@ async function updateResultSummaries(classId: number, sessionId: number, termId:
           average,
           totalScore,
           maxScore,
-          position
+          // Position will be updated by the position calculation service
         },
         create: {
           studentId: student.id,
@@ -303,7 +307,7 @@ async function updateResultSummaries(classId: number, sessionId: number, termId:
           average,
           totalScore,
           maxScore,
-          position
+          // Position will be calculated separately
         }
       });
     }
@@ -312,32 +316,3 @@ async function updateResultSummaries(classId: number, sessionId: number, termId:
   }
 }
 
-async function calculateClassPosition(
-  studentId: string,
-  classId: number,
-  termId: number,
-  sessionId: number,
-  studentAverage: number
-): Promise<number> {
-  try {
-    // Get all result summaries for this class/term/session
-    const allResults = await prisma.result.findMany({
-      where: {
-        classId,
-        termId,
-        sessionId
-      },
-      orderBy: {
-        average: 'desc'
-      }
-    });
-
-    // Count how many students have higher averages
-    const position = allResults.filter((result: any) => result.average > studentAverage).length + 1;
-    
-    return position;
-  } catch (error) {
-    console.error('Error calculating position:', error);
-    return 1; // Default to position 1 if calculation fails
-  }
-}

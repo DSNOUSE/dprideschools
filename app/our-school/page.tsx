@@ -66,7 +66,7 @@ export default function OurSchoolPage() {
       </section>
 
       {/* Our Motto & Mission */}
-      <section className="py-20 bg-white">
+      <section className="py-20">
         <Container>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
@@ -82,7 +82,7 @@ export default function OurSchoolPage() {
                 <span className="text-blue-600 font-semibold">Our Foundation</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                &quot;Groom Them Young&quot;
+                Groom Them Young
               </h2>
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
                 Since 2008, DPRIDE International School has been dedicated to providing high-quality western education
@@ -97,8 +97,8 @@ export default function OurSchoolPage() {
             </div>
             <div className="relative h-96 md:h-full min-h-[400px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="/images/director.png"
-                alt="School facility"
+                src="/images/students-lab.png"
+                alt="Students in laboratory"
                 fill
                 className="object-cover object-[center_top]"
               />
@@ -108,7 +108,7 @@ export default function OurSchoolPage() {
       </section>
 
       {/* Our Vision & Mission */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-cyan-50">
+      <section className="py-20">
         <Container>
           <div className="text-center mb-16">
             <SectionHeader
@@ -120,8 +120,8 @@ export default function OurSchoolPage() {
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                <Visibility sx={{ fontSize: 32, color: 'white' }} />
+              <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-6">
+                <Visibility sx={{ fontSize: 32, color: '#003366' }} />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
               <p className="text-gray-700 leading-relaxed text-lg">
@@ -132,8 +132,8 @@ export default function OurSchoolPage() {
             </div>
 
             <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center mb-6">
-                <FlashOn sx={{ fontSize: 32, color: 'white' }} />
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
+                <FlashOn sx={{ fontSize: 32, color: '#003366' }} />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
               <p className="text-gray-700 leading-relaxed text-lg">
@@ -202,10 +202,10 @@ export default function OurSchoolPage() {
             ].map((value, index) => (
               <div
                 key={index}
-                className="group bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl p-4 sm:p-6 text-center hover:shadow-xl transition-all duration-500 hover:-translate-y-2 hover:border-amber-300"
+                className="group rounded-2xl p-4 sm:p-6 text-center hover:shadow-xl transition-all duration-500 hover:-translate-y-2 hover:border-amber-300"
               >
                 <div className="flex justify-center mb-3 sm:mb-4 transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                  <div className="p-2 sm:p-3 bg-gradient-to-br from-amber-100 to-amber-200 rounded-xl sm:rounded-2xl group-hover:from-amber-200 group-hover:to-amber-300 transition-all duration-300">
+                  <div className="p-2 sm:p-3 to-amber-200 rounded-xl sm:rounded-2xl group-hover:from-amber-200 group-hover:to-amber-300 transition-all duration-300">
                     {value.icon}
                   </div>
                 </div>
@@ -282,14 +282,14 @@ export default function OurSchoolPage() {
             ].map((facility, index) => (
               <div
                 key={index}
-                className="group bg-white rounded-2xl p-6 sm:p-8 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 border border-gray-100 hover:border-amber-200"
+                className="group bg-white rounded-2xl p-6 sm:p-8 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 hover:border-amber-200"
               >
                 <div className="flex justify-center mb-3 sm:mb-4 transform transition-all duration-500 group-hover:scale-110">
-                  <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl sm:rounded-2xl group-hover:from-blue-200 group-hover:to-blue-300 transition-all duration-500">
+                  <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl group-hover:from-blue-200 group-hover:to-blue-300 transition-all duration-500">
                     {facility.icon}
                   </div>
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-[#b45309] transition-colors duration-300">
                   {facility.title}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
@@ -355,145 +355,28 @@ export default function OurSchoolPage() {
         </Container>
       </section>
 
-      {/* Leadership Team */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
-        <Container>
-          <div className="text-center mb-16">
-            <SectionHeader
-              title="Meet Our Leadership"
-              description="Experienced educators committed to your child&apos;s success"
-              align="center"
-            />
-          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: 'Maryam Salihu Mohammed',
-                role: 'Director',
-                bio: 'Over 15 years of educational leadership experience, passionate about holistic child development.',
-                image: '/images/director.png',
-              },
-              {
-                name: 'Leadership Team',
-                role: 'Academic Coordinator',
-                bio: 'Overseeing curriculum delivery and ensuring academic excellence across all levels.',
-                image: '/images/hero-boy.png',
-              },
-              {
-                name: 'Leadership Team',
-                role: 'Head of Pastoral Care',
-                bio: 'Dedicated to student wellbeing, behavior management, and character development.',
-                image: '/images/hero-girls.png',
-              },
-            ].map((leader, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
-              >
-                <div className="relative h-64">
-                  <Image
-                    src={leader.image}
-                    alt={leader.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{leader.name}</h3>
-                  <p className="text-blue-600 font-semibold mb-3">{leader.role}</p>
-                  <p className="text-gray-600 leading-relaxed">{leader.bio}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="py-20 bg-white">
-        <Container>
-          <div className="text-center mb-16">
-            <SectionHeader
-              title="Why Families Choose DPRIDE"
-              description="What makes us different"
-              align="center"
-            />
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {[
-              {
-                title: 'Proven Track Record',
-                description: 'Since 2008, we have consistently produced students who excel academically and demonstrate strong character.',
-                stat: '15+',
-                statLabel: 'Years of Excellence',
-              },
-              {
-                title: 'Qualified Teachers',
-                description: 'Our educators are experienced, trained, and passionate about nurturing each child&apos;s potential.',
-                stat: '100%',
-                statLabel: 'Qualified Staff',
-              },
-              {
-                title: 'Small Class Sizes',
-                description: 'We maintain low student-to-teacher ratios to ensure personalized attention and support.',
-                stat: '1:15',
-                statLabel: 'Teacher-Student Ratio',
-              },
-              {
-                title: 'Safe & Secure',
-                description: 'Comprehensive security measures, CCTV monitoring, and strict visitor protocols ensure student safety.',
-                stat: '24/7',
-                statLabel: 'Security Monitoring',
-              },
-            ].map((reason, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-2xl p-8 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex items-center gap-6 mb-4">
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-blue-600">{reason.stat}</div>
-                    <div className="text-sm text-gray-600 font-semibold">{reason.statLabel}</div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{reason.title}</h3>
-                  </div>
-                </div>
-                <p className="text-gray-700 leading-relaxed">{reason.description}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 text-white">
+      <section className="py-20 text-[#4a4a4a]">
         <Container>
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Ready to Join the DPRIDE Family?
             </h2>
-            <p className="text-xl text-blue-100 mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Experience excellence in education. Schedule a visit or start your application today.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a
                 href="/book-visit"
-                className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-black font-semibold rounded-full border-2 border-black transition-all duration-300"
+                className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-black font-semibold rounded-full transition-all duration-300"
               >
                 Book a School Visit
               </a>
-              <a
-                href="/apply"
-                className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-black font-semibold rounded-full border-2 border-black transition-all duration-300"
-              >
-                Start Application
-              </a>
-              <a
+                            <a
                 href="/contact"
-                className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-black font-semibold rounded-full border-2 border-black transition-all duration-300"
+                className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-black font-semibold rounded-full border-black transition-all duration-300"
               >
                 Contact Us
               </a>

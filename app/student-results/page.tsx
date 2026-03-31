@@ -165,17 +165,17 @@ export default function StudentResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 print:bg-white">
+    <div className="min-h-screen">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b print:hidden">
+      <div className="bg-white shadow-sm print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between py-2 md:py-4 gap-4">
-            <h1 className="text-lg md:text-2xl font-bold text-gray-900 truncate">{formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}'s Results</h1>
+            <h1 className="text-lg md:text-2xl font-bold text-[#003366] truncate">{formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}'s Results</h1>
             
             {/* Term Selector */}
             {terms.length > 0 && (
               <div className="flex items-center gap-2">
-                <label htmlFor="term-select" className="text-sm font-medium text-gray-700">
+                <label htmlFor="term-select" className="text-sm font-medium text-[#003366]">
                   Select Term:
                 </label>
                 <select
@@ -202,7 +202,7 @@ export default function StudentResultsPage() {
           <div className="flex flex-col gap-8 lg:flex-row">
             <div className="flex-1 min-w-0">
         {/* Student Information */}
-        <div className="space-y-4 md:space-y-6 mb-6 border-2 border-blue-200 p-3 md:p-4 rounded-lg bg-blue-50">
+        <div className="space-y-4 md:space-y-6 mb-6 border-1 border-blue-200 p-3 md:p-4 rounded-lg bg-blue-50">
           {/* Mobile: Side-by-side layout | Desktop: Existing layout */}
           <div className="flex items-center space-x-4">
             {result.student.photo ? (
@@ -229,7 +229,7 @@ export default function StudentResultsPage() {
             </div>
           </div>
           <div className="text-left">
-            <p className="text-gray-600">Session: {result.session.name}</p>
+            <p className="text-gray-900">Session: {result.session.name}</p>
             <p className="text-gray-600">Term: {result.term.name}</p>
             <p className="text-gray-600">Sex: {result.student.sex || 'N/A'}</p>
           </div>
@@ -268,7 +268,7 @@ export default function StudentResultsPage() {
                     const overallGrade = calculateGrade(result.result.average || 0);
                     const overallGradeColor = getGradeColor(overallGrade);
                     return (
-                      <p className={`text-lg md:text-2xl font-bold border-2 px-3 py-1 rounded ${overallGradeColor.split(' ')[0]}`}>
+                      <p className={`text-lg md:text-2xl font-bold border-1 px-3 py-1 rounded ${overallGradeColor.split(' ')[0]}`}>
                         {overallGrade}
                       </p>
                     );
@@ -388,7 +388,7 @@ export default function StudentResultsPage() {
                   <div className="text-center">
                     <div className="text-gray-600 text-xs mb-1">Overall Average</div>
                     <div className="text-gray-900 font-bold text-xl">{grade.average.toFixed(1)}</div>
-                    <div className={`mt-2 inline-block px-3 py-1 rounded-full text-sm font-bold border-2 ${gradeColor}`}>
+                    <div className={`mt-2 inline-block px-3 py-1 rounded-full text-sm font-bold border-1 ${gradeColor}`}>
                       Grade: {letterGrade}
                     </div>
                   </div>
@@ -423,7 +423,7 @@ export default function StudentResultsPage() {
                       <td className="border border-gray-300 px-4 py-2 text-center">{grade.examScore}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center font-bold">{grade.average.toFixed(1)}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">
-                        <span className={`inline-block px-2 py-1 rounded text-sm font-bold border-2 ${gradeColor}`}>
+                        <span className={`inline-block px-2 py-1 rounded text-sm font-bold border-1 ${gradeColor}`}>
                           {letterGrade}
                         </span>
                       </td>

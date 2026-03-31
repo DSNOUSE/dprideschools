@@ -122,21 +122,23 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
   const average = grades.length > 0 ? totalScore / grades.length : 0;
   const maxScore = grades.length * 100;
 
-  // ── Position fallback ─────────────────────────────────────────
+  // ── Position calculation (using total score) ───────────────────────
   let position = result?.position ?? null;
 
   if (position === null) {
+    // Use total score for ranking instead of average
     const allResults = await prisma.result.findMany({
       where: {
         classId: resolvedClassId,
         termId: resolvedTermId,
         sessionId: resolvedSessionId,
       },
-      orderBy: { average: 'desc' },
+      orderBy: { totalScore: 'desc' }, // Highest total score first
     });
 
     if (allResults.length > 0) {
-      position = allResults.filter((r) => r.average > average).length + 1;
+      // Calculate position: 1 + number of students with higher total scores
+      position = allResults.filter((r) => r.totalScore > totalScore).length + 1;
     }
   }
 
