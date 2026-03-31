@@ -317,7 +317,7 @@ export default function StudentResultsPage() {
                 {/* Right Column - Teacher Names */}
                 <div className="md:pl-4">
                   <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-gray-600 mb-3">Class Teachers</h4>
+                    <h4 className="text-sm font-semibold text-gray-600 mb-3">Class Teacher</h4>
                     {Array.from(new Set(result.grades.map(grade => grade.teacher?.name).filter(Boolean)))
                       .map((teacherName, index) => (
                         <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
