@@ -131,8 +131,8 @@ export async function POST(request: NextRequest) {
             departmentId: earlyYearsDept!.id 
           } 
         },
-        update: {},
-        create: { name: subjectName, departmentId: earlyYearsDept!.id }
+        update: { section: 'Nursery' },
+        create: { name: subjectName, departmentId: earlyYearsDept!.id, section: 'Nursery' }
       });
       subjectCount++;
     }
@@ -145,8 +145,8 @@ export async function POST(request: NextRequest) {
             departmentId: primaryDept!.id 
           } 
         },
-        update: {},
-        create: { name: subjectName, departmentId: primaryDept!.id }
+        update: { section: 'Primary' },
+        create: { name: subjectName, departmentId: primaryDept!.id, section: 'Primary' }
       });
       subjectCount++;
     }
@@ -159,8 +159,8 @@ export async function POST(request: NextRequest) {
             departmentId: secondaryDept!.id 
           } 
         },
-        update: {},
-        create: { name: subjectName, departmentId: secondaryDept!.id }
+        update: { section: 'Secondary' },
+        create: { name: subjectName, departmentId: secondaryDept!.id, section: 'Secondary' }
       });
       subjectCount++;
     }
