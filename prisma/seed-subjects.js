@@ -61,8 +61,7 @@ async function main() {
         'History',
         'Pre-Vocational Studies (PVS)',
         'Basic and Science Technology (BST)',
-        'IRK',
-        'Arabic'
+        'IRK'
       ]
     },
     {
