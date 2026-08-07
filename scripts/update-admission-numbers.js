@@ -89,12 +89,12 @@ async function main() {
       const searchName = nameMapping[student.name] || student.name;
       
       // Split name into parts
-      const nameParts = searchName.split(' ');
+      const nameParts = searchName.split(' ').filter(part => part.length > 0);
       const firstName = nameParts[0];
       const lastName = nameParts[nameParts.length - 1];
       const middleName = nameParts.length > 2 ? nameParts.slice(1, -1).join(' ') : null;
 
-      // Try exact match first
+      // Strategy 1: Try exact match with middle name
       let existingStudent = await prisma.student.findFirst({
         where: {
           firstName: { equals: firstName, mode: 'insensitive' },
@@ -103,6 +103,23 @@ async function main() {
         },
         include: { class: true }
       });
+
+      // Strategy 2: Try matching firstName and any part of the remaining name in lastName/middleName
+      if (!existingStudent) {
+        const allMatches = await prisma.student.findMany({
+          where: {
+            firstName: { equals: firstName, mode: 'insensitive' }
+          },
+          include: { class: true }
+        });
+        
+        // Find best match by checking if any of the other name parts appear in lastName or middleName
+        existingStudent = allMatches.find(s => {
+          const fullName = `${s.firstName} ${s.middleName || ''} ${s.lastName}`.toLowerCase();
+          const searchParts = searchName.toLowerCase().split(' ').slice(1);
+          return searchParts.every(part => fullName.includes(part));
+        });
+      }
 
       if (!existingStudent) {
         console.log(`  ⚠ Not found: ${student.name} (searched as: ${searchName})`);
