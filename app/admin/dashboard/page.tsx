@@ -72,7 +72,10 @@ export default async function DashboardPage() {
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h1 className="text-2xl md:text-3xl font-semibold">Admin Dashboard</h1>
+        <div className="flex items-center gap-3">
+          <img src="/images/icons/dashboard.png" alt="Dashboard" className="w-8 h-8" />
+          <h1 className="text-2xl md:text-3xl font-semibold"></h1>
+        </div>
         <div className="grid grid-cols-2 sm:flex sm:flex-row gap-2">
           <Link href="/admin/academics/grades" className="px-3 py-2 text-white rounded text-sm md:text-base text-center">Grade Management</Link>
           <Link href="/admin/academics/classes" className="px-3 py-2 bg-purple-600 text-white rounded text-sm md:text-base text-center">Academic Classes</Link>
