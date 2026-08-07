@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Metadata } from 'next';
 import { defaultMetadata } from '@/lib/metadata';
 import { prisma } from '@/lib/prisma';
@@ -62,24 +63,26 @@ export default async function ClassesPage() {
               <div className="divide-y">
                 {group.classes.map((cls) => (
                   <div key={cls.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{cls.name}</h3>
-                        {cls.level && (
-                          <p className="text-sm text-gray-500">Level: {cls.level}</p>
-                        )}
-                      </div>
-                      <div className="flex gap-4 text-sm text-gray-600">
-                        <div className="text-center">
-                          <div className="font-semibold text-gray-900">{cls._count.students}</div>
-                          <div className="text-xs">Students</div>
+                    <Link href={`/admin/academics/classes/${cls.id}`} className="block">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold text-blue-600 hover:text-blue-800">{cls.name}</h3>
+                          {cls.level && (
+                            <p className="text-sm text-gray-500">Level: {cls.level}</p>
+                          )}
                         </div>
-                        <div className="text-center">
-                          <div className="font-semibold text-gray-900">{cls._count.subjects}</div>
-                          <div className="text-xs">Subjects</div>
+                        <div className="flex gap-4 text-sm text-gray-600">
+                          <div className="text-center">
+                            <div className="font-semibold text-gray-900">{cls._count.students}</div>
+                            <div className="text-xs">Students</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="font-semibold text-gray-900">{cls._count.subjects}</div>
+                            <div className="text-xs">Subjects</div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 ))}
               </div>

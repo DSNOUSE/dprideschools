@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default async function StudentsPage({ searchParams }: { searchParams?: Promise<{ page?: string; q?: string }> }) {
+export default async function StudentsPage({ searchParams }: { searchParams?: Promise<{ page?: string; q?: string; classId?: string }> }) {
   // Check authentication at the page level
   const session = await getServerSession(authOptions);
   const roles = (session?.user as any)?.roles as string[] | undefined;
@@ -18,6 +18,7 @@ export default async function StudentsPage({ searchParams }: { searchParams?: Pr
   const resolvedSearchParams = await searchParams;
   const page = Number(resolvedSearchParams?.page ?? '1');
   const q = resolvedSearchParams?.q ?? '';
+  const classId = resolvedSearchParams?.classId ? Number(resolvedSearchParams.classId) : undefined;
   const pageSize = 20;
 
   const where: any = {};
@@ -27,6 +28,18 @@ export default async function StudentsPage({ searchParams }: { searchParams?: Pr
       { firstName: { contains: q, mode: 'insensitive' } },
       { lastName: { contains: q, mode: 'insensitive' } },
     ];
+  }
+  if (classId) {
+    where.classId = classId;
+  }
+
+  let filteredClassName: string | undefined;
+  if (classId) {
+    const filteredClass = await prisma.class.findUnique({
+      where: { id: classId },
+      select: { name: true }
+    });
+    filteredClassName = filteredClass?.name;
   }
 
   const [total, students] = await Promise.all([
@@ -40,7 +53,16 @@ export default async function StudentsPage({ searchParams }: { searchParams?: Pr
     <div className="p-4 md:p-6">
       <div className="bg-white rounded-lg p-4 md:p-6 shadow">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h1 className="text-xl md:text-2xl font-bold">Current DPIS Students</h1>
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold">
+              {filteredClassName ? `Students in ${filteredClassName}` : 'Current DPIS Students'}
+            </h1>
+            {filteredClassName && (
+              <Link href="/admin/students" className="text-sm text-blue-600 hover:text-blue-800">
+                View all students
+              </Link>
+            )}
+          </div>
           <div className="flex flex-col sm:flex-row gap-2">
             <form method="get" className="flex">
               <input 
