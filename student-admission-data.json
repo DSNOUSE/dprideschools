@@ -1,0 +1,247 @@
+[
+  {
+    "serialNumber": 1,
+    "name": "Nanga Aisha Abubakar",
+    "class": "JSS 1",
+    "gender": "F",
+    "currentRegNumber": "35417"
+  },
+  {
+    "serialNumber": 2,
+    "name": "Hanifa Jibrin Usman",
+    "class": "JSS 1",
+    "gender": "F",
+    "currentRegNumber": "394119"
+  },
+  {
+    "serialNumber": 3,
+    "name": "Ali Muhammad Usman",
+    "class": "JSS 1",
+    "gender": "M",
+    "currentRegNumber": "455/22"
+  },
+  {
+    "serialNumber": 4,
+    "name": "Ummalsalma Auwwal Usman",
+    "class": "JSS 1",
+    "gender": "F",
+    "currentRegNumber": "328116"
+  },
+  {
+    "serialNumber": 5,
+    "name": "Ummulsulaim Ibrahim",
+    "class": "JSS 1",
+    "gender": "F",
+    "currentRegNumber": "33316"
+  },
+  {
+    "serialNumber": 6,
+    "name": "Aisha Muhammad",
+    "class": "JSS 1",
+    "gender": "F",
+    "currentRegNumber": "435/21"
+  },
+  {
+    "serialNumber": 7,
+    "name": "Imam Usman Nafisa",
+    "class": "JSS 1",
+    "gender": "F",
+    "currentRegNumber": "346117"
+  },
+  {
+    "serialNumber": 8,
+    "name": "Salad Fatima",
+    "class": "Primary 5",
+    "gender": "F",
+    "currentRegNumber": "39318"
+  },
+  {
+    "serialNumber": 9,
+    "name": "Sanusi Hafsat",
+    "class": "Primary 5",
+    "gender": "F",
+    "currentRegNumber": "29415"
+  },
+  {
+    "serialNumber": 10,
+    "name": "Ahmad Abdultahi Garba",
+    "class": "JSS 3",
+    "gender": "M",
+    "currentRegNumber": "482/25"
+  },
+  {
+    "serialNumber": 11,
+    "name": "Abdullah Arif",
+    "class": "JSS 3",
+    "gender": "M",
+    "currentRegNumber": "417/19"
+  },
+  {
+    "serialNumber": 12,
+    "name": "Abdultahmid Fatima",
+    "class": "JSS 3",
+    "gender": "F",
+    "currentRegNumber": "442/21"
+  },
+  {
+    "serialNumber": 13,
+    "name": "Hussaini Maryam",
+    "class": "JSS 3",
+    "gender": "F",
+    "currentRegNumber": "436/21"
+  },
+  {
+    "serialNumber": 14,
+    "name": "Mohammed Halima",
+    "class": "JSS 3",
+    "gender": "F",
+    "currentRegNumber": "447/21"
+  },
+  {
+    "serialNumber": 15,
+    "name": "Abdultahmid Muhammad",
+    "class": "JSS 3",
+    "gender": "M",
+    "currentRegNumber": "443/21"
+  },
+  {
+    "serialNumber": 16,
+    "name": "Nabage Ruqaiya Nasir",
+    "class": "JSS 3",
+    "gender": "F",
+    "currentRegNumber": "444/21"
+  },
+  {
+    "serialNumber": 17,
+    "name": "Bilal Sani Sheku",
+    "class": "JSS 3",
+    "gender": "M",
+    "currentRegNumber": "475/24"
+  },
+  {
+    "serialNumber": 18,
+    "name": "Aisha Musa",
+    "class": "JSS 2",
+    "gender": "F",
+    "currentRegNumber": "432/20"
+  },
+  {
+    "serialNumber": 19,
+    "name": "Bilkisu Sani Sheku",
+    "class": "JSS 2",
+    "gender": "F",
+    "currentRegNumber": "458/22"
+  },
+  {
+    "serialNumber": 20,
+    "name": "Khadija vsman Imam",
+    "class": "JSS 2",
+    "gender": "F",
+    "currentRegNumber": "426/20"
+  },
+  {
+    "serialNumber": 21,
+    "name": "Zainab Usman Imam",
+    "class": "JSS 2",
+    "gender": "F",
+    "currentRegNumber": "406/19"
+  },
+  {
+    "serialNumber": 22,
+    "name": "Hafsat Bint Abubakar",
+    "class": "Year 1",
+    "gender": "F",
+    "currentRegNumber": "489/25"
+  },
+  {
+    "serialNumber": 23,
+    "name": "Baratu Amrullah",
+    "class": "Year 1",
+    "gender": "F",
+    "currentRegNumber": "428/21"
+  },
+  {
+    "serialNumber": 24,
+    "name": "Fatima Ibrahim",
+    "class": "Year 1",
+    "gender": "F",
+    "currentRegNumber": "198/21"
+  },
+  {
+    "serialNumber": 25,
+    "name": "Maryam Faysal Ameen",
+    "class": "Pre-Nursery",
+    "gender": "F",
+    "currentRegNumber": "454/22"
+  },
+  {
+    "serialNumber": 26,
+    "name": "Davidoloruntola",
+    "class": "Pre-Nursery",
+    "gender": "M",
+    "currentRegNumber": "407/24"
+  },
+  {
+    "serialNumber": 27,
+    "name": "Mukhtar Salihu",
+    "class": "Preparatory",
+    "gender": "M",
+    "currentRegNumber": "480/25"
+  },
+  {
+    "serialNumber": 28,
+    "name": "Noor Aliya Maina",
+    "class": "Nursery 1",
+    "gender": "M",
+    "currentRegNumber": "487/25"
+  },
+  {
+    "serialNumber": 29,
+    "name": "Umar Faruk Yalaka",
+    "class": "Nursery 2",
+    "gender": "M",
+    "currentRegNumber": "483/25"
+  },
+  {
+    "serialNumber": 30,
+    "name": "Fatima Muhammad Baba",
+    "class": "Nursery 2",
+    "gender": "F",
+    "currentRegNumber": "484/25"
+  },
+  {
+    "serialNumber": 31,
+    "name": "Nana Salad",
+    "class": "Nursery 2",
+    "gender": "F",
+    "currentRegNumber": "485/25"
+  },
+  {
+    "serialNumber": 32,
+    "name": "Hafsat Usman Imam",
+    "class": "Nursery 2",
+    "gender": "F",
+    "currentRegNumber": "492/26"
+  },
+  {
+    "serialNumber": 33,
+    "name": "Amina Abdutahmid",
+    "class": "Pre-Nursery",
+    "gender": "F",
+    "currentRegNumber": "471/24"
+  },
+  {
+    "serialNumber": 34,
+    "name": "Sheriff Aliyu Maina",
+    "class": "Pre-Nursery",
+    "gender": "M",
+    "currentRegNumber": "488/25"
+  },
+  {
+    "serialNumber": 35,
+    "name": "Ibrahim Sani Sheku",
+    "class": "Pre-Nursery",
+    "gender": "M",
+    "currentRegNumber": "474/24"
+  }
+]

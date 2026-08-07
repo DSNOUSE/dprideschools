@@ -46,7 +46,8 @@ async function main() {
         'Elementary Science',
         'Numbers',
         'Picture Reading & Rhymes',
-        'Phonics & Spellings'
+        'Phonics & Spellings',
+        'Arabic Language'
       ]
     },
     {

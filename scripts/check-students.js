@@ -1,40 +1,46 @@
+const fs = require('fs');
+const path = require('path');
+
+try {
+  const envPath = path.resolve(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    const content = fs.readFileSync(envPath, 'utf8');
+    content.split(/\r?\n/).forEach((line) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const eq = trimmed.indexOf('=');
+      if (eq === -1) return;
+      const key = trimmed.slice(0, eq).trim();
+      const value = trimmed.slice(eq + 1).trim();
+      const unquoted = value.replace(/^"|"$/g, '');
+      if (!process.env[key]) process.env[key] = unquoted;
+    });
+  }
+} catch (err) {}
+
 const { PrismaClient } = require('@prisma/client');
-const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
+const { Pool } = require('pg');
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-async function checkStudents() {
-  try {
-    const count = await prisma.student.count();
-    console.log('Total students in database:', count);
+async function main() {
+  const students = await prisma.student.findMany({
+    select: { firstName: true, middleName: true, lastName: true, admissionNo: true },
+    orderBy: { firstName: 'asc' }
+  });
 
-    if (count > 0) {
-      console.log('\nRecent students (last 10):');
-      const students = await prisma.student.findMany({
-        take: 10,
-        include: { class: true, session: true },
-        orderBy: { createdAt: 'desc' }
-      });
+  students.forEach(s => {
+    console.log(`${s.firstName} ${s.middleName || ''} ${s.lastName} | ${s.admissionNo}`);
+  });
 
-      students.forEach(s => {
-        console.log(`  ${s.admissionNo} - ${s.firstName} ${s.lastName} (${s.class.name}, ${s.session.name})`);
-      });
-
-      console.log('\nSample by class:');
-      const classes = await prisma.class.findMany({ take: 3 });
-      for (const cls of classes) {
-        const classCount = await prisma.student.count({ where: { classId: cls.id } });
-        console.log(`  ${cls.name}: ${classCount} students`);
-      }
-    }
-  } catch (error) {
-    console.error('Error:', error.message);
-  } finally {
-    await prisma.$disconnect();
-  }
+  await prisma.$disconnect();
+  await pool.end();
 }
 
-checkStudents();
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
+});
