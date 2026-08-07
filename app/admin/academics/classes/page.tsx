@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { defaultMetadata } from '@/lib/metadata';
+import { prisma } from '@/lib/prisma';
 import Container from '@/components/Container';
 
 export const metadata: Metadata = {
@@ -7,28 +8,90 @@ export const metadata: Metadata = {
   description: 'Manage academic classes and class assignments',
 };
 
-export default function ClassesPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function ClassesPage() {
+  const classes = await prisma.class.findMany({
+    include: {
+      department: true,
+      _count: {
+        select: {
+          students: true,
+          subjects: true,
+        }
+      }
+    },
+    orderBy: [
+      { department: { name: 'asc' } },
+      { sort_order: 'asc' }
+    ]
+  });
+
+  // Group classes by department
+  const groupedByDept = new Map<string, { deptName: string; classes: typeof classes }>();
+  for (const cls of classes) {
+    const deptName = cls.department?.name || 'Other';
+    if (!groupedByDept.has(deptName)) {
+      groupedByDept.set(deptName, { deptName, classes: [] });
+    }
+    groupedByDept.get(deptName)!.classes.push(cls);
+  }
+
+  const deptColors: Record<string, string> = {
+    'Early Years': 'bg-pink-100 text-pink-800 border-pink-200',
+    'Primary': 'bg-blue-100 text-blue-800 border-blue-200',
+    'Secondary': 'bg-green-100 text-green-800 border-green-200',
+  };
+
   return (
     <Container>
       <div className="py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Academic Classes</h1>
         
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="text-center py-12">
-            <div className="text-gray-500 mb-4">
-              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
+        <div className="space-y-6">
+          {Array.from(groupedByDept.values()).map((group) => (
+            <div key={group.deptName} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="px-6 py-4 bg-gray-50 border-b">
+                <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${deptColors[group.deptName] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+                  {group.deptName}
+                </span>
+                <h2 className="text-xl font-semibold text-gray-900 mt-2">{group.deptName} Classes</h2>
+                <p className="text-sm text-gray-500">{group.classes.length} class{group.classes.length !== 1 ? 'es' : ''}</p>
+              </div>
+              
+              <div className="divide-y">
+                {group.classes.map((cls) => (
+                  <div key={cls.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">{cls.name}</h3>
+                        {cls.level && (
+                          <p className="text-sm text-gray-500">Level: {cls.level}</p>
+                        )}
+                      </div>
+                      <div className="flex gap-4 text-sm text-gray-600">
+                        <div className="text-center">
+                          <div className="font-semibold text-gray-900">{cls._count.students}</div>
+                          <div className="text-xs">Students</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-semibold text-gray-900">{cls._count.subjects}</div>
+                          <div className="text-xs">Subjects</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <h2 className="text-xl font-semibold text-gray-700 mb-2">Academic Classes</h2>
-            <p className="text-gray-600 mb-6">Class management will be available here.</p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-700">
-                <strong>Coming Soon:</strong> Complete class management and assignment system.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
+
+        {classes.length === 0 && (
+          <div className="bg-white rounded-lg shadow-md p-6 text-center py-12">
+            <p className="text-gray-500">No classes found. Classes will appear here once configured.</p>
+          </div>
+        )}
       </div>
     </Container>
   );
