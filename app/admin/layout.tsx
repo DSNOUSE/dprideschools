@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -17,7 +18,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr]">
           <aside className="hidden lg:block p-6 bg-gray-50">
             
-            <nav className="flex flex-col gap-3">
+            <nav className="flex flex-col gap-3 h-full">
               <Link href="/admin/dashboard" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
                 <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6"/>
@@ -61,6 +62,20 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                 </svg>
                 <span>Sessions</span>
               </Link>
+              
+              <div className="mt-auto pt-6">
+                <form action="/api/auth/signout" method="POST" className="w-full">
+                  <button 
+                    type="submit" 
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded hover:bg-white text-red-600 hover:text-red-700"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    <span>Logout</span>
+                  </button>
+                </form>
+              </div>
             </nav>
           </aside>
           <main className="p-3 md:p-6 bg-white/0">{children}</main>
