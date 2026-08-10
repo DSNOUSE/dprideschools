@@ -85,12 +85,12 @@ export default async function DashboardPage() {
         </div>
         <div className="grid grid-cols-2 sm:flex sm:flex-row gap-2">
           <Link href="/admin/academics/grades" className="px-3 py-2 text-white rounded text-sm md:text-base text-center">Grade Management</Link>
-          <Link href="/admin/academics/classes" className="px-3 py-2 bg-purple-600 text-white rounded text-sm md:text-base text-center">Academic Classes</Link>
-          <Link href="/admin/positions" className="px-3 py-2 bg-indigo-600 text-white rounded text-sm md:text-base text-center">Class Positions</Link>
-          <Link href="/admin/students" className="px-3 py-2 bg-blue-600 text-white rounded text-sm md:text-base text-center">Manage Students</Link>
-          <Link href="/admin/teachers" className="px-3 py-2 bg-green-600 text-white rounded text-sm md:text-base text-center">Teachers</Link>
-          <Link href="/admin/audit" className="px-3 py-2 bg-red-600 text-white rounded text-sm md:text-base text-center">Audit Dashboard</Link>
-          <Link href="/admin/notifications/send" className="px-3 py-2 bg-amber-500 text-white rounded text-sm md:text-base text-center">Send Notification</Link>
+          <Link href="/admin/academics/classes" className="px-3 py-2 bg-blue-500 text-white rounded text-sm md:text-base text-left">Academic Classes</Link>
+          <Link href="/admin/positions" className="px-3 py-2 bg-blue-500 text-white rounded text-sm md:text-base text-left">Class Positions</Link>
+          <Link href="/admin/students" className="px-3 py-2 bg-blue-500 text-white rounded text-sm md:text-base text-left">Manage Students</Link>
+          <Link href="/admin/teachers" className="px-3 py-2 bg-blue-500 text-white rounded text-sm md:text-base text-left">Teachers</Link>
+          <Link href="/admin/audit" className="px-3 py-2 bg-blue-500 text-white rounded text-sm md:text-base text-left">Audit Dashboard</Link>
+          <Link href="/admin/notifications/send" className="px-3 py-2 bg-amber-600 text-white rounded text-sm md:text-base text-left">Send Notification</Link>
         </div>
       </div>
 
