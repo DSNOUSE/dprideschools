@@ -53,20 +53,20 @@ export async function POST(request: NextRequest) {
       // Process specific classes
       classes = await prisma.class.findMany({
         where: { id: { in: classIds } },
-        include: { department: true },
+        include: { level: true },
       });
     } else {
       // Process all classes that have results for this term/session
       classes = await prisma.class.findMany({
         where: {
-          results: {
+          termResults: {
             some: {
               termId,
               sessionId,
             }
           }
         },
-        include: { department: true },
+        include: { level: true },
       });
     }
 
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     for (const classItem of classes) {
       try {
         // Get all results for this class
-        const classResults = await prisma.result.findMany({
+        const classResults = await prisma.termResult.findMany({
           where: {
             classId: classItem.id,
             termId,
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
           results.push({
             classId: classItem.id,
             className: classItem.name,
-            departmentName: classItem.department.name,
+            departmentName: classItem.level.section.replaceAll('_', ' '),
             studentsProcessed: 0,
             positionsUpdated: 0,
             status: 'success',
@@ -109,20 +109,20 @@ export async function POST(request: NextRequest) {
         // Calculate positions with tie handling
         const positionUpdates: { studentId: string; position: number }[] = [];
         let currentPosition = 1;
-        let previousScore = -1;
+        let previousScore = Number.NaN;
         let studentsAtCurrentPosition = 0;
 
         for (let i = 0; i < classResults.length; i++) {
           const result = classResults[i];
           
-          if (result.totalScore === previousScore) {
+          if (Number(result.totalScore ?? 0) === previousScore) {
             studentsAtCurrentPosition++;
           } else {
             if (i > 0) {
               currentPosition += studentsAtCurrentPosition;
             }
             studentsAtCurrentPosition = 1;
-            previousScore = result.totalScore;
+            previousScore = Number(result.totalScore ?? 0);
           }
 
           positionUpdates.push({
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
 
         // Update positions in database
         const updatePromises = positionUpdates.map(({ studentId, position }) =>
-          prisma.result.updateMany({
+          prisma.termResult.updateMany({
             where: {
               studentId,
               classId: classItem.id,
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
         results.push({
           classId: classItem.id,
           className: classItem.name,
-          departmentName: classItem.department.name,
+          departmentName: classItem.level.section.replaceAll('_', ' '),
           studentsProcessed: classResults.length,
           positionsUpdated: positionUpdates.length,
           status: 'success',
@@ -160,7 +160,7 @@ export async function POST(request: NextRequest) {
         results.push({
           classId: classItem.id,
           className: classItem.name,
-          departmentName: classItem.department.name,
+          departmentName: classItem.level.section.replaceAll('_', ' '),
           studentsProcessed: 0,
           positionsUpdated: 0,
           status: 'error',
@@ -228,7 +228,7 @@ export async function GET(request: NextRequest) {
     // Get classes with their position calculation status
     const classes = await prisma.class.findMany({
       where: {
-        results: {
+        termResults: {
           some: {
             termId: parseInt(termId),
             sessionId: parseInt(sessionId),
@@ -236,8 +236,8 @@ export async function GET(request: NextRequest) {
         }
       },
       include: {
-        department: true,
-        results: {
+        level: true,
+        termResults: {
           where: {
             termId: parseInt(termId),
             sessionId: parseInt(sessionId),
@@ -251,20 +251,20 @@ export async function GET(request: NextRequest) {
     });
 
     const summary = classes.map(classItem => {
-      const results = classItem.results;
-      const studentsWithPositions = results.filter(r => r.position !== null).length;
-      const studentsWithoutPositions = results.length - studentsWithPositions;
+      const classTermResults = classItem.termResults;
+      const studentsWithPositions = classTermResults.filter(r => r.position !== null).length;
+      const studentsWithoutPositions = classTermResults.length - studentsWithPositions;
       
       return {
         classId: classItem.id,
         className: classItem.name,
-        departmentName: classItem.department.name,
-        totalStudents: results.length,
+        departmentName: classItem.level.section.replaceAll('_', ' '),
+        totalStudents: classTermResults.length,
         studentsWithPositions,
         studentsWithoutPositions,
         positionCalculationComplete: studentsWithoutPositions === 0,
-        highestScore: results.length > 0 ? Math.max(...results.map(r => r.totalScore)) : 0,
-        lowestScore: results.length > 0 ? Math.min(...results.map(r => r.totalScore)) : 0,
+        highestScore: classTermResults.length > 0 ? Math.max(...classTermResults.map(r => Number(r.totalScore ?? 0))) : 0,
+        lowestScore: classTermResults.length > 0 ? Math.min(...classTermResults.map(r => Number(r.totalScore ?? 0))) : 0,
       };
     });
 

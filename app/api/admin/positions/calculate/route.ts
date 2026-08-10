@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     // ── Validate Class Exists ─────────────────────────────────────
     const classExists = await prisma.class.findUnique({
       where: { id: classId },
-      include: { department: true }
+      include: { level: true }
     });
 
     if (!classExists) {
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Get All Results for Class/Term/Session ───────────────────────
-    const results = await prisma.result.findMany({
+    const results = await prisma.termResult.findMany({
       where: {
         classId,
         termId,
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         message: 'No results found for this class/term/session',
         class: classExists.name,
-        department: classExists.department.name,
+        department: classExists.level.section.replaceAll('_', ' '),
         termId,
         sessionId,
         positionsUpdated: 0,
@@ -91,14 +91,14 @@ export async function POST(request: NextRequest) {
     // ── Calculate Positions ───────────────────────────────────────
     const positionUpdates: PositionUpdate[] = [];
     let currentPosition = 1;
-    let previousScore = -1;
+    let previousScore = Number.NaN;
     let studentsAtCurrentPosition = 0;
 
     for (let i = 0; i < results.length; i++) {
       const result = results[i];
       
       // Handle ties: if same score as previous, same position
-      if (result.totalScore === previousScore) {
+      if (Number(result.totalScore ?? 0) === previousScore) {
         studentsAtCurrentPosition++;
       } else {
         // New score, update position
@@ -106,19 +106,19 @@ export async function POST(request: NextRequest) {
           currentPosition += studentsAtCurrentPosition;
         }
         studentsAtCurrentPosition = 1;
-        previousScore = result.totalScore;
+        previousScore = Number(result.totalScore ?? 0);
       }
 
       positionUpdates.push({
         studentId: result.studentId,
         position: currentPosition,
-        totalScore: result.totalScore,
+        totalScore: Number(result.totalScore ?? 0),
       });
     }
 
     // ── Update Positions in Database ─────────────────────────────────
     const updatePromises = positionUpdates.map(({ studentId, position }) =>
-      prisma.result.updateMany({
+      prisma.termResult.updateMany({
         where: {
           studentId,
           classId,
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: 'Positions calculated successfully',
       class: classExists.name,
-      department: classExists.department.name,
+      department: classExists.level.section.replaceAll('_', ' '),
       termId,
       sessionId,
       positionsUpdated: positionUpdates.length,
@@ -183,7 +183,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const results = await prisma.result.findMany({
+    const results = await prisma.termResult.findMany({
       where: {
         classId: parseInt(classId),
         termId: parseInt(termId),
@@ -210,7 +210,7 @@ export async function GET(request: NextRequest) {
       totalStudents: results.length,
       positions: results.map(result => ({
         position: result.position,
-        totalScore: result.totalScore,
+        totalScore: Number(result.totalScore ?? 0),
         average: result.average,
         student: result.student,
       })),

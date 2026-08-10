@@ -7,13 +7,17 @@
 
 import { prisma } from '@/lib/prisma';
 import type { ResultData } from './types';
-import type { CheckResultInput } from './schema';
 
 interface ServiceInput {
   studentId: string;
   classId?: number;
   sessionId?: number;
   termId?: number;
+}
+
+function toNumber(value: any): number {
+  if (value == null) return 0;
+  return typeof value === 'number' ? value : Number(value);
 }
 
 /**
@@ -25,35 +29,62 @@ interface ServiceInput {
 export async function getStudentResult(input: ServiceInput): Promise<ResultData> {
   const admissionNo = (input.studentId ?? '').trim();
 
-  // ── Student lookup ────────────────────────────────────────────
   const student = await prisma.student.findFirst({
     where: { admissionNo: { equals: admissionNo, mode: 'insensitive' } },
-    include: { class: true, session: true },
   });
 
   if (!student) {
     throw { status: 404, error: 'Student not found or no results available for this term/session', code: 'STUDENT_NOT_FOUND' };
   }
 
-  const resolvedClassId = input.classId ?? student.classId;
-  const resolvedSessionId = input.sessionId ?? student.sessionId;
+  const activeSession = await prisma.session.findFirst({
+    where: { isActive: true },
+    orderBy: { id: 'desc' },
+  });
 
-  if (input.classId && resolvedClassId !== student.classId) {
-    throw { status: 400, error: 'Student is not in the selected class', code: 'CLASS_MISMATCH' };
-  }
-  if (input.sessionId && resolvedSessionId !== student.sessionId) {
-    throw { status: 400, error: 'Student is not in the selected session', code: 'SESSION_MISMATCH' };
+  const resolvedSessionId = input.sessionId ?? activeSession?.id;
+  if (!resolvedSessionId) {
+    throw { status: 400, error: 'No academic sessions are configured', code: 'NO_SESSIONS' };
   }
 
-  // ── Term resolution ───────────────────────────────────────────
+  const enrollment = await prisma.enrollment.findFirst({
+    where: {
+      studentId: student.id,
+      sessionId: resolvedSessionId,
+      ...(input.classId ? { classId: input.classId } : {}),
+    },
+    include: {
+      class: true,
+      session: true,
+    },
+    orderBy: { enrolledAt: 'desc' },
+  });
+
+  if (!enrollment) {
+    throw {
+      status: input.classId || input.sessionId ? 400 : 404,
+      error: input.classId
+        ? 'Student is not in the selected class'
+        : input.sessionId
+          ? 'Student is not in the selected session'
+          : 'Student enrollment not found',
+      code: input.classId ? 'CLASS_MISMATCH' : input.sessionId ? 'SESSION_MISMATCH' : 'ENROLLMENT_NOT_FOUND',
+    };
+  }
+
+  const resolvedClassId = enrollment.classId;
+
   let resolvedTermId = input.termId ?? null;
-
   if (!resolvedTermId) {
-    // Prefer the term from the active session; fall back to lowest id
-    const activeSession = await prisma.session.findFirst({ where: { isActive: true } });
     const defaultTerm = await prisma.term.findFirst({
-      orderBy: { id: 'asc' },
-      ...(activeSession ? { where: { grades: { some: { sessionId: activeSession.id } } } } : {}),
+      where: {
+        OR: [
+          { sessionId: resolvedSessionId, isActive: true },
+          { sessionId: resolvedSessionId },
+          { subjectResults: { some: { sessionId: resolvedSessionId } } },
+        ],
+      },
+      orderBy: [{ isActive: 'desc' }, { order: 'asc' }, { id: 'asc' }],
     });
     if (!defaultTerm) {
       throw { status: 400, error: 'No academic terms are configured', code: 'NO_TERMS' };
@@ -66,23 +97,57 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
     throw { status: 400, error: 'Invalid term selected', code: 'INVALID_TERM' };
   }
 
-  // ── Grades ────────────────────────────────────────────────────
-  const grades = await prisma.grade.findMany({
+  const subjectResults = await prisma.subjectResult.findMany({
     where: {
       studentId: student.id,
       classId: resolvedClassId,
       sessionId: resolvedSessionId,
       termId: resolvedTermId,
     },
-    include: { 
-      subject: true, 
+    include: {
+      subject: true,
       term: true,
       teacher: {
-        select: { name: true, teacherId: true }
-      }
+        select: {
+          fullName: true,
+          staffNumber: true,
+          user: { select: { name: true } },
+        },
+      },
     },
     orderBy: { subject: { name: 'asc' } },
   });
+
+  // Prefer assessment breakdown when available
+  const assessments = await prisma.assessment.findMany({
+    where: {
+      termId: resolvedTermId,
+      offering: {
+        classId: resolvedClassId,
+        sessionId: resolvedSessionId,
+      },
+    },
+    include: {
+      scores: {
+        where: { studentId: student.id },
+      },
+      offering: true,
+    },
+    orderBy: [{ order: 'asc' }, { name: 'asc' }],
+  });
+
+  const scoresBySubject = new Map<number, { ca1?: number; ca2?: number; exam?: number }>();
+  for (const assessment of assessments) {
+    const score = assessment.scores[0];
+    if (!score || score.numericScore == null) continue;
+    const subjectId = assessment.offering.subjectId;
+    const bucket = scoresBySubject.get(subjectId) ?? {};
+    const value = toNumber(score.numericScore);
+    if (assessment.name === 'CA 1') bucket.ca1 = value;
+    else if (assessment.name === 'CA 2') bucket.ca2 = value;
+    else if (assessment.name === 'Exam') bucket.exam = value;
+    scoresBySubject.set(subjectId, bucket);
+  }
 
   const studentPayload = {
     admissionNo: student.admissionNo,
@@ -93,104 +158,109 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
     photo: null as string | null,
   };
 
-  if (grades.length === 0) {
+  if (subjectResults.length === 0) {
     return {
       hasResults: false,
       message: 'No results available for this term/session yet',
       student: studentPayload,
-      class: { name: student.class.name },
-      session: { name: student.session.name },
+      class: { name: enrollment.class.name },
+      session: { name: enrollment.session.name },
       term: { name: termInfo.name },
       grades: [],
       result: null,
     };
   }
 
-  // ── Result row & computed stats ───────────────────────────────
-  const result = await prisma.result.findUnique({
+  const termResult = await prisma.termResult.findUnique({
     where: {
-      studentId_classId_termId_sessionId: {
+      studentId_termId: {
         studentId: student.id,
-        classId: resolvedClassId,
         termId: resolvedTermId,
-        sessionId: resolvedSessionId,
       },
     },
   });
 
-  const totalScore = grades.reduce((sum, g) => sum + g.average, 0);
-  const average = grades.length > 0 ? totalScore / grades.length : 0;
-  const maxScore = grades.length * 100;
+  const totalScore = subjectResults.reduce((sum, g) => sum + toNumber(g.totalScore ?? g.percentage), 0);
+  const average = subjectResults.length > 0 ? totalScore / subjectResults.length : 0;
+  const maxScore = subjectResults.reduce((sum, g) => sum + toNumber(g.maxScore ?? 100), 0);
 
-  // ── Position calculation (using total score) ───────────────────────
-  let position = result?.position ?? null;
-
+  let position = termResult?.position ?? null;
   if (position === null) {
-    // Use total score for ranking instead of average
-    const allResults = await prisma.result.findMany({
+    const allResults = await prisma.termResult.findMany({
       where: {
         classId: resolvedClassId,
         termId: resolvedTermId,
         sessionId: resolvedSessionId,
       },
-      orderBy: { totalScore: 'desc' }, // Highest total score first
+      orderBy: { totalScore: 'desc' },
     });
 
     if (allResults.length > 0) {
-      // Calculate position: 1 + number of students with higher total scores
-      position = allResults.filter((r) => r.totalScore > totalScore).length + 1;
+      position = allResults.filter((r) => toNumber(r.totalScore) > totalScore).length + 1;
     }
   }
 
-  // ── Teacher Comments ───────────────────────────────────────
   const reports = await prisma.report.findMany({
     where: {
       studentId: student.id,
       termId: resolvedTermId,
-      status: 'PUBLISHED', // Only show published comments
-      subjectId: null, // Only get general comments (not subject-specific)
+      status: 'PUBLISHED',
     },
-    include: { 
-      teacher: { select: { name: true, teacherId: true } } 
+    include: {
+      teacher: {
+        select: {
+          fullName: true,
+          staffNumber: true,
+          user: { select: { name: true } },
+        },
+      },
     },
     orderBy: { createdAt: 'desc' },
   });
 
-  // Get the most recent general comment and teacher attribution
-  const latestCommentReport = reports.length > 0 ? reports[0] : null;
-  const generalComment = latestCommentReport?.comment ?? null;
-  /** Always set when a comment exists so the UI can show "Comment by …" (name, staff ID, or "Teacher"). */
+  const latestCommentReport = reports[0] ?? null;
+  const generalComment =
+    latestCommentReport?.teacherRemark ??
+    termResult?.classTeacherRemark ??
+    null;
   const commentAuthor =
     latestCommentReport?.teacher != null
       ? {
-          name: latestCommentReport.teacher.name ?? null,
-          teacherId: latestCommentReport.teacher.teacherId ?? null,
+          name: latestCommentReport.teacher.fullName ?? latestCommentReport.teacher.user?.name ?? null,
+          teacherId: latestCommentReport.teacher.staffNumber ?? null,
         }
       : { name: null, teacherId: null };
 
   return {
     student: studentPayload,
-    class: { name: student.class.name },
-    session: { name: student.session.name },
+    class: { name: enrollment.class.name },
+    session: { name: enrollment.session.name },
     term: { name: termInfo.name },
-    grades: grades.map((g) => ({
-      subject: { name: g.subject.name },
-      firstScore: g.firstScore ?? undefined,
-      secondScore: g.secondScore ?? undefined,
-      examScore: g.fourthScore ?? undefined,            // DB column is `fourthScore`
-      average: g.average,
-      teacher: g.teacher ? {
-        name: g.teacher.name,
-        teacherId: g.teacher.teacherId
-      } : null,
-    })),
+    grades: subjectResults.map((g) => {
+      const breakdown = scoresBySubject.get(g.subjectId) ?? {};
+      return {
+        subject: { name: g.subject.name },
+        firstScore: breakdown.ca1,
+        secondScore: breakdown.ca2,
+        examScore: breakdown.exam,
+        average: toNumber(g.totalScore ?? g.percentage),
+        teacher: g.teacher
+          ? {
+              name: g.teacher.fullName ?? g.teacher.user?.name ?? null,
+              teacherId: g.teacher.staffNumber ?? null,
+            }
+          : null,
+      };
+    }),
     result: {
       position: position ?? undefined,
-      average: result?.average ?? average,
-      totalScore: result?.totalScore ?? totalScore,
-      maxScore: result?.maxScore ?? maxScore,
+      average: toNumber(termResult?.average) || average,
+      totalScore: toNumber(termResult?.totalScore) || totalScore,
+      maxScore: toNumber(termResult?.maxScore) || maxScore,
       comment: generalComment || undefined,
       ...(generalComment ? { commentAuthor } : {}),
     },
   };
 }
+
+

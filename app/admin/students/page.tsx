@@ -30,7 +30,7 @@ export default async function StudentsPage({ searchParams }: { searchParams?: Pr
     ];
   }
   if (classId) {
-    where.classId = classId;
+    where.enrollments = { some: { classId, status: 'ACTIVE' } };
   }
 
   let filteredClassName: string | undefined;
@@ -44,7 +44,20 @@ export default async function StudentsPage({ searchParams }: { searchParams?: Pr
 
   const [total, students] = await Promise.all([
     prisma.student.count({ where }),
-    prisma.student.findMany({ where, skip: (page - 1) * pageSize, take: pageSize, orderBy: { lastName: 'asc' }, include: { class: true } }),
+    prisma.student.findMany({
+      where,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      orderBy: { lastName: 'asc' },
+      include: {
+        enrollments: {
+          where: { status: 'ACTIVE' },
+          include: { class: true },
+          take: 1,
+          orderBy: { enrolledAt: 'desc' },
+        },
+      },
+    }),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -102,7 +115,7 @@ export default async function StudentsPage({ searchParams }: { searchParams?: Pr
                 </Link>
               </div>
               <div className="text-sm text-gray-700">
-                <span className="font-medium">Class:</span> {s.class?.name ?? s.classId}
+                <span className="font-medium">Class:</span> {s.enrollments?.[0]?.class?.name ?? '—'}
               </div>
             </div>
           ))}
@@ -125,7 +138,7 @@ export default async function StudentsPage({ searchParams }: { searchParams?: Pr
                   <tr key={s.id} className="border-t hover:bg-gray-50">
                     <td className="p-3">{s.admissionNo}</td>
                     <td className="p-3">{s.lastName} {s.firstName}</td>
-                    <td className="p-3">{s.class?.name ?? s.classId}</td>
+                    <td className="p-3">{s.enrollments?.[0]?.class?.name ?? '—'}</td>
                     <td className="p-3 text-center">
                       <Link href={`/admin/students/${s.id}`} className="text-blue-600 hover:text-blue-800 font-medium">View</Link>
                     </td>

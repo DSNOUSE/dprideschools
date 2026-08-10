@@ -6,10 +6,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // ──────────────────────────────────────────────────────────────
 const mockPrisma = vi.hoisted(() => ({
   student: { findFirst: vi.fn() },
+  enrollment: { findFirst: vi.fn() },
   term: { findFirst: vi.fn(), findUnique: vi.fn() },
   session: { findFirst: vi.fn() },
-  grade: { findMany: vi.fn() },
-  result: { findUnique: vi.fn(), findMany: vi.fn() },
+  subjectResult: { findMany: vi.fn() },
+  termResult: { findUnique: vi.fn(), findMany: vi.fn() },
+  assessment: { findMany: vi.fn() },
   report: { findMany: vi.fn() },
 }));
 
@@ -35,25 +37,60 @@ function fakeStudent(overrides = {}) {
     firstName: 'John',
     lastName: 'Doe',
     middleName: 'A',
-    sex: 'M',
+    sex: 'MALE',
+    ...overrides,
+  };
+}
+
+function fakeEnrollment(overrides = {}) {
+  return {
+    id: 'enr-1',
+    studentId: 'stu-1',
     classId: 1,
     sessionId: 1,
+    status: 'ACTIVE',
     class: { name: 'JSS 1' },
     session: { name: '2025/2026' },
     ...overrides,
   };
 }
 
-function fakeGrade(subjectName: string, avg: number) {
+function fakeSubjectResult(subjectName: string, avg: number, subjectId = 1) {
   return {
-    id: 'g-' + subjectName,
-    firstScore: avg - 5,
-    secondScore: avg,
-    fourthScore: avg + 5,
-    average: avg,
+    id: 'sr-' + subjectName,
+    studentId: 'stu-1',
+    subjectId,
+    classId: 1,
+    termId: 1,
+    sessionId: 1,
+    totalScore: avg,
+    maxScore: 100,
+    percentage: avg,
+    grade: calculateGrade(avg),
+    teacher: null,
     subject: { name: subjectName },
     term: { name: 'First Term' },
   };
+}
+
+function fakeAssessmentsForSubject(subjectId: number, avg: number) {
+  return [
+    {
+      name: 'CA 1',
+      offering: { subjectId },
+      scores: [{ numericScore: avg - 5 }],
+    },
+    {
+      name: 'CA 2',
+      offering: { subjectId },
+      scores: [{ numericScore: avg }],
+    },
+    {
+      name: 'Exam',
+      offering: { subjectId },
+      scores: [{ numericScore: avg + 5 }],
+    },
+  ];
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -145,14 +182,17 @@ describe('rateLimiter', () => {
 // ──────────────────────────────────────────────────────────────
 describe('results utils', () => {
   describe('calculateGrade', () => {
+    // Boundaries match src/lib/results/utils.ts school-standard scale
     it.each([
       [95, 'A'],
       [80, 'A'],
       [79, 'B'],
-      [70, 'B'],
-      [60, 'C'],
-      [50, 'D'],
-      [49, 'F'],
+      [60, 'B'],
+      [59, 'C'],
+      [50, 'C'],
+      [49, 'D'],
+      [40, 'D'],
+      [39, 'F'],
       [0, 'F'],
     ])('score %d → grade %s', (score, expected) => {
       expect(calculateGrade(score)).toBe(expected);
@@ -176,7 +216,12 @@ describe('results utils', () => {
 // 4. Service layer tests
 // ──────────────────────────────────────────────────────────────
 describe('getStudentResult', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockPrisma.assessment.findMany.mockResolvedValue([]);
+    mockPrisma.report.findMany.mockResolvedValue([]);
+    mockPrisma.termResult.findMany.mockResolvedValue([]);
+  });
 
   it('throws 404 when student not found', async () => {
     mockPrisma.student.findFirst.mockResolvedValue(null);
@@ -188,7 +233,9 @@ describe('getStudentResult', () => {
   });
 
   it('throws 400 on class mismatch', async () => {
-    mockPrisma.student.findFirst.mockResolvedValue(fakeStudent({ classId: 2 }));
+    mockPrisma.student.findFirst.mockResolvedValue(fakeStudent());
+    mockPrisma.session.findFirst.mockResolvedValue({ id: 1, isActive: true });
+    mockPrisma.enrollment.findFirst.mockResolvedValue(null);
 
     await expect(
       getStudentResult({ studentId: 'STU001', classId: 1 }),
@@ -196,16 +243,28 @@ describe('getStudentResult', () => {
   });
 
   it('throws 400 on session mismatch', async () => {
-    mockPrisma.student.findFirst.mockResolvedValue(fakeStudent({ sessionId: 3 }));
+    mockPrisma.student.findFirst.mockResolvedValue(fakeStudent());
+    mockPrisma.enrollment.findFirst.mockResolvedValue(null);
 
     await expect(
       getStudentResult({ studentId: 'STU001', sessionId: 1 }),
     ).rejects.toMatchObject({ status: 400, code: 'SESSION_MISMATCH' });
   });
 
-  it('throws 400 when no terms configured', async () => {
+  it('throws 400 when no sessions configured', async () => {
     mockPrisma.student.findFirst.mockResolvedValue(fakeStudent());
     mockPrisma.session.findFirst.mockResolvedValue(null);
+
+    await expect(getStudentResult({ studentId: 'STU001' })).rejects.toMatchObject({
+      status: 400,
+      code: 'NO_SESSIONS',
+    });
+  });
+
+  it('throws 400 when no terms configured', async () => {
+    mockPrisma.student.findFirst.mockResolvedValue(fakeStudent());
+    mockPrisma.session.findFirst.mockResolvedValue({ id: 1, isActive: true });
+    mockPrisma.enrollment.findFirst.mockResolvedValue(fakeEnrollment());
     mockPrisma.term.findFirst.mockResolvedValue(null);
 
     await expect(getStudentResult({ studentId: 'STU001' })).rejects.toMatchObject({
@@ -214,12 +273,13 @@ describe('getStudentResult', () => {
     });
   });
 
-  it('returns hasResults: false when no grades exist', async () => {
+  it('returns hasResults: false when no subject results exist', async () => {
     mockPrisma.student.findFirst.mockResolvedValue(fakeStudent());
-    mockPrisma.session.findFirst.mockResolvedValue(null);
+    mockPrisma.session.findFirst.mockResolvedValue({ id: 1, isActive: true });
+    mockPrisma.enrollment.findFirst.mockResolvedValue(fakeEnrollment());
     mockPrisma.term.findFirst.mockResolvedValue({ id: 1, name: 'First Term' });
     mockPrisma.term.findUnique.mockResolvedValue({ id: 1, name: 'First Term' });
-    mockPrisma.grade.findMany.mockResolvedValue([]);
+    mockPrisma.subjectResult.findMany.mockResolvedValue([]);
 
     const result = await getStudentResult({ studentId: 'STU001' });
     expect(result.hasResults).toBe(false);
@@ -227,19 +287,25 @@ describe('getStudentResult', () => {
     expect(result.result).toBeNull();
   });
 
-  it('returns full result with grades', async () => {
+  it('returns full result with subject results and assessment breakdown', async () => {
     const student = fakeStudent();
     mockPrisma.student.findFirst.mockResolvedValue(student);
+    mockPrisma.enrollment.findFirst.mockResolvedValue(fakeEnrollment());
     mockPrisma.term.findUnique.mockResolvedValue({ id: 1, name: 'First Term' });
-    mockPrisma.grade.findMany.mockResolvedValue([
-      fakeGrade('Mathematics', 80),
-      fakeGrade('English', 70),
+    mockPrisma.subjectResult.findMany.mockResolvedValue([
+      fakeSubjectResult('Mathematics', 80, 10),
+      fakeSubjectResult('English', 70, 11),
     ]);
-    mockPrisma.result.findUnique.mockResolvedValue({
+    mockPrisma.assessment.findMany.mockResolvedValue([
+      ...fakeAssessmentsForSubject(10, 80),
+      ...fakeAssessmentsForSubject(11, 70),
+    ]);
+    mockPrisma.termResult.findUnique.mockResolvedValue({
       position: 3,
       average: 75,
       totalScore: 150,
       maxScore: 200,
+      classTeacherRemark: null,
     });
     mockPrisma.report.findMany.mockResolvedValue([]);
 
@@ -253,21 +319,24 @@ describe('getStudentResult', () => {
     expect(result.student.admissionNo).toBe('STU001');
     expect(result.grades).toHaveLength(2);
     expect(result.grades[0].subject.name).toBe('Mathematics');
-    // fourthScore mapped to examScore
+    // Exam assessment mapped to examScore
     expect(result.grades[0].examScore).toBe(85);
+    expect(result.grades[0].firstScore).toBe(75);
+    expect(result.grades[0].secondScore).toBe(80);
     expect(result.result?.position).toBe(3);
   });
 
-  it('computes fallback position when result.position is null', async () => {
+  it('computes fallback position when termResult.position is null', async () => {
     const student = fakeStudent();
     mockPrisma.student.findFirst.mockResolvedValue(student);
+    mockPrisma.enrollment.findFirst.mockResolvedValue(fakeEnrollment());
     mockPrisma.term.findUnique.mockResolvedValue({ id: 1, name: 'First Term' });
-    mockPrisma.grade.findMany.mockResolvedValue([fakeGrade('Maths', 60)]);
-    mockPrisma.result.findUnique.mockResolvedValue(null);
-    mockPrisma.result.findMany.mockResolvedValue([
-      { average: 90 },
-      { average: 80 },
-      { average: 50 },
+    mockPrisma.subjectResult.findMany.mockResolvedValue([fakeSubjectResult('Maths', 60, 1)]);
+    mockPrisma.termResult.findUnique.mockResolvedValue(null);
+    mockPrisma.termResult.findMany.mockResolvedValue([
+      { totalScore: 90 },
+      { totalScore: 80 },
+      { totalScore: 50 },
     ]);
     mockPrisma.report.findMany.mockResolvedValue([]);
 
@@ -278,12 +347,13 @@ describe('getStudentResult', () => {
       termId: 1,
     });
 
-    // avg = 60 → 2 students above (90, 80) → position 3
+    // totalScore = 60 → 2 students above (90, 80) → position 3
     expect(result.result?.position).toBe(3);
   });
 
   it('throws 400 for invalid term id', async () => {
     mockPrisma.student.findFirst.mockResolvedValue(fakeStudent());
+    mockPrisma.enrollment.findFirst.mockResolvedValue(fakeEnrollment());
     mockPrisma.term.findUnique.mockResolvedValue(null);
 
     await expect(
@@ -291,16 +361,27 @@ describe('getStudentResult', () => {
     ).rejects.toMatchObject({ status: 400, code: 'INVALID_TERM' });
   });
 
-  it('includes commentAuthor when a published general report exists', async () => {
+  it('includes commentAuthor when a published report exists', async () => {
     const student = fakeStudent();
     mockPrisma.student.findFirst.mockResolvedValue(student);
+    mockPrisma.enrollment.findFirst.mockResolvedValue(fakeEnrollment());
     mockPrisma.term.findUnique.mockResolvedValue({ id: 1, name: 'First Term' });
-    mockPrisma.grade.findMany.mockResolvedValue([fakeGrade('Maths', 70)]);
-    mockPrisma.result.findUnique.mockResolvedValue({ position: 1, average: 70, totalScore: 70, maxScore: 100 });
+    mockPrisma.subjectResult.findMany.mockResolvedValue([fakeSubjectResult('Maths', 70, 1)]);
+    mockPrisma.termResult.findUnique.mockResolvedValue({
+      position: 1,
+      average: 70,
+      totalScore: 70,
+      maxScore: 100,
+      classTeacherRemark: null,
+    });
     mockPrisma.report.findMany.mockResolvedValue([
       {
-        comment: 'Excellent term.',
-        teacher: { name: 'Dr. Ada Okafor', teacherId: 'TCH-1001' },
+        teacherRemark: 'Excellent term.',
+        teacher: {
+          fullName: 'Dr. Ada Okafor',
+          staffNumber: 'TCH-1001',
+          user: { name: 'Dr. Ada Okafor' },
+        },
       },
     ]);
 
@@ -318,15 +399,22 @@ describe('getStudentResult', () => {
     });
   });
 
-  it('includes fallback commentAuthor when a published general report has no teacher row', async () => {
+  it('includes fallback commentAuthor when a published report has no teacher row', async () => {
     const student = fakeStudent();
     mockPrisma.student.findFirst.mockResolvedValue(student);
+    mockPrisma.enrollment.findFirst.mockResolvedValue(fakeEnrollment());
     mockPrisma.term.findUnique.mockResolvedValue({ id: 1, name: 'First Term' });
-    mockPrisma.grade.findMany.mockResolvedValue([fakeGrade('Maths', 70)]);
-    mockPrisma.result.findUnique.mockResolvedValue({ position: 1, average: 70, totalScore: 70, maxScore: 100 });
+    mockPrisma.subjectResult.findMany.mockResolvedValue([fakeSubjectResult('Maths', 70, 1)]);
+    mockPrisma.termResult.findUnique.mockResolvedValue({
+      position: 1,
+      average: 70,
+      totalScore: 70,
+      maxScore: 100,
+      classTeacherRemark: null,
+    });
     mockPrisma.report.findMany.mockResolvedValue([
       {
-        comment: 'Legacy comment.',
+        teacherRemark: 'Legacy comment.',
         teacher: null,
       },
     ]);
@@ -340,6 +428,30 @@ describe('getStudentResult', () => {
 
     expect(result.result?.comment).toBe('Legacy comment.');
     expect(result.result?.commentAuthor).toEqual({ name: null, teacherId: null });
+  });
+
+  it('falls back to termResult.classTeacherRemark when report has no remark', async () => {
+    mockPrisma.student.findFirst.mockResolvedValue(fakeStudent());
+    mockPrisma.enrollment.findFirst.mockResolvedValue(fakeEnrollment());
+    mockPrisma.term.findUnique.mockResolvedValue({ id: 1, name: 'First Term' });
+    mockPrisma.subjectResult.findMany.mockResolvedValue([fakeSubjectResult('Maths', 70, 1)]);
+    mockPrisma.termResult.findUnique.mockResolvedValue({
+      position: 1,
+      average: 70,
+      totalScore: 70,
+      maxScore: 100,
+      classTeacherRemark: 'Keep it up.',
+    });
+    mockPrisma.report.findMany.mockResolvedValue([]);
+
+    const result = await getStudentResult({
+      studentId: 'STU001',
+      classId: 1,
+      sessionId: 1,
+      termId: 1,
+    });
+
+    expect(result.result?.comment).toBe('Keep it up.');
   });
 });
 

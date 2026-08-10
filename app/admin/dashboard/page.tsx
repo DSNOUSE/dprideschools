@@ -28,7 +28,14 @@ export default async function DashboardPage() {
   const recentStudents = await prisma.student.findMany({
     take: 6,
     orderBy: { createdAt: 'desc' },
-    include: { class: true }
+    include: {
+      enrollments: {
+        where: { status: 'ACTIVE' },
+        include: { class: true },
+        take: 1,
+        orderBy: { enrolledAt: 'desc' },
+      },
+    },
   });
 
   const getAge = (d?: Date | null) => {
@@ -132,8 +139,8 @@ export default async function DashboardPage() {
                     <tr key={s.id} className="border-t">
                       <td className="p-2">{s.admissionNo}</td>
                       <td className="p-2">{s.lastName} {s.firstName}</td>
-                      <td className="p-2">{s.class?.name ?? s.classId}</td>
-                      <td className="p-2">{s.sex === 'M' ? 'Male' : s.sex === 'F' ? 'Female' : (s.sex ?? '-')}</td>
+                      <td className="p-2">{s.enrollments?.[0]?.class?.name ?? '—'}</td>
+                      <td className="p-2">{s.sex === 'MALE' ? 'Male' : s.sex === 'FEMALE' ? 'Female' : (s.sex ?? '-')}</td>
                       <td className="p-2">{getAge(s.birthDate)}</td>
                       <td className="p-2 text-center">
                         <Link href={`/admin/students/${s.id}`} className="text-blue-600">View</Link>

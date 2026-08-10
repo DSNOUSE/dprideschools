@@ -1,11 +1,5 @@
 /**
  * Position calculation service for class rankings
- * 
- * This service handles:
- * - Calculating student positions based on total scores
- * - Handling ties (same score = same position)
- * - Batch position updates for classes
- * - Position recalculation triggers
  */
 
 import { prisma } from '@/lib/prisma';
@@ -33,31 +27,27 @@ export interface ClassPositionResult {
   tiesHandled: number;
 }
 
-/**
- * Calculate positions for a single class based on total scores
- * Highest total score gets position 1
- * Ties are handled by giving same position to students with equal scores
- */
+function toNumber(value: any): number {
+  if (value == null) return 0;
+  return typeof value === 'number' ? value : Number(value);
+}
+
 export async function calculateClassPositions(params: PositionCalculationParams): Promise<ClassPositionResult> {
   const { classId, termId, sessionId } = params;
 
-  // Get class information
   const classInfo = await prisma.class.findUnique({
     where: { id: classId },
-    include: { department: true },
+    include: { level: true },
   });
 
   if (!classInfo) {
     throw new Error(`Class with ID ${classId} not found`);
   }
 
-  // Get all results for this class, ordered by total score (descending)
-  const results = await prisma.result.findMany({
-    where: {
-      classId,
-      termId,
-      sessionId,
-    },
+  const sectionLabel = classInfo.level.section.replaceAll('_', ' ');
+
+  const results = await prisma.termResult.findMany({
+    where: { classId, termId, sessionId },
     orderBy: { totalScore: 'desc' },
   });
 
@@ -65,63 +55,55 @@ export async function calculateClassPositions(params: PositionCalculationParams)
     return {
       classId,
       className: classInfo.name,
-      departmentName: classInfo.department.name,
+      departmentName: sectionLabel,
       positions: [],
       totalStudents: 0,
       tiesHandled: 0,
     };
   }
 
-  // Calculate positions with tie handling
   const positions: StudentPosition[] = [];
   let currentPosition = 1;
-  let previousScore = -1;
+  let previousScore = Number.NaN;
   let studentsAtCurrentPosition = 0;
   let tiesHandled = 0;
 
   for (let i = 0; i < results.length; i++) {
     const result = results[i];
-    
-    // Check for tie with previous score
-    if (result.totalScore === previousScore) {
+    const score = toNumber(result.totalScore);
+
+    if (score === previousScore) {
       studentsAtCurrentPosition++;
       tiesHandled++;
     } else {
-      // New score, update position (skip positions for ties)
-      if (i > 0) {
-        currentPosition += studentsAtCurrentPosition;
-      }
+      if (i > 0) currentPosition += studentsAtCurrentPosition;
       studentsAtCurrentPosition = 1;
-      previousScore = result.totalScore;
+      previousScore = score;
     }
 
     positions.push({
       studentId: result.studentId,
       position: currentPosition,
-      totalScore: result.totalScore,
-      average: result.average,
+      totalScore: score,
+      average: toNumber(result.average),
     });
   }
 
   return {
     classId,
     className: classInfo.name,
-    departmentName: classInfo.department.name,
+    departmentName: sectionLabel,
     positions,
     totalStudents: results.length,
     tiesHandled,
   };
 }
 
-/**
- * Update positions in database for a class
- */
 export async function updateClassPositions(params: PositionCalculationParams): Promise<ClassPositionResult> {
   const calculationResult = await calculateClassPositions(params);
 
-  // Update positions in database using transaction
   const updatePromises = calculationResult.positions.map(({ studentId, position }) =>
-    prisma.result.updateMany({
+    prisma.termResult.updateMany({
       where: {
         studentId,
         classId: params.classId,
@@ -146,34 +128,28 @@ export async function updateClassPositions(params: PositionCalculationParams): P
   return calculationResult;
 }
 
-/**
- * Calculate positions for all classes in a term/session
- */
 export async function calculateAllClassPositions(
   termId: number,
   sessionId: number,
   classIds?: number[]
 ): Promise<ClassPositionResult[]> {
-  // Get classes to process
   let classes;
   if (classIds && classIds.length > 0) {
     classes = await prisma.class.findMany({
       where: { id: { in: classIds } },
-      include: { department: true },
+      include: { level: true },
     });
   } else {
-    // Get all classes that have results for this term/session
     classes = await prisma.class.findMany({
       where: {
-        results: {
-          some: { termId, sessionId }
-        }
+        termResults: {
+          some: { termId, sessionId },
+        },
       },
-      include: { department: true },
+      include: { level: true },
     });
   }
 
-  // Process each class
   const results: ClassPositionResult[] = [];
   for (const classItem of classes) {
     try {
@@ -185,11 +161,10 @@ export async function calculateAllClassPositions(
       results.push(result);
     } catch (error) {
       logger.error(`Failed to calculate positions for class ${classItem.id}`, error);
-      // Add failed result with error information
       results.push({
         classId: classItem.id,
         className: classItem.name,
-        departmentName: classItem.department.name,
+        departmentName: classItem.level.section.replaceAll('_', ' '),
         positions: [],
         totalStudents: 0,
         tiesHandled: 0,
@@ -200,11 +175,8 @@ export async function calculateAllClassPositions(
   return results;
 }
 
-/**
- * Get current positions for a class with student details
- */
 export async function getClassPositions(params: PositionCalculationParams) {
-  const results = await prisma.result.findMany({
+  const results = await prisma.termResult.findMany({
     where: {
       classId: params.classId,
       termId: params.termId,
@@ -218,8 +190,8 @@ export async function getClassPositions(params: PositionCalculationParams) {
           lastName: true,
           middleName: true,
           sex: true,
-        }
-      }
+        },
+      },
     },
     orderBy: { position: 'asc' },
   });
@@ -227,44 +199,27 @@ export async function getClassPositions(params: PositionCalculationParams) {
   return {
     ...params,
     totalStudents: results.length,
-    positions: results.map(result => ({
+    positions: results.map((result) => ({
       position: result.position,
-      totalScore: result.totalScore,
-      average: result.average,
+      totalScore: toNumber(result.totalScore),
+      average: toNumber(result.average),
       student: result.student,
     })),
   };
 }
 
-/**
- * Recalculate positions for a specific student when their grades change
- */
 export async function recalculateStudentPosition(
   studentId: string,
   classId: number,
   termId: number,
   sessionId: number
 ): Promise<void> {
-  // First, recalculate all positions for the class to ensure consistency
-  await updateClassPositions({
-    classId,
-    termId,
-    sessionId,
-  });
-
-  logger.info('Student position recalculated', {
-    studentId,
-    classId,
-    termId,
-    sessionId,
-  });
+  await updateClassPositions({ classId, termId, sessionId });
+  logger.info('Student position recalculated', { studentId, classId, termId, sessionId });
 }
 
-/**
- * Check if position calculation is needed for a class
- */
 export async function isPositionCalculationNeeded(params: PositionCalculationParams): Promise<boolean> {
-  const resultsWithoutPositions = await prisma.result.count({
+  const resultsWithoutPositions = await prisma.termResult.count({
     where: {
       classId: params.classId,
       termId: params.termId,
@@ -272,41 +227,37 @@ export async function isPositionCalculationNeeded(params: PositionCalculationPar
       position: null,
     },
   });
-
   return resultsWithoutPositions > 0;
 }
 
-/**
- * Get summary of position calculation status for all classes
- */
 export async function getPositionCalculationSummary(termId: number, sessionId: number) {
   const classes = await prisma.class.findMany({
     where: {
-      results: {
-        some: { termId, sessionId }
-      }
+      termResults: {
+        some: { termId, sessionId },
+      },
     },
     include: {
-      department: true,
-      results: {
+      level: true,
+      termResults: {
         where: { termId, sessionId },
         select: {
           position: true,
           totalScore: true,
-        }
-      }
+        },
+      },
     },
   });
 
-  return classes.map(classItem => {
-    const results = classItem.results;
-    const studentsWithPositions = results.filter(r => r.position !== null).length;
+  return classes.map((classItem) => {
+    const results = classItem.termResults;
+    const studentsWithPositions = results.filter((r) => r.position !== null).length;
     const studentsWithoutPositions = results.length - studentsWithPositions;
-    
+
     return {
       classId: classItem.id,
       className: classItem.name,
-      departmentName: classItem.department.name,
+      departmentName: classItem.level.section.replaceAll('_', ' '),
       totalStudents: results.length,
       studentsWithPositions,
       studentsWithoutPositions,
@@ -315,3 +266,4 @@ export async function getPositionCalculationSummary(termId: number, sessionId: n
     };
   });
 }
+

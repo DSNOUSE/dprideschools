@@ -129,7 +129,7 @@ export async function trackLoginActivity(request: NextRequest, success: boolean,
         },
         ipAddress: requestInfo.ipAddress,
         userAgent: requestInfo.userAgent,
-        sessionId: requestInfo.sessionId,
+        clientSessionId: requestInfo.sessionId,
         timestamp: new Date()
       }
     });

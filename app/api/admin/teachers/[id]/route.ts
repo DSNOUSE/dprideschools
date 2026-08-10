@@ -5,19 +5,14 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
-// PATCH /api/admin/teachers/[id] - Update teacher information
 export async function PATCH(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Authentication check
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // Role-based access control - only administrators can update teachers
     const roles = (session.user as any)?.roles as string[] | undefined;
     if (!roles?.includes('Administrator')) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
@@ -25,44 +20,58 @@ export async function PATCH(
 
     const { id } = await context.params;
     const body = await request.json();
-    const { teacherId } = body;
+    const { teacherId, name, email } = body;
 
-    // Validate teacher ID if provided
     if (teacherId !== undefined && teacherId !== null) {
       if (typeof teacherId !== 'string' || teacherId.trim().length === 0) {
-        return NextResponse.json(
-          { error: 'Teacher ID must be a non-empty string' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Teacher ID must be a non-empty string' }, { status: 400 });
       }
     }
 
-    // Update teacher
+    const existing = await prisma.user.findUnique({
+      where: { id },
+      include: { teacher: true, roles: { include: { role: true } } },
+    });
+    if (!existing) return NextResponse.json({ error: 'Teacher not found' }, { status: 404 });
+
     const updatedTeacher = await prisma.user.update({
       where: { id },
       data: {
-        teacherId: teacherId || null
+        ...(name !== undefined ? { name } : {}),
+        ...(email !== undefined ? { email } : {}),
+        ...(teacherId !== undefined
+          ? {
+              teacher: {
+                upsert: {
+                  create: {
+                    fullName: name || existing.name || existing.email,
+                    staffNumber: teacherId || null,
+                  },
+                  update: {
+                    staffNumber: teacherId || null,
+                    ...(name ? { fullName: name } : {}),
+                  },
+                },
+              },
+            }
+          : {}),
       },
       include: {
-        roles: {
-          include: {
-            role: true
-          }
-        }
-      }
+        teacher: true,
+        roles: { include: { role: true } },
+      },
     });
 
-    // Create audit log for teacher update
     const { createAuditLog, extractRequestInfo, extractTeacherInfo } = await import('@/lib/audit/service');
     const requestInfo = extractRequestInfo(request, session);
     const teacherInfo = extractTeacherInfo(session);
 
     await createAuditLog({
-      entityType: 'Result', // Using Result as entity type for teacher updates
+      entityType: 'Result',
       entityId: id,
       action: 'UPDATE',
-      oldValues: { teacherId: updatedTeacher.teacherId },
-      newValues: { teacherId },
+      oldValues: { teacherId: existing.teacher?.staffNumber ?? null },
+      newValues: { teacherId: updatedTeacher.teacher?.staffNumber ?? null },
       changedFields: ['teacherId'],
       userId: (session.user as any)?.id || 'unknown',
       userName: (session.user as any)?.name || 'Unknown',
@@ -73,7 +82,7 @@ export async function PATCH(
       sessionId: requestInfo.sessionId,
       ipAddress: requestInfo.ipAddress,
       userAgent: requestInfo.userAgent,
-      notes: `Teacher ID updated for ${updatedTeacher.name || updatedTeacher.email}`
+      notes: `Teacher ID updated for ${updatedTeacher.name || updatedTeacher.email}`,
     });
 
     return NextResponse.json({
@@ -82,16 +91,12 @@ export async function PATCH(
         id: updatedTeacher.id,
         email: updatedTeacher.email,
         name: updatedTeacher.name,
-        teacherId: updatedTeacher.teacherId,
-        roles: updatedTeacher.roles.map(r => r.role.name)
-      }
+        teacherId: updatedTeacher.teacher?.staffNumber ?? null,
+        roles: updatedTeacher.roles.map((r) => r.role.name),
+      },
     });
-
   } catch (error) {
     console.error('Error updating teacher:', error);
-    return NextResponse.json(
-      { error: 'Failed to update teacher' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update teacher' }, { status: 500 });
   }
 }

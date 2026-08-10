@@ -29,43 +29,44 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-// Manual name mapping for database vs extracted data mismatches
+// Updated name mapping for database vs extracted data mismatches
+// Maps from corrected names in JSON to actual names in database
 const nameMapping = {
-  'Nanga Aisha Abubakar': 'Nana Aisha Abubakar',
+  'Nana Aisha Abubakar': 'Nana Aisha Abubakar',
   'Hanifa Jibrin Usman': 'Hanifa Jibrin Usman',
-  'Ali Muhammad Usman': 'Ali Mohammed B.M',
-  'Ummalsalma Auwwal Usman': 'Hanan Auwal',
-  'Ummulsulaim Ibrahim': "Umm'suleim Ibrahim",
+  'Ali Mohammed BMM': 'Ali Mohammed B.M',
+  'Ummusalma Auwal Usman': 'Hanan Auwal',
+  'Ummusuleim Ibrahim': "Umm'suleim Ibrahim",
   'Aisha Muhammad': 'Aisha Muhammad',
   'Imam Usman Nafisa': 'Imam Usman Nafisa',
-  'Salad Fatima': 'Saad Fatima',
+  'Sa\'ad Fatima': 'Saad Fatima',
   'Sanusi Hafsat': 'Sanusi Hafsat',
-  'Ahmad Abdultahi Garba': 'Ahmed Abdullahi Garba',
-  'Abdullah Arif': 'Abdallah Arif',
-  'Abdultahmid Fatima': 'Abdulhamid Fatima',
+  'Ahmad Abdullahi Garba': 'Ahmed Abdullahi Garba',
+  'Abdallah Arif': 'Abdallah Arif',
+  'Abdulhamid Fatima': 'Abdulhamid Fatima',
   'Hussaini Maryam': 'Hussaini Maryam',
   'Mohammed Halima': 'Mohammed Halima',
-  'Abdultahmid Muhammad': 'Abdulhamid Mohammed',
-  'Nabage Ruqaiya Nasir': 'Nabage Ruqaiya Nasiru',
-  'Bilal Sani Sheku': 'Bilal Sani',
+  'Abdulhamid Mohammed': 'Abdulhamid Mohammed',
+  'Nabage Rugayya Nazir': 'Nabage Ruqaiya Nasiru',
+  'Bilal Sani Shehu': 'Bilal Sani',
   'Aisha Musa': 'Aisha Musa',
-  'Bilkisu Sani Sheku': 'Bilikisu Sani Shehu',
-  'Khadija vsman Imam': 'Khadija U. Imam',
+  'Bilkisu Sani Shehu': 'Bilikisu Sani Shehu',
+  'Khadija Usman Imam': 'Khadija U. Imam',
   'Zainab Usman Imam': 'Zainab U. Imam',
   'Hafsat Bint Abubakar': 'Hafsat Bint Abubakar',
-  'Baratu Amrullah': 'Barata Amrullah',
+  'Baraka Amrullah': 'Barata Amrullah',
   'Fatima Ibrahim': 'Fatima Ibrahim',
   'Maryam Faysal Ameen': 'Maryam Faysal Amin',
-  'Davidoloruntola': 'David Oloruntola',
+  'David Oloruntoba': 'David Oloruntola',
   'Mukhtar Salihu': 'Mukhtar Salihu',
-  'Noor Aliya Maina': 'Noor Aliyu Maina',
-  'Umar Faruk Yalaka': 'Umar Faruk Yahaya',
+  'Noor Aliyu Maina': 'Noor Aliyu Maina',
+  'Umar Faruk Yahaya': 'Umar Faruk Yahaya',
   'Fatima Muhammad Baba': 'Fatima Muhammad Baba',
-  'Nana Salad': 'Nana Sa\'ad',
+  'Nana Sa\'ad': 'Nana Sa\'ad',
   'Hafsat Usman Imam': 'Hafsat Usman Imam',
-  'Amina Abdutahmid': 'Amina Abdulhamid',
+  'Amina Abdulhamid': 'Amina Abdulhamid',
   'Sheriff Aliyu Maina': 'Sheriff Aliyu Maina',
-  'Ibrahim Sani Sheku': 'Ramadan Sani Shehu'
+  'Ibrahim Sani Shehu': 'Ramadan Sani Shehu'
 };
 
 async function main() {
@@ -113,11 +114,11 @@ async function main() {
           include: { class: true }
         });
         
-        // Find best match by checking if any of the other name parts appear in lastName or middleName
+        // Find best match by checking if ALL search name parts appear in the database name
+        const searchParts = searchName.toLowerCase().split(' ').slice(1);
         existingStudent = allMatches.find(s => {
-          const fullName = `${s.firstName} ${s.middleName || ''} ${s.lastName}`.toLowerCase();
-          const searchParts = searchName.toLowerCase().split(' ').slice(1);
-          return searchParts.every(part => fullName.includes(part));
+          const dbName = `${s.firstName} ${s.middleName || ''} ${s.lastName}`.toLowerCase();
+          return searchParts.every(part => dbName.includes(part));
         });
       }
 

@@ -53,7 +53,10 @@ export const unifiedCredentialsProvider = Credentials({
         
         const appUser = await prisma.user.findUnique({
           where: { email: credentials.email.toLowerCase() },
-          include: { roles: { include: { role: true } } }
+          include: {
+            roles: { include: { role: true } },
+            teacher: true,
+          }
         });
 
         console.log('Database query result:', appUser ? 'User found' : 'User not found');
@@ -80,7 +83,8 @@ export const unifiedCredentialsProvider = Credentials({
               id: appUser.id.toString(),
               email: appUser.email,
               name: appUser.name,
-              teacherId: appUser.teacherId ?? undefined,
+              teacherId: appUser.teacher?.staffNumber ?? appUser.teacher?.id ?? undefined,
+              teacherRecordId: appUser.teacher?.id ?? undefined,
               roles,
             };
             console.log('✅ Returning user object:', result);
@@ -105,8 +109,15 @@ export const unifiedCredentialsProvider = Credentials({
               include: {
                 student: {
                   include: {
-                    class: true,
-                    session: true
+                    enrollments: {
+                      where: { status: 'ACTIVE' },
+                      include: {
+                        class: true,
+                        session: true,
+                      },
+                      orderBy: { enrolledAt: 'desc' },
+                      take: 1,
+                    },
                   }
                 }
               }
@@ -124,7 +135,16 @@ export const unifiedCredentialsProvider = Credentials({
               email: parent.email,
               name: parent.name,
               roles: ['parent'],
-              students: parent.students.map(sp => sp.student)
+              students: parent.students.map((sp) => {
+                const enrollment = sp.student.enrollments[0];
+                return {
+                  ...sp.student,
+                  classId: enrollment?.classId,
+                  sessionId: enrollment?.sessionId,
+                  class: enrollment?.class ?? null,
+                  session: enrollment?.session ?? null,
+                };
+              })
             } as any;
           } else {
             await trackLoginActivity(mockRequest, false, parent.email, 'Parent password mismatch');
@@ -138,8 +158,15 @@ export const unifiedCredentialsProvider = Credentials({
         const student = await prisma.student.findUnique({
           where: { admissionNo: admissionNumber },
           include: {
-            class: true,
-            session: true
+            enrollments: {
+              where: { status: 'ACTIVE' },
+              include: {
+                class: true,
+                session: true,
+              },
+              orderBy: { enrolledAt: 'desc' },
+              take: 1,
+            },
           }
         });
         
@@ -152,15 +179,16 @@ export const unifiedCredentialsProvider = Credentials({
           if (studentPasswordMatch) {
             console.log('✅ Authenticated student:', student.admissionNo);
             await trackLoginActivity(mockRequest, true, student.admissionNo);
+            const enrollment = student.enrollments[0];
             return {
               id: student.id.toString(),
               admissionNo: student.admissionNo,
               name: `${student.firstName} ${student.lastName}`,
               roles: ['student'],
-              classId: student.classId,
-              sessionId: student.sessionId,
-              class: student.class,
-              session: student.session
+              classId: enrollment?.classId,
+              sessionId: enrollment?.sessionId,
+              class: enrollment?.class ?? null,
+              session: enrollment?.session ?? null,
             } as any;
           } else {
             console.log('❌ Student password mismatch');

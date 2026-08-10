@@ -13,7 +13,20 @@ export async function createTerm(formData: FormData) {
   ensureAdmin((session?.user as any)?.roles);
   const name = (formData.get('name') || '').toString().trim();
   if (!name) throw new Error('Name is required');
-  await prisma.term.create({ data: { name } });
+
+  const activeSession =
+    (await prisma.session.findFirst({ where: { isActive: true }, orderBy: { id: 'desc' } })) ||
+    (await prisma.session.findFirst({ orderBy: { id: 'desc' } }));
+  if (!activeSession) throw new Error('No academic session configured');
+
+  const maxOrder = await prisma.term.aggregate({ where: { sessionId: activeSession.id }, _max: { order: true } });
+  await prisma.term.create({
+    data: {
+      name,
+      sessionId: activeSession.id,
+      order: (maxOrder._max.order ?? 0) + 1,
+    },
+  });
   revalidatePath('/admin/academics/terms');
 }
 

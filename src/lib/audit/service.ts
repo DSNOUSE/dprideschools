@@ -8,7 +8,7 @@ import { createResultChangeNotification, createSecurityAlert } from '@/lib/notif
 import type { NextRequest } from 'next/server';
 
 export interface AuditLogData {
-  entityType: 'Grade' | 'Result';
+  entityType: 'Grade' | 'Result' | 'SUBJECT_RESULT' | 'TERM_RESULT' | 'REPORT' | string;
   entityId: string;
   action: 'CREATE' | 'UPDATE' | 'DELETE';
   oldValues?: any;
@@ -73,10 +73,30 @@ export async function createAuditLog(data: AuditLogData) {
       changedFields = calculateChangedFields(data.oldValues, data.newValues);
     }
 
+    const {
+      sessionId,
+      sessionIdAcademic,
+      teacherFullName,
+      teacherId,
+      ...rest
+    } = data as any;
+
+    let resolvedTeacherId: string | undefined = teacherId;
+    if (teacherId) {
+      const byId = await prisma.teacher.findUnique({ where: { id: teacherId } });
+      if (!byId) {
+        const byStaff = await prisma.teacher.findUnique({ where: { staffNumber: teacherId } });
+        resolvedTeacherId = byStaff?.id;
+      }
+    }
+
     const auditLog = await prisma.resultAuditLog.create({
       data: {
-        ...data,
+        ...rest,
         changedFields,
+        teacherId: resolvedTeacherId,
+        clientSessionId: sessionId,
+        academicSessionId: sessionIdAcademic,
         timestamp: new Date(),
       },
     });
@@ -84,7 +104,7 @@ export async function createAuditLog(data: AuditLogData) {
     // Create notification for result changes (non-bulk operations)
     if (!data.batchId) {
       await createResultChangeNotification({
-        entityType: data.entityType,
+        entityType: data.entityType as any,
         action: data.action,
         userId: data.userId,
         userName: data.userName,
@@ -109,9 +129,29 @@ export async function createAuditLog(data: AuditLogData) {
  */
 export async function logTeacherActivity(data: TeacherActivityData) {
   try {
+    const {
+      sessionId,
+      sessionIdAcademic,
+      teacherFullName,
+      teacherId,
+      ...rest
+    } = data as any;
+
+    let resolvedTeacherId: string | undefined = teacherId;
+    if (teacherId) {
+      const byId = await prisma.teacher.findUnique({ where: { id: teacherId } });
+      if (!byId) {
+        const byStaff = await prisma.teacher.findUnique({ where: { staffNumber: teacherId } });
+        resolvedTeacherId = byStaff?.id;
+      }
+    }
+
     const activity = await prisma.teacherActivityLog.create({
       data: {
-        ...data,
+        ...rest,
+        teacherId: resolvedTeacherId,
+        clientSessionId: sessionId,
+        academicSessionId: sessionIdAcademic,
         timestamp: new Date(),
       },
     });
@@ -461,7 +501,7 @@ async function checkForSuspiciousActivity(data: AuditLogData) {
 export async function createResultApproval(data: {
   entityType: string;
   entityId: string;
-  entityTypeFull: string;
+  entityTypeFull?: string;
   submittedBy: string;
   classId?: number;
   studentId?: string;
@@ -470,9 +510,25 @@ export async function createResultApproval(data: {
   submitterNotes?: string;
 }) {
   try {
+    const mappedEntityType =
+      data.entityType === 'Result' || data.entityType === 'TERM_RESULT'
+        ? 'TERM_RESULT'
+        : data.entityType === 'Report' || data.entityType === 'REPORT'
+          ? 'REPORT'
+          : data.entityType === 'Assessment' || data.entityType === 'ASSESSMENT'
+            ? 'ASSESSMENT'
+            : 'SUBJECT_RESULT';
+
     const approval = await prisma.resultApproval.create({
       data: {
-        ...data,
+        entityType: mappedEntityType as any,
+        entityId: data.entityId,
+        submittedBy: data.submittedBy,
+        classId: data.classId,
+        studentId: data.studentId,
+        termId: data.termId,
+        sessionId: data.sessionIdAcademic,
+        submitterNotes: data.submitterNotes,
         submittedAt: new Date(),
         status: 'PENDING',
       },

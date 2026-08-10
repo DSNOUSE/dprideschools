@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   if (!process.env.DATABASE_URL) {
@@ -13,13 +13,16 @@ export async function GET(
 
   try {
     const { id } = await params;
-    
     const student = await prisma.student.findUnique({
       where: { id },
       include: {
-        class: true,
-        session: true
-      }
+        enrollments: {
+          where: { status: 'ACTIVE' },
+          include: { class: true, session: true },
+          take: 1,
+          orderBy: { enrolledAt: 'desc' },
+        },
+      },
     });
 
     if (!student) {

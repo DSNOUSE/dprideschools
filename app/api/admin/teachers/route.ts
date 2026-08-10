@@ -9,13 +9,11 @@ export const dynamic = 'force-dynamic';
 // GET /api/admin/teachers - Retrieve all teachers
 export async function GET(request: NextRequest) {
   try {
-    // Authentication check
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Role-based access control - only administrators can view teachers
     const roles = (session.user as any)?.roles as string[] | undefined;
     if (!roles?.includes('Administrator')) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
@@ -24,7 +22,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search');
 
-    let whereClause: any = {
+    const whereClause: any = {
       roles: {
         some: {
           role: {
@@ -38,46 +36,28 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       whereClause.OR = [
-        {
-          name: {
-            contains: search,
-            mode: 'insensitive'
-          }
-        },
-        {
-          email: {
-            contains: search,
-            mode: 'insensitive'
-          }
-        },
-        {
-          teacherId: {
-            contains: search,
-            mode: 'insensitive'
-          }
-        }
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { teacher: { staffNumber: { contains: search, mode: 'insensitive' } } },
+        { teacher: { fullName: { contains: search, mode: 'insensitive' } } },
       ];
     }
 
     const teachers = await prisma.user.findMany({
       where: whereClause,
       include: {
-        roles: {
-          include: {
-            role: true
-          }
-        }
+        roles: { include: { role: true } },
+        teacher: true,
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
+      orderBy: { createdAt: 'desc' }
     });
 
     const formattedTeachers = teachers.map(teacher => ({
       id: teacher.id,
       email: teacher.email,
       name: teacher.name,
-      teacherId: teacher.teacherId,
+      teacherId: teacher.teacher?.staffNumber ?? null,
+      teacherRecordId: teacher.teacher?.id ?? null,
       roles: teacher.roles.map(r => r.role.name),
       createdAt: teacher.createdAt.toISOString()
     }));
@@ -99,13 +79,11 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/teachers - Create a new teacher
 export async function POST(request: NextRequest) {
   try {
-    // Authentication check
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Role-based access control - only administrators can create teachers
     const roles = (session.user as any)?.roles as string[] | undefined;
     if (!roles?.includes('Administrator')) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
@@ -114,7 +92,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, name, teacherId, password } = body;
 
-    // Validate required fields
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Email and password are required' },
@@ -122,7 +99,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -131,11 +107,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    });
-
+    const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return NextResponse.json(
         { error: 'A user with this email already exists' },
@@ -143,57 +115,57 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    // Get Teacher role
-    const teacherRole = await prisma.role.findUnique({
-      where: { name: 'Teacher' }
-    });
-
-    if (!teacherRole) {
-      return NextResponse.json(
-        { error: 'Teacher role not found' },
-        { status: 500 }
-      );
+    if (teacherId) {
+      const existingStaff = await prisma.teacher.findUnique({ where: { staffNumber: teacherId } });
+      if (existingStaff) {
+        return NextResponse.json(
+          { error: 'A teacher with this staff number already exists' },
+          { status: 409 }
+        );
+      }
     }
 
-    // Create new teacher
+    const passwordHash = await bcrypt.hash(password, 10);
+    const teacherRole = await prisma.role.findUnique({ where: { name: 'Teacher' } });
+    if (!teacherRole) {
+      return NextResponse.json({ error: 'Teacher role not found' }, { status: 500 });
+    }
+
     const newTeacher = await prisma.user.create({
       data: {
         email,
         name: name || null,
-        teacherId: teacherId || null,
         passwordHash,
         roles: {
+          create: { roleId: teacherRole.id }
+        },
+        teacher: {
           create: {
-            roleId: teacherRole.id
+            fullName: name || email,
+            staffNumber: teacherId || null,
+            isActive: true,
           }
         }
       },
       include: {
-        roles: {
-          include: {
-            role: true
-          }
-        }
+        roles: { include: { role: true } },
+        teacher: true,
       }
     });
 
-    // Create audit log for teacher creation
     const { createAuditLog, extractRequestInfo, extractTeacherInfo } = await import('@/lib/audit/service');
     const requestInfo = extractRequestInfo(request, session);
     const teacherInfo = extractTeacherInfo(session);
 
     await createAuditLog({
-      entityType: 'Result', // Using Result as entity type for teacher creation
+      entityType: 'Result',
       entityId: newTeacher.id,
       action: 'CREATE',
       oldValues: {},
-      newValues: { 
-        email: newTeacher.email, 
-        name: newTeacher.name, 
-        teacherId: newTeacher.teacherId,
+      newValues: {
+        email: newTeacher.email,
+        name: newTeacher.name,
+        teacherId: newTeacher.teacher?.staffNumber,
         role: 'Teacher'
       },
       changedFields: ['email', 'name', 'teacherId', 'role'],
@@ -215,7 +187,8 @@ export async function POST(request: NextRequest) {
         id: newTeacher.id,
         email: newTeacher.email,
         name: newTeacher.name,
-        teacherId: newTeacher.teacherId,
+        teacherId: newTeacher.teacher?.staffNumber ?? null,
+        teacherRecordId: newTeacher.teacher?.id ?? null,
         roles: newTeacher.roles.map(r => r.role.name),
         createdAt: newTeacher.createdAt.toISOString()
       }

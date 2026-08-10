@@ -10,22 +10,32 @@ export async function POST(request: Request) {
   if (!process.env.DATABASE_URL) {
     return NextResponse.json({ error: 'Database not available' }, { status: 503 });
   }
-  
+
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { title, message, recipientType, classId, departmentId, priority } = await request.json();
+  const { title, message, recipientType, classId, priority } = await request.json();
 
-  let parents: Array<any> = [];
+  let parents: Array<{ id: string; email: string }> = [];
   if (recipientType === 'ALL_PARENTS') {
-    parents = await prisma.parent.findMany();
+    parents = await prisma.parent.findMany({ select: { id: true, email: true } });
   } else if (recipientType === 'CLASS_PARENTS') {
     parents = await prisma.parent.findMany({
-      where: { students: { some: { student: { classId: Number(classId) } } } },
-    });
-  } else if (recipientType === 'DEPARTMENT_PARENTS') {
-    parents = await prisma.parent.findMany({
-      where: { students: { some: { student: { class: { departmentId: Number(departmentId) } } } } },
+      where: {
+        students: {
+          some: {
+            student: {
+              enrollments: {
+                some: {
+                  classId: Number(classId),
+                  status: 'ACTIVE',
+                },
+              },
+            },
+          },
+        },
+      },
+      select: { id: true, email: true },
     });
   }
 
@@ -36,11 +46,10 @@ export async function POST(request: Request) {
       type: 'ANNOUNCEMENT',
       recipientType,
       classId: classId ? Number(classId) : null,
-      departmentId: departmentId ? Number(departmentId) : null,
       senderId: (session.user as any).id,
       priority: (priority as any) ?? 'NORMAL',
       recipients: {
-        create: parents.map((p: any) => ({ parentId: p.id })),
+        create: parents.map((p) => ({ parentId: p.id })),
       },
     },
   });

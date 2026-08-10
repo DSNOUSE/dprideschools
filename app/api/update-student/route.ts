@@ -1,7 +1,16 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { Sex } from '@prisma/client';
 
 export const dynamic = 'force-dynamic';
+
+function toSex(value: unknown): Sex | undefined {
+  if (!value) return undefined;
+  const v = String(value).toUpperCase();
+  if (v === 'M' || v === 'MALE') return 'MALE';
+  if (v === 'F' || v === 'FEMALE') return 'FEMALE';
+  return undefined;
+}
 
 export async function POST(request: Request) {
   if (!process.env.DATABASE_URL) {
@@ -11,58 +20,82 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { admissionNo, newClassId, sex } = body;
-
     if (!admissionNo) {
       return NextResponse.json({ error: 'Admission number required' }, { status: 400 });
     }
 
-    // Find student
     const student = await prisma.student.findFirst({
       where: { admissionNo },
-      include: { class: true }
+      include: {
+        enrollments: {
+          where: { status: 'ACTIVE' },
+          include: { class: true, session: true },
+          take: 1,
+          orderBy: { enrolledAt: 'desc' },
+        },
+      },
     });
 
     if (!student) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 });
     }
 
-    console.log('Found student:', {
-      id: student.id,
-      admissionNo: student.admissionNo,
-      name: `${student.firstName} ${student.lastName}`,
-      currentClass: student.class?.name,
-      currentSex: student.sex
-    });
+    const sexValue = toSex(sex);
+    if (sexValue) {
+      await prisma.student.update({
+        where: { id: student.id },
+        data: { sex: sexValue },
+      });
+    }
 
-    // Update student
-    const updateData: any = {};
-    if (newClassId) updateData.classId = Number(newClassId);
-    if (sex) updateData.sex = sex;
+    if (newClassId) {
+      const activeSession =
+        student.enrollments[0]?.sessionId ||
+        (await prisma.session.findFirst({ where: { isActive: true }, orderBy: { id: 'desc' } }))?.id;
 
-    const updatedStudent = await prisma.student.update({
+      if (activeSession) {
+        await prisma.enrollment.upsert({
+          where: {
+            studentId_sessionId: {
+              studentId: student.id,
+              sessionId: activeSession,
+            },
+          },
+          update: {
+            classId: Number(newClassId),
+            status: 'ACTIVE',
+          },
+          create: {
+            studentId: student.id,
+            sessionId: activeSession,
+            classId: Number(newClassId),
+            status: 'ACTIVE',
+          },
+        });
+      }
+    }
+
+    const updatedStudent = await prisma.student.findUnique({
       where: { id: student.id },
-      data: updateData,
-      include: { class: true }
-    });
-
-    console.log('Updated student:', {
-      id: updatedStudent.id,
-      admissionNo: updatedStudent.admissionNo,
-      name: `${updatedStudent.firstName} ${updatedStudent.lastName}`,
-      newClass: updatedStudent.class?.name,
-      newSex: updatedStudent.sex
+      include: {
+        enrollments: {
+          where: { status: 'ACTIVE' },
+          include: { class: true, session: true },
+          take: 1,
+          orderBy: { enrolledAt: 'desc' },
+        },
+      },
     });
 
     return NextResponse.json({
       message: 'Student updated successfully',
-      student: updatedStudent
+      student: updatedStudent,
     });
-
   } catch (error) {
     console.error('Error updating student:', error);
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Failed to update student',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
