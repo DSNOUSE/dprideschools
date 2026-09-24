@@ -148,7 +148,7 @@ async function insertGrades(studentId, termId, results, label) {
         maxScore: 100,
         percentage: result.average,
         grade: result.grade,
-        status: 'DRAFT',
+        status: 'APPROVED',
       },
       create: {
         studentId,
@@ -160,7 +160,7 @@ async function insertGrades(studentId, termId, results, label) {
         maxScore: 100,
         percentage: result.average,
         grade: result.grade,
-        status: 'DRAFT',
+        status: 'APPROVED',
       },
     });
 
@@ -192,7 +192,7 @@ async function updateTermResult(studentId, termId) {
       average,
       totalScore,
       maxScore,
-      status: 'DRAFT',
+      status: 'APPROVED',
     },
     create: {
       studentId,
@@ -202,7 +202,7 @@ async function updateTermResult(studentId, termId) {
       average,
       totalScore,
       maxScore,
-      status: 'DRAFT',
+      status: 'APPROVED',
     },
   });
 
@@ -246,3 +246,4 @@ async function main() {
 }
 
 main();
+
