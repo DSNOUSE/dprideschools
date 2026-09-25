@@ -42,7 +42,7 @@ export default function GradeManagementPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [classes, setClasses] = useState([]);
   const [sessions, setSessions] = useState([]);
-  const [terms, setTerms] = useState([]);
+  const [terms, setTerms] = useState<any[]>([]);
   const [grades, setGrades] = useState<GradeEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -59,6 +59,17 @@ export default function GradeManagementPage() {
   useEffect(() => {
     fetchDropdownData();
   }, []);
+
+  // Terms belong to a session, so reload them whenever the session changes.
+  useEffect(() => {
+    if (selectedSession) {
+      setSelectedTerm('');
+      fetchTermsForSession(selectedSession);
+    } else {
+      setTerms([]);
+      setSelectedTerm('');
+    }
+  }, [selectedSession]);
 
   useEffect(() => {
     if (selectedClass && selectedSession && selectedTerm) {
@@ -89,17 +100,27 @@ export default function GradeManagementPage() {
 
   const fetchDropdownData = async () => {
     try {
-      const [classesRes, sessionsRes, termsRes] = await Promise.all([
+      const [classesRes, sessionsRes] = await Promise.all([
         fetch('/api/academics/classes'),
         fetch('/api/academics/sessions'),
-        fetch('/api/academics/terms')
       ]);
 
       if (classesRes.ok) setClasses(await classesRes.json());
       if (sessionsRes.ok) setSessions(await sessionsRes.json());
-      if (termsRes.ok) setTerms(await termsRes.json());
     } catch (err) {
       console.error('Failed to fetch dropdown data:', err);
+    }
+  };
+
+  // Load the terms that belong to the selected session.
+  const fetchTermsForSession = async (sessionId: string) => {
+    try {
+      const res = await fetch(`/api/academics/terms?sessionId=${encodeURIComponent(sessionId)}`);
+      const data = await res.json();
+      setTerms(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Failed to fetch terms:', err);
+      setTerms([]);
     }
   };
 

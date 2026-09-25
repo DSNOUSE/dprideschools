@@ -114,19 +114,39 @@ export default function ResultsPage() {
     }
   }, [searchParams, terms, studentId, selectedClass, selectedSession]);
 
+  // Terms belong to a session, so reload them whenever the session changes.
+  useEffect(() => {
+    if (selectedSession) {
+      setSelectedTerm('');
+      fetchTermsForSession(selectedSession);
+    } else {
+      setTerms([]);
+      setSelectedTerm('');
+    }
+  }, [selectedSession]);
+
   const fetchDropdownData = async () => {
     try {
-      const [classesRes, sessionsRes, termsRes] = await Promise.all([
+      const [classesRes, sessionsRes] = await Promise.all([
         fetch('/api/academics/classes'),
         fetch('/api/academics/sessions'),
-        fetch('/api/academics/terms')
       ]);
 
       if (classesRes.ok) setClasses(await classesRes.json());
       if (sessionsRes.ok) setSessions(await sessionsRes.json());
-      if (termsRes.ok) setTerms(await termsRes.json());
     } catch {
       // Dropdown fetch failures are non-critical; user sees empty selects
+    }
+  };
+
+  // Load the terms that belong to the selected session.
+  const fetchTermsForSession = async (sessionId: string) => {
+    try {
+      const res = await fetch(`/api/academics/terms?sessionId=${encodeURIComponent(sessionId)}`);
+      const data = await res.json();
+      setTerms(Array.isArray(data) ? data : []);
+    } catch {
+      setTerms([]);
     }
   };
 

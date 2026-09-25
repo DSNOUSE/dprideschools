@@ -481,22 +481,6 @@ SELECT gen_random_uuid()::text, st.id, st."sessionId", st."classId", 'ACTIVE', s
 FROM "Student" st
 ON CONFLICT ("studentId", "sessionId") DO NOTHING;
 
--- Teacher subject assignments from grade teacher history
-INSERT INTO "TeacherSubject" ("teacherId", "offeringId")
-SELECT DISTINCT t.id, so.id
-FROM "Grade" g
-JOIN "Teacher" t ON t."userId" = g."teacherId"
-JOIN "Subject" s ON s.id = g."subjectId"
-JOIN (
-  SELECT name, MIN(id) AS keep_id FROM "Subject" GROUP BY name
-) c ON c.name = s.name
-JOIN "SubjectOffering" so
-  ON so."subjectId" = c.keep_id
- AND so."classId" = g."classId"
- AND so."sessionId" = g."sessionId"
-WHERE g."teacherId" IS NOT NULL
-ON CONFLICT ("teacherId", "offeringId") DO NOTHING;
-
 /* =========================================================
    5. BACKFILL ASSESSMENTS + SCORES + RESULTS
    ========================================================= */
@@ -506,21 +490,7 @@ WITH pairs AS (
   SELECT DISTINCT
     so.id AS offering_id,
     g."termId" AS term_id,
-    (
-      SELECT t.id
-      FROM "Grade" g2
-      JOIN "Teacher" t ON t."userId" = g2."teacherId"
-      JOIN "Subject" s2 ON s2.id = g2."subjectId"
-      JOIN (SELECT name, MIN(id) keep_id FROM "Subject" GROUP BY name) c2 ON c2.name = s2.name
-      WHERE g2."classId" = g."classId"
-        AND g2."sessionId" = g."sessionId"
-        AND g2."termId" = g."termId"
-        AND c2.keep_id = so."subjectId"
-        AND g2."teacherId" IS NOT NULL
-      GROUP BY t.id
-      ORDER BY count(*) DESC
-      LIMIT 1
-    ) AS teacher_id
+    NULL::text AS teacher_id
   FROM "Grade" g
   JOIN "Subject" s ON s.id = g."subjectId"
   JOIN (SELECT name, MIN(id) keep_id FROM "Subject" GROUP BY name) c ON c.name = s.name
@@ -594,14 +564,13 @@ SELECT
     ELSE 'F'
   END,
   'PUBLISHED',
-  t.id,
+  NULL,
   g."createdAt",
   g."updatedAt",
   g."updatedAt"
 FROM "Grade" g
 JOIN "Subject" s ON s.id = g."subjectId"
 JOIN (SELECT name, MIN(id) keep_id FROM "Subject" GROUP BY name) c ON c.name = s.name
-LEFT JOIN "Teacher" t ON t."userId" = g."teacherId"
 ON CONFLICT ("studentId", "subjectId", "termId") DO NOTHING;
 
 -- Term results from Result table

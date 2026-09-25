@@ -37,28 +37,45 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
     throw { status: 404, error: 'Student not found or no results available for this term/session', code: 'STUDENT_NOT_FOUND' };
   }
 
-  const activeSession = await prisma.session.findFirst({
-    where: { isActive: true },
-    orderBy: { id: 'desc' },
-  });
-
-  const resolvedSessionId = input.sessionId ?? activeSession?.id;
-  if (!resolvedSessionId) {
-    throw { status: 400, error: 'No academic sessions are configured', code: 'NO_SESSIONS' };
+  if (!input.sessionId) {
+    // Guard: only meaningful when no explicit session was requested — make
+    // sure the system actually has an active session configured at all.
+    const activeSession = await prisma.session.findFirst({
+      where: { isActive: true },
+      orderBy: { id: 'desc' },
+    });
+    if (!activeSession) {
+      throw { status: 400, error: 'No academic sessions are configured', code: 'NO_SESSIONS' };
+    }
   }
 
-  const enrollment = await prisma.enrollment.findFirst({
-    where: {
-      studentId: student.id,
-      sessionId: resolvedSessionId,
-      ...(input.classId ? { classId: input.classId } : {}),
-    },
-    include: {
-      class: true,
-      session: true,
-    },
-    orderBy: { enrolledAt: 'desc' },
-  });
+  let enrollment;
+
+  if (input.sessionId) {
+    // Caller asked for a specific session — honour it exactly.
+    enrollment = await prisma.enrollment.findFirst({
+      where: {
+        studentId: student.id,
+        sessionId: input.sessionId,
+        ...(input.classId ? { classId: input.classId } : {}),
+      },
+      include: { class: true, session: true },
+      orderBy: { enrolledAt: 'desc' },
+    });
+  } else {
+    // No session specified — use the student's own most recent enrollment
+    // rather than forcing "the active session" id, since more than one
+    // session can be flagged active and the student may not have an
+    // enrollment record for whichever one happens to sort first.
+    enrollment = await prisma.enrollment.findFirst({
+      where: {
+        studentId: student.id,
+        ...(input.classId ? { classId: input.classId } : {}),
+      },
+      include: { class: true, session: true },
+      orderBy: [{ session: { isActive: 'desc' } }, { enrolledAt: 'desc' }],
+    });
+  }
 
   if (!enrollment) {
     throw {
@@ -72,6 +89,7 @@ export async function getStudentResult(input: ServiceInput): Promise<ResultData>
     };
   }
 
+  const resolvedSessionId = enrollment.sessionId;
   const resolvedClassId = enrollment.classId;
 
   let resolvedTermId = input.termId ?? null;

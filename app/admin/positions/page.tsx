@@ -53,15 +53,20 @@ export default function PositionsManagementPage() {
   const [classSummaries, setClassSummaries] = useState<ClassPositionSummary[]>([]);
   const [selectedClass, setSelectedClass] = useState<number | null>(null);
 
-  // Fetch terms
-  const fetchTerms = async () => {
+  // Fetch terms (scoped to a session when provided)
+  const fetchTerms = async (sessionId?: string) => {
     try {
-      const response = await fetch('/api/academics/terms');
+      const url = sessionId
+        ? `/api/academics/terms?sessionId=${encodeURIComponent(sessionId)}`
+        : '/api/academics/terms';
+      const response = await fetch(url);
       const data = await response.json();
       if (Array.isArray(data)) {
         setTerms(data);
-        if (data.length > 0 && !selectedTerm) {
+        if (data.length > 0) {
           setSelectedTerm(data[0].id.toString());
+        } else {
+          setSelectedTerm('');
         }
       }
     } catch (error) {
@@ -190,11 +195,17 @@ export default function PositionsManagementPage() {
     }
   }, [status, session, router]);
 
-  // Fetch initial data
+  // Fetch sessions first; terms are loaded per selected session below
   useEffect(() => {
-    fetchTerms();
     fetchSessions();
   }, []);
+
+  // Reload terms whenever the selected session changes
+  useEffect(() => {
+    if (selectedSession) {
+      fetchTerms(selectedSession);
+    }
+  }, [selectedSession]);
 
   // Fetch summaries when term/session changes
   useEffect(() => {

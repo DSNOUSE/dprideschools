@@ -34,7 +34,7 @@ async function main() {
   // Ensure term
   let term = await prisma.term.findFirst();
   if (!term) {
-    term = await prisma.term.create({ data: { name: 'Term 1' } });
+    term = await prisma.term.create({ data: { name: 'First Term' } });
   }
 
   // Ensure a student

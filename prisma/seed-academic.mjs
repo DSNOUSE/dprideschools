@@ -154,42 +154,48 @@ async function main() {
 
   console.log('✓ Subjects created');
 
-  // 4. Create Terms
-  const terms = await Promise.all([
-    prisma.term.upsert({
-      where: { name: 'First Term' },
-      update: {},
-      create: { name: 'First Term' }
-    }),
-    prisma.term.upsert({
-      where: { name: 'Second Term' },
-      update: {},
-      create: { name: 'Second Term' }
-    }),
-    prisma.term.upsert({
-      where: { name: 'Third Term' },
-      update: {},
-      create: { name: 'Third Term' }
-    })
-  ]);
+  // 4. Create Sessions (one per academic year), each with its own terms
+  const sessionSeeds = [
+    { name: '2024/2025', isActive: false },
+    { name: '2025/2026', isActive: false },
+    { name: '2026/2027', isActive: true }
+  ];
+  const termSeeds = [
+    { name: 'First Term', order: 1 },
+    { name: 'Second Term', order: 2 },
+    { name: 'Third Term', order: 3 }
+  ];
 
-  console.log('✓ Terms created');
+  const sessions = [];
+  const termsBySession = new Map();
+  for (const sessionSeed of sessionSeeds) {
+    const session = await prisma.session.upsert({
+      where: { name: sessionSeed.name },
+      update: { isActive: sessionSeed.isActive },
+      create: sessionSeed
+    });
+    const sessionTerms = [];
+    for (const termSeed of termSeeds) {
+      const term = await prisma.term.upsert({
+        where: { sessionId_name: { sessionId: session.id, name: termSeed.name } },
+        update: { order: termSeed.order },
+        create: {
+          sessionId: session.id,
+          name: termSeed.name,
+          order: termSeed.order,
+          isActive: false
+        }
+      });
+      sessionTerms.push(term);
+    }
+    sessions.push(session);
+    termsBySession.set(session.name, sessionTerms);
+  }
 
-  // 5. Create Sessions
-  const sessions = await Promise.all([
-    prisma.session.upsert({
-      where: { name: '2024/2025' },
-      update: { isActive: false },
-      create: { name: '2024/2025', isActive: false }
-    }),
-    prisma.session.upsert({
-      where: { name: '2025/2026' },
-      update: { isActive: true },
-      create: { name: '2025/2026', isActive: true }
-    })
-  ]);
+  // Sample results below belong to the 2025/2026 session.
+  const terms = termsBySession.get('2025/2026');
 
-  console.log('✓ Sessions created');
+  console.log('✓ Sessions and terms created');
 
   // 6. Create Grade Scales
   const gradeScales = await Promise.all([

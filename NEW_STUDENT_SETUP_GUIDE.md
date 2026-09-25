@@ -177,7 +177,7 @@ npm run dev
 10. **YEAR 8**
     - Ali Mohammed B.M (Male)
     - Hanan Auwal (Female)
-    - Hanifa Jibrin Usman (Female)
+    - Hanifa Usman Jibrin (Female)
     - Nana Aisha Abubakar (Female)
     - Umm'suleim Ibrahim (Female)
 

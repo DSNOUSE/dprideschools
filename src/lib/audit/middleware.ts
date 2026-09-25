@@ -107,18 +107,46 @@ export function withActivityTracking(
 }
 
 /**
- * Track login activity specifically
+ * Track login activity specifically.
+ *
+ * `teacher_activity_logs.userId` is a required foreign key to the `User`
+ * table. Only application users (admins/teachers) have a `User` row —
+ * students and parents are separate models — so we can only persist this
+ * log when we have a real `User.id`. Otherwise we just log to the console
+ * to avoid a foreign key violation on every student/parent login attempt.
  */
-export async function trackLoginActivity(request: NextRequest, success: boolean, userEmail?: string, error?: string) {
+export async function trackLoginActivity(
+  request: NextRequest,
+  success: boolean,
+  userEmail?: string,
+  error?: string,
+  userId?: string,
+) {
   try {
     const requestInfo = extractRequestInfo(request, { sessionToken: 'login_attempt' });
-    
-    // For login attempts, we might not have a session yet, so we'll create a special log entry
     const { prisma } = await import('@/lib/prisma');
-    
+
+    let resolvedUserId = userId;
+    if (!resolvedUserId && userEmail) {
+      const user = await prisma.user.findUnique({
+        where: { email: userEmail.toLowerCase() },
+        select: { id: true },
+      });
+      resolvedUserId = user?.id;
+    }
+
+    if (!resolvedUserId) {
+      // No matching User row (student/parent login, or user not found) —
+      // skip the DB write since the FK constraint can't be satisfied.
+      console.log(
+        `Login activity (${success ? 'success' : 'failed'}) for ${userEmail ?? 'unknown'}${error ? `: ${error}` : ''}`,
+      );
+      return;
+    }
+
     await prisma.teacherActivityLog.create({
       data: {
-        userId: 'system', // Special user ID for login attempts
+        userId: resolvedUserId,
         action: success ? 'LOGIN_SUCCESS' : 'LOGIN_FAILED',
         resourceType: 'AUTHENTICATION',
         details: {

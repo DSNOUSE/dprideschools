@@ -60,7 +60,7 @@ const allStudentsData = [
   // YEAR 8
   { fullName: 'Ali Mohammed B.M', gender: 'Male', class: 'YEAR 8', department: 'Secondary' },
   { fullName: 'Hanan Auwal', gender: 'Female', class: 'YEAR 8', department: 'Secondary' },
-  { fullName: 'Hanifa Jibrin Usman', gender: 'Female', class: 'YEAR 8', department: 'Secondary' },
+  { fullName: 'Hanifa Usman Jibrin', gender: 'Female', class: 'YEAR 8', department: 'Secondary' },
   { fullName: 'Nana Aisha Abubakar', gender: 'Female', class: 'YEAR 8', department: 'Secondary' },
   { fullName: 'Umm\'suleim Ibrahim', gender: 'Female', class: 'YEAR 8', department: 'Secondary' },
   

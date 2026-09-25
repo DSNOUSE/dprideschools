@@ -65,7 +65,7 @@ const newStudentsData = {
   'YEAR 8': [
     { fullName: 'Ali Mohammed B.M', gender: 'Male' },
     { fullName: 'Hanan Auwal', gender: 'Female' },
-    { fullName: 'Hanifa Jibrin Usman', gender: 'Female' },
+    { fullName: 'Hanifa Usman Jibrin', gender: 'Female' },
     { fullName: 'Nana Aisha Abubakar', gender: 'Female' },
     { fullName: 'Umm\'suleim Ibrahim', gender: 'Female' }
   ],

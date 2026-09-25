@@ -36,9 +36,15 @@ export default function SignInPage() {
         const admissionNo = (session.user as any)?.admissionNo;
         
         if (admissionNo) {
-          // Smart redirect to dedicated student results page
+          // Smart redirect to dedicated student results page, carrying the
+          // student's class/session so the portal can preselect them.
           console.log('Smart redirect to student results page');
-          router.push(`/student-results?student=${admissionNo}`);
+          const classId = (session.user as any)?.classId;
+          const sessionId = (session.user as any)?.sessionId;
+          const params = new URLSearchParams({ student: admissionNo });
+          if (classId) params.set('class', String(classId));
+          if (sessionId) params.set('session', String(sessionId));
+          router.push(`/student-results?${params.toString()}`);
         } else {
           // Fallback to general results page
           console.log('Fallback to general results page - missing admission number');

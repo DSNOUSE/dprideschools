@@ -77,7 +77,7 @@ export const unifiedCredentialsProvider = Credentials({
             console.log('✅ Authenticated admin user:', appUser.email, 'Roles:', roles);
             
             // Track successful login
-            await trackLoginActivity(mockRequest, true, appUser.email);
+            await trackLoginActivity(mockRequest, true, appUser.email, undefined, appUser.id);
             
             const result = {
               id: appUser.id.toString(),

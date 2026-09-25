@@ -16,7 +16,7 @@ const extractedData = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'st
 // Name mapping (same as in update-admission-numbers.js)
 const nameMapping = {
   'Nanga Aisha Abubakar': 'Nana Aisha Abubakar',
-  'Hanifa Jibrin Usman': 'Hanifa Jibrin Usman',
+  'Hanifa Jibrin Usman': 'Hanifa Usman Jibrin',
   'Ali Muhammad Usman': 'Ali Mohammed B.M',
   'Ummalsalma Auwwal Usman': 'Hanan Auwal',
   'Ummulsulaim Ibrahim': "Umm'suleim Ibrahim",

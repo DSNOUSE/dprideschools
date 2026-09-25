@@ -24,10 +24,12 @@ export default function StudentView({ params }: Props) {
         const { id } = await params;
         
         // Fetch student data
+        let studentSessionId: number | undefined;
         const studentRes = await fetch(`/api/academics/students/${id}`);
         if (studentRes.ok) {
           const studentData = await studentRes.json();
           setStudent(studentData);
+          studentSessionId = studentData?.sessionId;
         }
 
         // Fetch reports
@@ -37,8 +39,11 @@ export default function StudentView({ params }: Props) {
           setReports(reportsData);
         }
 
-        // Fetch terms
-        const termsRes = await fetch('/api/academics/terms');
+        // Fetch terms for the student's own session
+        const termsUrl = studentSessionId
+          ? `/api/academics/terms?sessionId=${studentSessionId}`
+          : '/api/academics/terms';
+        const termsRes = await fetch(termsUrl);
         if (termsRes.ok) {
           const termsData = await termsRes.json();
           setTerms(termsData);
@@ -100,7 +105,15 @@ export default function StudentView({ params }: Props) {
       <div className="bg-white rounded-lg p-6 shadow">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">{student.lastName} {student.firstName}</h1>
-          <div className="space-x-2">
+          <div className="flex gap-2 flex-wrap">
+            <a
+              href={`/api/admin/results/pdf?studentId=${encodeURIComponent(student.admissionNo)}`}
+              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Download PDF
+            </a>
             <Link href={`/admin/students/${student.id}/reports/new`} className="px-3 py-1 bg-blue-600 text-white rounded">New Report</Link>
           </div>
         </div>

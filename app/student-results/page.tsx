@@ -23,6 +23,9 @@ export default function StudentResultsPage() {
   const [result, setResult] = useState<ResultData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [emptyForSelection, setEmptyForSelection] = useState(false);
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [selectedSession, setSelectedSession] = useState<string>('');
   const [terms, setTerms] = useState<any[]>([]);
   const [selectedTerm, setSelectedTerm] = useState<string>('');
 
@@ -35,42 +38,105 @@ export default function StudentResultsPage() {
 
   // Grade calculation functions imported from @/lib/results
 
-  // Fetch available terms
-  const fetchTerms = async () => {
+  // Fetch every academic session so the student can switch between years.
+  const fetchSessions = async () => {
     try {
-      const response = await fetch('/api/academics/terms');
+      const response = await fetch('/api/academics/sessions');
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        // Newest academic year first for the selector (names are "YYYY/YYYY").
+        const ordered = [...data].sort((a: any, b: any) =>
+          String(b.name).localeCompare(String(a.name))
+        );
+        setSessions(ordered);
+        // Prefer the session the student signed in with, then the active one,
+        // then the newest session available.
+        const fromQuery =
+          querySessionId && ordered.some((s: any) => s.id.toString() === querySessionId)
+            ? querySessionId
+            : '';
+        const initial =
+          fromQuery ||
+          ordered.find((s: any) => s.isActive)?.id?.toString() ||
+          ordered[0].id.toString();
+        setSelectedSession(initial);
+      } else {
+        setLoading(false);
+        setError('No academic sessions are configured yet.');
+      }
+    } catch (error) {
+      console.error('Error fetching sessions:', error);
+      setLoading(false);
+      setError('Unable to load academic sessions.');
+    }
+  };
+
+  // Fetch the terms that belong to the selected session.
+  const fetchTerms = async (sessionId: string) => {
+    try {
+      const url = sessionId
+        ? `/api/academics/terms?sessionId=${encodeURIComponent(sessionId)}`
+        : '/api/academics/terms';
+      const response = await fetch(url);
       const data = await response.json();
       if (Array.isArray(data)) {
         setTerms(data);
-        // Set default term to first term if none selected
-        if (!selectedTerm && data.length > 0) {
-          setSelectedTerm(data[0].id.toString());
+        if (data.length === 0) {
+          // No terms configured for this session — show the empty state
+          // instead of spinning forever.
+          setSelectedTerm('');
+          setResult(null);
+          setEmptyForSelection(true);
+          setLoading(false);
+          return;
         }
+        const fromQuery =
+          queryTermId && data.some((t: any) => t.id.toString() === queryTermId)
+            ? queryTermId
+            : '';
+        setSelectedTerm(fromQuery || data[0].id.toString());
       }
     } catch (error) {
       console.error('Error fetching terms:', error);
     }
   };
 
-  // Fetch student results
+  // Fetch student results for the selected session + term
   const fetchStudentResults = async (admissionNo: string) => {
     try {
       setLoading(true);
       setError('');
+      setEmptyForSelection(false);
 
       const res = await checkResult({
         studentId: admissionNo,
         classId: queryClassId,
-        sessionId: querySessionId,
+        sessionId: selectedSession || querySessionId,
         termId: selectedTerm || queryTermId,
       });
 
       if (res.ok) {
         setResult(res.data);
         setError('');
+        setEmptyForSelection(false);
       } else {
-        setError(res.error);
-        setResult(null);
+        // Not being enrolled in the chosen session simply means "nothing to
+        // show for this year" — render an empty state instead of an error.
+        const missingForSelection = [
+          'SESSION_MISMATCH',
+          'CLASS_MISMATCH',
+          'ENROLLMENT_NOT_FOUND',
+        ].includes(res.code ?? '');
+
+        if (missingForSelection) {
+          setResult(null);
+          setError('');
+          setEmptyForSelection(true);
+        } else {
+          setError(res.error);
+          setResult(null);
+          setEmptyForSelection(false);
+        }
       }
     } finally {
       setLoading(false);
@@ -88,24 +154,26 @@ export default function StudentResultsPage() {
     router.push('/signin');
   };
 
-  // Auto-fetch results if student admission number is available
+  // Load the academic sessions once the user is authenticated
   useEffect(() => {
-    if (studentAdmissionNo) {
+    if (status === 'authenticated') {
+      fetchSessions();
+    }
+  }, [status]);
+
+  // Whenever the selected session changes, load that session's terms
+  useEffect(() => {
+    if (selectedSession) {
+      fetchTerms(selectedSession);
+    }
+  }, [selectedSession]);
+
+  // Auto-fetch results whenever the student, session or term changes
+  useEffect(() => {
+    if (studentAdmissionNo && selectedSession && selectedTerm) {
       fetchStudentResults(studentAdmissionNo);
     }
-  }, [studentAdmissionNo, selectedTerm]);
-
-  // Fetch terms on component mount
-  useEffect(() => {
-    fetchTerms();
-  }, []);
-
-  // Set initial selected term from URL params
-  useEffect(() => {
-    if (queryTermId && !selectedTerm) {
-      setSelectedTerm(queryTermId);
-    }
-  }, [queryTermId, selectedTerm]);
+  }, [studentAdmissionNo, selectedSession, selectedTerm]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -153,7 +221,93 @@ export default function StudentResultsPage() {
     );
   }
 
+  // Session + term selectors, shared by the results view and the empty state.
+  const controls = (
+    <div className="flex flex-wrap items-center gap-3 md:gap-4">
+      {sessions.length > 0 && (
+        <div className="flex items-center gap-2">
+          <label htmlFor="session-select" className="text-sm font-medium text-[#003366]">
+            Select Session:
+          </label>
+          <select
+            id="session-select"
+            value={selectedSession}
+            onChange={(e) => setSelectedSession(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            {sessions.map((s) => (
+              <option key={s.id} value={s.id.toString()}>
+                {s.name}
+                {s.isActive ? ' (Current)' : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {terms.length > 0 && (
+        <div className="flex items-center gap-2">
+          <label htmlFor="term-select" className="text-sm font-medium text-[#003366]">
+            Select Term:
+          </label>
+          <select
+            id="term-select"
+            value={selectedTerm}
+            onChange={(e) => setSelectedTerm(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            {terms.map((term) => (
+              <option key={term.id} value={term.id.toString()}>
+                {term.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+    </div>
+  );
+
   if (!result) {
+    if (emptyForSelection) {
+      return (
+        <div className="min-h-screen bg-gray-50">
+          <div className="bg-white shadow-sm print:hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between py-2 md:py-4 gap-4">
+                <h1 className="text-lg md:text-2xl font-bold text-[#003366] truncate">
+                  Student Results
+                </h1>
+                {controls}
+              </div>
+            </div>
+          </div>
+          <Container className="py-12">
+            <div className="max-w-lg mx-auto bg-white rounded-xl shadow p-8 text-center">
+              <TrendingUp sx={{ fontSize: 56, color: '#9ca3af', marginBottom: 16 }} />
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                No results for this session and term
+              </h2>
+              <p className="text-gray-600 mb-6">
+                There is nothing published for the selected session and term. Use the
+                selectors above to view a different academic year.
+              </p>
+              <div className="flex justify-center gap-3">
+                <Button
+                  onClick={() => studentAdmissionNo && fetchStudentResults(studentAdmissionNo)}
+                  variant="blue-pill"
+                >
+                  Refresh
+                </Button>
+                <Button onClick={handleLogout} variant="red-pill">
+                  Logout
+                </Button>
+              </div>
+            </div>
+          </Container>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -172,26 +326,8 @@ export default function StudentResultsPage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between py-2 md:py-4 gap-4">
             <h1 className="text-lg md:text-2xl font-bold text-[#003366] truncate">{formatStudentName(result.student.firstName, result.student.middleName, result.student.lastName)}'s Results</h1>
             
-            {/* Term Selector */}
-            {terms.length > 0 && (
-              <div className="flex items-center gap-2">
-                <label htmlFor="term-select" className="text-sm font-medium text-[#003366]">
-                  Select Term:
-                </label>
-                <select
-                  id="term-select"
-                  value={selectedTerm}
-                  onChange={(e) => setSelectedTerm(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {terms.map((term) => (
-                    <option key={term.id} value={term.id.toString()}>
-                      {term.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+            {/* Session + Term Selector */}
+            {controls}
           </div>
         </div>
       </div>

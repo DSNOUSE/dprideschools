@@ -7,7 +7,7 @@ const jsonData = JSON.parse(fs.readFileSync('student-admission-data.json', 'utf8
 // User's provided list (corrected format)
 const userList = [
   { sn: 1, name: "Nana Aisha Abubakar", class: "YR 8", reg: "DPS35417", gender: "F" },
-  { sn: 2, name: "Hanifa Jibrin Usman", class: "YR 8", reg: "DPS39419", gender: "F" },
+  { sn: 2, name: "Hanifa Usman Jibrin", class: "YR 8", reg: "DPS2026034", gender: "F" },
   { sn: 3, name: "Ali Mohammed BMM", class: "YR 8", reg: "DPS45522", gender: "M" },
   { sn: 4, name: "Ummusalma Auwal Usman", class: "YR 8", reg: "DPS32816", gender: "F" },
   { sn: 5, name: "Ummusuleim Ibrahim", class: "YR 8", reg: "DPS33316", gender: "F" },

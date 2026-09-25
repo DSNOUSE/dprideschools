@@ -33,7 +33,7 @@ const prisma = new PrismaClient({ adapter });
 // Maps from corrected names in JSON to actual names in database
 const nameMapping = {
   'Nana Aisha Abubakar': 'Nana Aisha Abubakar',
-  'Hanifa Jibrin Usman': 'Hanifa Jibrin Usman',
+  'Hanifa Jibrin Usman': 'Hanifa Usman Jibrin',
   'Ali Mohammed BMM': 'Ali Mohammed B.M',
   'Ummusalma Auwal Usman': 'Hanan Auwal',
   'Ummusuleim Ibrahim': "Umm'suleim Ibrahim",
