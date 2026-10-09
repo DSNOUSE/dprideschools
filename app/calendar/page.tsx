@@ -8,7 +8,7 @@ interface CalendarEvent {
   id: string;
   title: string;
   date: string;
-  type: 'academic' | 'special_event' | 'holiday' | 'sports' | 'arts' | 'parent_meeting';
+  type: 'academic' | 'special_event' | 'holiday' | 'sports' | 'arts' | 'parent_meeting' | 'exam';
   description?: string;
   time?: string;
   location?: string;
@@ -22,420 +22,638 @@ interface Term {
 }
 
 const CalendarPage: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 1, 26)); // February 2026
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 9, 15)); // October 2026
   const [viewMode, setViewMode] = useState<'month' | 'list'>('month');
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
 
-  // Sample events for Q1 2026 based on the provided calendar
+  // Events for Q1 2026/2027 (September - December 2026)
   const events: CalendarEvent[] = [
-    // January 2026
+    // September 2026
     {
-      id: 'jan6',
-      title: 'Resumption Academic',
-      date: '2026-01-06',
+      id: 'sep7',
+      title: 'RESUMPTION',
+      date: '2026-09-07',
       type: 'academic',
-      description: 'Students resume for Q1 2026'
+      description: 'Students resume for Q1 2026/2027'
     },
     {
-      id: 'jan12',
-      title: 'Academic Activities',
-      date: '2026-01-12',
+      id: 'sep8',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-08',
       type: 'academic'
     },
     {
-      id: 'jan13',
-      title: 'Academic Activities',
-      date: '2026-01-13',
+      id: 'sep9',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-09',
       type: 'academic'
     },
     {
-      id: 'jan17',
-      title: 'Year 9 Extra Lessons - Maths/NVE',
-      date: '2026-01-17',
+      id: 'sep10',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-10',
+      type: 'academic'
+    },
+    {
+      id: 'sep11',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-11',
+      type: 'academic'
+    },
+    {
+      id: 'sep14',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-14',
+      type: 'academic'
+    },
+    {
+      id: 'sep15',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-15',
+      type: 'academic'
+    },
+    {
+      id: 'sep16',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-16',
+      type: 'academic'
+    },
+    {
+      id: 'sep17',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-17',
+      type: 'academic'
+    },
+    {
+      id: 'sep18',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-18',
+      type: 'academic'
+    },
+    {
+      id: 'sep21',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-21',
+      type: 'academic'
+    },
+    {
+      id: 'sep22',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-22',
+      type: 'academic'
+    },
+    {
+      id: 'sep23',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-23',
+      type: 'academic'
+    },
+    {
+      id: 'sep24',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-24',
+      type: 'academic'
+    },
+    {
+      id: 'sep25',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-25',
+      type: 'academic'
+    },
+    {
+      id: 'sep26',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-09-26',
+      type: 'academic'
+    },
+    {
+      id: 'sep28',
+      title: 'FIRST CA',
+      date: '2026-09-28',
       type: 'academic',
-      description: 'Extra lessons for Year 9 students'
+      description: 'First Continuous Assessment'
     },
     {
-      id: 'jan19',
-      title: 'Academic Activities',
-      date: '2026-01-19',
+      id: 'sep29',
+      title: 'FIRST CA',
+      date: '2026-09-29',
       type: 'academic'
     },
     {
-      id: 'jan20',
-      title: 'Academic Activities',
-      date: '2026-01-20',
+      id: 'sep30',
+      title: 'FIRST CA',
+      date: '2026-09-30',
+      type: 'academic'
+    },
+    // October 2026
+    {
+      id: 'oct1',
+      title: 'INDEPENDENCE DAY',
+      date: '2026-10-01',
+      type: 'holiday',
+      description: 'Nigeria Independence Day'
+    },
+    {
+      id: 'oct2',
+      title: 'FIRST CA',
+      date: '2026-10-02',
       type: 'academic'
     },
     {
-      id: 'jan24',
-      title: 'Year 9 Extra Lessons - CCA/Business Studies',
-      date: '2026-01-24',
-      type: 'academic'
-    },
-    {
-      id: 'jan26',
-      title: 'Academic Activities',
-      date: '2026-01-26',
-      type: 'academic'
-    },
-    {
-      id: 'jan27',
-      title: 'Academic Activities',
-      date: '2026-01-27',
-      type: 'academic'
-    },
-    {
-      id: 'jan29',
-      title: 'Academic Activities',
-      date: '2026-01-29',
-      type: 'academic'
-    },
-    {
-      id: 'jan30',
-      title: 'Academic Activities',
-      date: '2026-01-30',
-      type: 'academic'
-    },
-    {
-      id: 'jan31',
-      title: 'Year 9 Extra Lessons - BST/Maths',
-      date: '2026-01-31',
-      type: 'academic'
-    },
-    // February 2026
-    {
-      id: 'feb2',
-      title: 'Academic Activities',
-      date: '2026-02-02',
-      type: 'academic'
-    },
-    {
-      id: 'feb3',
-      title: 'Academic Activities',
-      date: '2026-02-03',
-      type: 'academic'
-    },
-    {
-      id: 'feb4',
-      title: 'Academic Activities',
-      date: '2026-02-04',
-      type: 'academic'
-    },
-    {
-      id: 'feb5',
-      title: '1st CA Begins',
-      date: '2026-02-05',
-      type: 'academic',
-      description: 'First Continuous Assessment begins'
-    },
-    {
-      id: 'feb6',
-      title: '1st CA Continues',
-      date: '2026-02-06',
-      type: 'academic'
-    },
-    {
-      id: 'feb7',
-      title: 'End of 1st CA',
-      date: '2026-02-07',
-      type: 'academic',
-      description: 'First Continuous Assessment ends'
-    },
-    {
-      id: 'feb9',
-      title: 'Academic Activities',
-      date: '2026-02-09',
-      type: 'academic'
-    },
-    {
-      id: 'feb10',
-      title: 'Academic Activities',
-      date: '2026-02-10',
-      type: 'academic'
-    },
-    {
-      id: 'feb11',
-      title: 'Academic Activities',
-      date: '2026-02-11',
-      type: 'academic'
-    },
-    {
-      id: 'feb12',
-      title: 'OPEN DAY MID TERM',
-      date: '2026-02-12',
+      id: 'oct5',
+      title: "TEACHER'S DAY",
+      date: '2026-10-05',
       type: 'special_event',
-      description: 'Mid-term open day for parents'
+      description: "Teacher's Day celebration"
     },
     {
-      id: 'feb13',
-      title: 'MID TERM',
-      date: '2026-02-13',
+      id: 'oct6',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-06',
+      type: 'academic'
+    },
+    {
+      id: 'oct7',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-07',
+      type: 'academic'
+    },
+    {
+      id: 'oct8',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-08',
+      type: 'academic'
+    },
+    {
+      id: 'oct9',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-09',
+      type: 'academic'
+    },
+    {
+      id: 'oct10',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-10',
+      type: 'academic'
+    },
+    {
+      id: 'oct12',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-12',
+      type: 'academic'
+    },
+    {
+      id: 'oct13',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-13',
+      type: 'academic'
+    },
+    {
+      id: 'oct14',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-14',
+      type: 'academic'
+    },
+    {
+      id: 'oct14-open',
+      title: 'OPEN DAY',
+      date: '2026-10-14',
+      type: 'special_event',
+      description: 'Open day for parents'
+    },
+    {
+      id: 'oct15',
+      title: 'MID TERM BREAK',
+      date: '2026-10-15',
       type: 'holiday',
       description: 'Mid-term break begins'
     },
     {
-      id: 'feb14',
-      title: 'MID TERM',
-      date: '2026-02-14',
+      id: 'oct16',
+      title: 'MID TERM BREAK',
+      date: '2026-10-16',
       type: 'holiday'
     },
     {
-      id: 'feb16',
-      title: 'Academic Activities',
-      date: '2026-02-16',
+      id: 'oct19',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-19',
       type: 'academic'
     },
     {
-      id: 'feb17',
-      title: 'Academic Activities',
-      date: '2026-02-17',
+      id: 'oct20',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-20',
       type: 'academic'
     },
     {
-      id: 'feb18',
-      title: 'Academic Activities',
-      date: '2026-02-18',
+      id: 'oct21',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-21',
       type: 'academic'
     },
     {
-      id: 'feb19',
-      title: 'Academic Activities',
-      date: '2026-02-19',
+      id: 'oct22',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-22',
       type: 'academic'
     },
     {
-      id: 'feb20',
-      title: 'Academic Activities',
-      date: '2026-02-20',
+      id: 'oct23',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-23',
       type: 'academic'
     },
     {
-      id: 'feb21',
-      title: 'Academic Activities',
-      date: '2026-02-21',
+      id: 'oct24',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-24',
       type: 'academic'
     },
     {
-      id: 'feb23',
-      title: 'Academic Activities',
-      date: '2026-02-23',
+      id: 'oct25',
+      title: 'INTERHOUSE SPORTS DAY',
+      date: '2026-10-25',
+      type: 'sports',
+      description: 'Annual inter-house sports competition'
+    },
+    {
+      id: 'oct26',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-10-26',
       type: 'academic'
     },
     {
-      id: 'feb24',
-      title: 'Academic Activities',
-      date: '2026-02-24',
-      type: 'academic'
-    },
-    {
-      id: 'feb25',
-      title: 'Academic Activities',
-      date: '2026-02-25',
-      type: 'academic'
-    },
-    {
-      id: 'feb26',
-      title: 'Academic Activities',
-      date: '2026-02-26',
-      type: 'academic'
-    },
-    {
-      id: 'feb27',
-      title: 'Academic Activities',
-      date: '2026-02-27',
-      type: 'academic'
-    },
-    {
-      id: 'feb28',
-      title: 'CULTURAL DAY',
-      date: '2026-02-28',
-      type: 'arts',
-      description: 'Annual cultural day celebration'
-    },
-    // March 2026
-    {
-      id: 'mar2',
-      title: 'Academic Activities',
-      date: '2026-03-02',
-      type: 'academic'
-    },
-    {
-      id: 'mar3',
-      title: 'Academic Activities',
-      date: '2026-03-03',
-      type: 'academic'
-    },
-    {
-      id: 'mar4',
-      title: '2nd CA Begins',
-      date: '2026-03-04',
+      id: 'oct27',
+      title: 'SECOND CA',
+      date: '2026-10-27',
       type: 'academic',
-      description: 'Second Continuous Assessment begins'
+      description: 'Second Continuous Assessment'
     },
     {
-      id: 'mar5',
-      title: '2nd CA Continues',
-      date: '2026-03-05',
+      id: 'oct28',
+      title: 'SECOND CA',
+      date: '2026-10-28',
       type: 'academic'
     },
     {
-      id: 'mar6',
-      title: '2nd CA Ends',
-      date: '2026-03-06',
-      type: 'academic',
-      description: 'Second Continuous Assessment ends'
-    },
-    {
-      id: 'mar7',
-      title: 'Year 9 2nd BECE MOCK',
-      date: '2026-03-07',
-      type: 'academic',
-      description: 'BECE Mock examination for Year 9'
-    },
-    {
-      id: 'mar8',
-      title: 'Year 9 Extra Lessons - History/Maths',
-      date: '2026-03-08',
+      id: 'oct29',
+      title: 'SECOND CA',
+      date: '2026-10-29',
       type: 'academic'
     },
     {
-      id: 'mar9',
-      title: 'Academic Activities',
-      date: '2026-03-09',
+      id: 'oct30',
+      title: 'SECOND CA',
+      date: '2026-10-30',
       type: 'academic'
     },
     {
-      id: 'mar10',
-      title: 'Academic Activities',
-      date: '2026-03-10',
+      id: 'oct31',
+      title: 'SECOND CA',
+      date: '2026-10-31',
+      type: 'academic'
+    },
+    // November 2026
+    {
+      id: 'nov2',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-02',
       type: 'academic'
     },
     {
-      id: 'mar11',
-      title: 'Academic Activities',
-      date: '2026-03-11',
+      id: 'nov3',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-03',
       type: 'academic'
     },
     {
-      id: 'mar12',
-      title: 'Academic Activities',
-      date: '2026-03-12',
+      id: 'nov4',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-04',
       type: 'academic'
     },
     {
-      id: 'mar13',
-      title: 'Academic Activities',
-      date: '2026-03-13',
+      id: 'nov5',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-05',
       type: 'academic'
     },
     {
-      id: 'mar14',
-      title: 'Year 9 Extra Lessons - Basic Tech',
-      date: '2026-03-14',
+      id: 'nov6',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-06',
       type: 'academic'
     },
     {
-      id: 'mar15',
-      title: 'Academic Activities',
-      date: '2026-03-15',
+      id: 'nov7',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-07',
       type: 'academic'
     },
     {
-      id: 'mar16',
-      title: 'PUBLIC HOLIDAY - EID',
-      date: '2026-03-16',
-      type: 'holiday',
-      description: 'Eid holiday celebration'
-    },
-    {
-      id: 'mar17',
-      title: 'PUBLIC HOLIDAY - EID',
-      date: '2026-03-17',
-      type: 'holiday'
-    },
-    {
-      id: 'mar18',
-      title: 'Academic Activities',
-      date: '2026-03-18',
+      id: 'nov9',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-09',
       type: 'academic'
     },
     {
-      id: 'mar19',
-      title: 'Academic Activities',
-      date: '2026-03-19',
+      id: 'nov10',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-10',
       type: 'academic'
     },
     {
-      id: 'mar20',
-      title: 'Academic Activities',
-      date: '2026-03-20',
+      id: 'nov11',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-11',
       type: 'academic'
     },
     {
-      id: 'mar21',
-      title: 'Year 9 Extra Lessons - History/Maths',
-      date: '2026-03-21',
+      id: 'nov12',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-12',
       type: 'academic'
     },
     {
-      id: 'mar22',
-      title: 'Academic Activities',
-      date: '2026-03-22',
+      id: 'nov13',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-13',
       type: 'academic'
     },
     {
-      id: 'mar23',
+      id: 'nov14',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-14',
+      type: 'academic'
+    },
+    {
+      id: 'nov16',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-16',
+      type: 'academic'
+    },
+    {
+      id: 'nov17',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-17',
+      type: 'academic'
+    },
+    {
+      id: 'nov18',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-18',
+      type: 'academic'
+    },
+    {
+      id: 'nov19',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-19',
+      type: 'academic'
+    },
+    {
+      id: 'nov20',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-20',
+      type: 'academic'
+    },
+    {
+      id: 'nov21',
+      title: 'ACADEMIC ACTIVITIES',
+      date: '2026-11-21',
+      type: 'academic'
+    },
+    {
+      id: 'nov23',
       title: 'REVISION',
-      date: '2026-03-23',
+      date: '2026-11-23',
       type: 'academic',
       description: 'Revision period begins'
     },
     {
-      id: 'mar24',
+      id: 'nov24',
       title: 'REVISION',
-      date: '2026-03-24',
+      date: '2026-11-24',
       type: 'academic'
     },
     {
-      id: 'mar25',
+      id: 'nov25',
       title: 'REVISION',
-      date: '2026-03-25',
+      date: '2026-11-25',
       type: 'academic'
     },
     {
-      id: 'mar26',
+      id: 'nov26',
       title: 'REVISION',
-      date: '2026-03-26',
+      date: '2026-11-26',
       type: 'academic'
     },
     {
-      id: 'mar27',
+      id: 'nov27',
       title: 'REVISION',
-      date: '2026-03-27',
+      date: '2026-11-27',
       type: 'academic'
     },
     {
-      id: 'mar28',
-      title: 'EXAMS BEGIN',
-      date: '2026-03-28',
-      type: 'academic',
+      id: 'nov28',
+      title: 'REVISION',
+      date: '2026-11-28',
+      type: 'academic'
+    },
+    {
+      id: 'nov30',
+      title: 'EXAM BEGINS',
+      date: '2026-11-30',
+      type: 'exam',
       description: 'Final examinations begin'
     },
+    // December 2026
     {
-      id: 'mar29',
-      title: 'EXAMS',
-      date: '2026-03-29',
+      id: 'dec1',
+      title: 'EXAM CONT.',
+      date: '2026-12-01',
+      type: 'exam'
+    },
+    {
+      id: 'dec2',
+      title: 'EXAM CONT.',
+      date: '2026-12-02',
+      type: 'exam'
+    },
+    {
+      id: 'dec3',
+      title: 'EXAM CONT.',
+      date: '2026-12-03',
+      type: 'exam'
+    },
+    {
+      id: 'dec4',
+      title: 'EXAM CONT.',
+      date: '2026-12-04',
+      type: 'exam'
+    },
+    {
+      id: 'dec5',
+      title: 'EXAM ENDS',
+      date: '2026-12-05',
+      type: 'exam',
+      description: 'Final examinations end'
+    },
+    {
+      id: 'dec7',
+      title: 'MARKING',
+      date: '2026-12-07',
+      type: 'academic',
+      description: 'Marking of examination papers'
+    },
+    {
+      id: 'dec8',
+      title: 'MARKING',
+      date: '2026-12-08',
       type: 'academic'
+    },
+    {
+      id: 'dec9',
+      title: 'MARKING',
+      date: '2026-12-09',
+      type: 'academic'
+    },
+    {
+      id: 'dec10',
+      title: 'MARKING',
+      date: '2026-12-10',
+      type: 'academic'
+    },
+    {
+      id: 'dec11',
+      title: 'MARKING',
+      date: '2026-12-11',
+      type: 'academic'
+    },
+    {
+      id: 'dec12',
+      title: 'MARKING',
+      date: '2026-12-12',
+      type: 'academic'
+    },
+    {
+      id: 'dec14',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-14',
+      type: 'holiday',
+      description: 'Christmas holiday begins'
+    },
+    {
+      id: 'dec15',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-15',
+      type: 'holiday'
+    },
+    {
+      id: 'dec16',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-16',
+      type: 'holiday'
+    },
+    {
+      id: 'dec17',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-17',
+      type: 'holiday'
+    },
+    {
+      id: 'dec18',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-18',
+      type: 'holiday'
+    },
+    {
+      id: 'dec19',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-19',
+      type: 'holiday'
+    },
+    {
+      id: 'dec20',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-20',
+      type: 'holiday'
+    },
+    {
+      id: 'dec21',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-21',
+      type: 'holiday'
+    },
+    {
+      id: 'dec22',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-22',
+      type: 'holiday'
+    },
+    {
+      id: 'dec23',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-23',
+      type: 'holiday'
+    },
+    {
+      id: 'dec24',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-24',
+      type: 'holiday'
+    },
+    {
+      id: 'dec25',
+      title: 'CHRISTMAS DAY',
+      date: '2026-12-25',
+      type: 'holiday',
+      description: 'Christmas Day celebration'
+    },
+    {
+      id: 'dec26',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-26',
+      type: 'holiday'
+    },
+    {
+      id: 'dec27',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-27',
+      type: 'holiday'
+    },
+    {
+      id: 'dec28',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-28',
+      type: 'holiday'
+    },
+    {
+      id: 'dec29',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-29',
+      type: 'holiday'
+    },
+    {
+      id: 'dec30',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-30',
+      type: 'holiday'
+    },
+    {
+      id: 'dec31',
+      title: 'CHRISTMAS BREAK',
+      date: '2026-12-31',
+      type: 'holiday'
     }
   ];
 
   const terms: Term[] = [
     {
-      name: 'Q1 2026',
-      startDate: 'January 6, 2026',
-      endDate: 'March 29, 2026',
-      halfTerm: 'February 13-14, 2026'
+      name: 'Q1 2026/2027',
+      startDate: 'September 7, 2026',
+      endDate: 'December 5, 2026',
+      halfTerm: 'October 15-16, 2026'
     }
   ];
 
@@ -444,7 +662,8 @@ const CalendarPage: React.FC = () => {
     { id: 'academic', label: 'Academic', color: 'bg-blue-500' },
     { id: 'special_event', label: 'Special Event', color: 'bg-red-500' },
     { id: 'holiday', label: 'Holiday', color: 'bg-green-500' },
-    { id: 'arts', label: 'Arts', color: 'bg-pink-500' }
+    { id: 'sports', label: 'Sports', color: 'bg-orange-500' },
+    { id: 'exam', label: 'Exam', color: 'bg-purple-500' }
   ];
 
   const getEventColor = (type: string) => {
@@ -453,8 +672,9 @@ const CalendarPage: React.FC = () => {
       case 'special_event': return 'bg-red-500';
       case 'holiday': return 'bg-green-500';
       case 'sports': return 'bg-orange-500';
+      case 'exam': return 'bg-purple-500';
       case 'arts': return 'bg-pink-500';
-      case 'parent_meeting': return 'bg-purple-500';
+      case 'parent_meeting': return 'bg-yellow-500';
       default: return 'bg-gray-500';
     }
   };
@@ -500,7 +720,7 @@ const CalendarPage: React.FC = () => {
   };
 
   const goToToday = () => {
-    setCurrentDate(new Date(2026, 1, 26)); // Today is Feb 26, 2026
+    setCurrentDate(new Date(2026, 9, 15)); // Navigate to October 15, 2026
   };
 
   const monthNames = [
@@ -625,7 +845,7 @@ const CalendarPage: React.FC = () => {
                 <div className="grid grid-cols-7 gap-1">
                   {getDaysInMonth(currentDate).map((day, index) => {
                     const dayEvents = day ? getEventsForDay(day, currentDate.getMonth() + 1) : [];
-                    const isToday = day === 26 && currentDate.getMonth() === 1 && currentDate.getFullYear() === 2026;
+                    const isToday = day === 15 && currentDate.getMonth() === 9 && currentDate.getFullYear() === 2026;
                     
                     return (
                       <div
@@ -703,12 +923,8 @@ const CalendarPage: React.FC = () => {
                 <span className="text-sm text-gray-700">Sports</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-pink-500" />
-                <span className="text-sm text-gray-700">Arts</span>
-              </div>
-              <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-purple-500" />
-                <span className="text-sm text-gray-700">Parent Meeting</span>
+                <span className="text-sm text-gray-700">Exam</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-green-500" />
