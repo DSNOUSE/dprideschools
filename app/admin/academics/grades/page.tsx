@@ -92,9 +92,31 @@ export default function GradeManagementPage() {
   useEffect(() => {
     if (selectedSubject) {
       setCurrentPage(1);
+      // When a subject is selected, fetch only students enrolled in that subject
+      if (selectedClass && selectedSession && selectedSubject) {
+        fetchStudentsForSubject();
+      }
       fetchExistingGrades();
     }
   }, [selectedSubject]);
+
+  const fetchStudentsForSubject = async () => {
+    try {
+      console.log('Fetching students for subject:', selectedSubject, 'class:', selectedClass, 'session:', selectedSession);
+      const response = await fetch(
+        `/api/academics/students?classId=${selectedClass}&sessionId=${selectedSession}&subjectId=${selectedSubject}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`Successfully fetched ${data.length} students for subject ${selectedSubject}`, data);
+        setStudents(data);
+      } else {
+        console.error(`Failed to fetch students for subject: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      console.error('Error fetching students for subject:', err);
+    }
+  };
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -155,19 +177,17 @@ export default function GradeManagementPage() {
     try {
       console.log('Fetching subjects and departments for class:', selectedClass, 'session:', selectedSession);
       
-      // FIX-008: Fetch students and subjects in parallel
-      const [subjectsRes, departmentsRes, studentsRes] = await Promise.all([
+      // Fetch subjects and departments only - students are fetched separately
+      const [subjectsRes, departmentsRes] = await Promise.all([
         fetch(`/api/academics/subjects?classId=${selectedClass}&sessionId=${selectedSession}`),
         fetch('/api/academics/departments'),
-        fetch(`/api/academics/students?classId=${selectedClass}&sessionId=${selectedSession}`),
       ]);
       
-      if (subjectsRes.ok && departmentsRes.ok && studentsRes.ok) {
+      if (subjectsRes.ok && departmentsRes.ok) {
         const subjects = await subjectsRes.json();
         const departments = await departmentsRes.json();
-        const students = await studentsRes.json();
 
-        console.log(`Fetched ${subjects.length} subjects and ${students.length} students`);
+        console.log(`Fetched ${subjects.length} subjects`);
 
         // Create department lookup map with abbreviations
         const departmentMap: Record<string | number, string> = {};
@@ -192,12 +212,11 @@ export default function GradeManagementPage() {
         }));
 
         setSubjects(enhancedSubjects);
-        setStudents(students);
       } else {
         console.error('One or more API calls failed');
       }
     } catch (err) {
-      console.error('Error fetching subjects/departments/students:', err);
+      console.error('Error fetching subjects/departments:', err);
     }
   };
 
@@ -448,6 +467,11 @@ export default function GradeManagementPage() {
           
           {loading ? (
             <div className="p-8 text-center">Loading grades...</div>
+          ) : students.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              <p className="text-base font-medium">No students found for this subject</p>
+              <p className="text-sm mt-1">Make sure students are enrolled in this subject</p>
+            </div>
           ) : (
             <>
               {/* Mobile Card Layout with Pagination */}
