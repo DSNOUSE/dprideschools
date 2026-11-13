@@ -68,14 +68,14 @@ export function isTeacher(session: Session | null): boolean {
  * Check if user is a parent
  */
 export function isParent(session: Session | null): boolean {
-  return (session?.user as ExtendedUser)?.role === 'parent';
+  return hasRole(session, 'Parent');
 }
 
 /**
  * Check if user is a student
  */
 export function isStudent(session: Session | null): boolean {
-  return (session?.user as ExtendedUser)?.role === 'student';
+  return hasRole(session, 'Student');
 }
 
 /**

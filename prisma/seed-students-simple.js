@@ -13,68 +13,33 @@ async function main() {
     
     // Student data from the provided lists
     const studentsData = [
-      // DISCOVERY CLASS (Pre-Nursery)
-      { fullName: 'Fatima Muhammad Baba', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)' },
-      { fullName: 'Hafsat Usman Imam', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)' },
-      { fullName: 'Nana Sa\'ad', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)' },
-      { fullName: 'Noor Aliyu Maina', gender: 'Male', class: 'DISCOVERY CLASS (Pre-Nursery)' },
-      { fullName: 'Umar Faruk Yahaya', gender: 'Male', class: 'DISCOVERY CLASS (Pre-Nursery)' },
-      
-      // EXPLORERS (Nursery 1)
-      { fullName: 'Amina Abdulhamid', gender: 'Female', class: 'EXPLORERS (Nursery 1)' },
-      { fullName: 'Mukhtar Salihu', gender: 'Male', class: 'EXPLORERS (Nursery 1)' },
-      { fullName: 'Ramadan Ibrahim', gender: 'Male', class: 'EXPLORERS (Nursery 1)' },
-      { fullName: 'Sani Shehu', gender: 'Male', class: 'EXPLORERS (Nursery 1)' },
-      { fullName: 'Sheriff Aliyu Maina', gender: 'Male', class: 'EXPLORERS (Nursery 1)' },
-      
-      // PREPARATORY (Nursery 2)
-      { fullName: 'David Oloruntola', gender: 'Male', class: 'PREPARATORY (Nursery 2)' },
-      { fullName: 'Maryam Faysal Amin', gender: 'Female', class: 'PREPARATORY (Nursery 2)' },
-      
-      // YEAR 1
-      { fullName: 'Barata Amrullah', gender: 'Male', class: 'YEAR 1' },
-      { fullName: 'Fatima Ibrahim', gender: 'Female', class: 'YEAR 1' },
-      
-      // YEAR 2
-      { fullName: 'Hafsat Abubakar', gender: 'Female', class: 'YEAR 2' },
-      
-      // YEAR 3
-      { fullName: 'Aisha Musa', gender: 'Female', class: 'YEAR 3' },
-      { fullName: 'Bilikisu Sani Shehu', gender: 'Female', class: 'YEAR 3' },
-      { fullName: 'Khadija U. Imam', gender: 'Female', class: 'YEAR 3' },
-      { fullName: 'Zainab U. Imam', gender: 'Female', class: 'YEAR 3' },
-      
-      // YEAR 4
-      { fullName: 'Abdallah Arif', gender: 'Male', class: 'YEAR 4' },
-      { fullName: 'Abdulhamid Fatima', gender: 'Female', class: 'YEAR 4' },
-      { fullName: 'Abdulhamid Mohammed', gender: 'Male', class: 'YEAR 4' },
-      { fullName: 'Ahmed Abdullahi Garba', gender: 'Male', class: 'YEAR 4' },
-      { fullName: 'Bilal Sani', gender: 'Male', class: 'YEAR 4' },
-      { fullName: 'Hussaini Maryam', gender: 'Female', class: 'YEAR 4' },
-      { fullName: 'Mohammed Halima', gender: 'Female', class: 'YEAR 4' },
-      { fullName: 'Nabage Ruqaiya Nasiru', gender: 'Female', class: 'YEAR 4' },
-      
-      // YEAR 5
-      { fullName: 'Saad Fatima', gender: 'Female', class: 'YEAR 5' },
-      { fullName: 'Sanusi Hafsat', gender: 'Female', class: 'YEAR 5' },
-      
-      // YEAR 7
-      { fullName: 'Aisha Muhammad', gender: 'Female', class: 'YEAR 7' },
-      { fullName: 'Imam Usman Nafisa', gender: 'Female', class: 'YEAR 7' },
-      
-      // YEAR 8
-      { fullName: 'Ali Mohammed B.M', gender: 'Male', class: 'YEAR 8' },
-      { fullName: 'Hanan Auwal', gender: 'Female', class: 'YEAR 8' },
-      { fullName: 'Hanifa Usman Jibrin', gender: 'Female', class: 'YEAR 8' },
-      { fullName: 'Nana Aisha Abubakar', gender: 'Female', class: 'YEAR 8' },
-      { fullName: 'Umm\'suleim Ibrahim', gender: 'Female', class: 'YEAR 8' },
-      
-      // YEAR 9
-      { fullName: 'Abdallah Rabiu', gender: 'Male', class: 'YEAR 9' },
-      { fullName: 'Ahmed Abubakar', gender: 'Male', class: 'YEAR 9' },
-      { fullName: 'Sanusi Musab', gender: 'Male', class: 'YEAR 9' },
-      { fullName: 'Zaid Musa', gender: 'Male', class: 'YEAR 9' }
-    ];
+  // DISCOVERY CLASS (Pre-Nursery)
+  { fullName: 'RUQAIYYA USMAN IMAM', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)' },
+  { fullName: 'ABDULMUMINI FAAIZ MUHAMMAD', gender: 'Male', class: 'DISCOVERY CLASS (Pre-Nursery)' },
+
+  // EXPLORERS (Nursery 1)
+  { fullName: 'FATIMA MUKHTAR ALKALI', gender: 'Female', class: 'EXPLORERS (Nursery 1)' },
+  { fullName: 'FATIMA MUHAMMED BABA', gender: 'Female', class: 'EXPLORERS (Nursery 1)' },
+  { fullName: 'HAFSAT USMAN IMAM', gender: 'Female', class: 'EXPLORERS (Nursery 1)' },
+  { fullName: 'NANA AISHA SAAD', gender: 'Female', class: 'EXPLORERS (Nursery 1)' },
+
+  // YEAR 2
+  { fullName: 'BARATA AMRULLAH', gender: 'Female', class: 'YEAR 2' },
+
+  // YEAR 5
+  { fullName: 'AISHA MUSA', gender: 'Female', class: 'YEAR 5' },
+  { fullName: 'MUHAMMAD ARIF ABDALLAH', gender: 'Male', class: 'YEAR 5' },
+  { fullName: 'KHADIJA USMAN IMAM', gender: 'Female', class: 'YEAR 5' },
+  { fullName: 'RUQAIYA NASIRU NABAGE', gender: 'Female', class: 'YEAR 5' },
+  { fullName: 'ZAINAB USMAN IMAM', gender: 'Female', class: 'YEAR 5' },
+
+  // YEAR 9
+  { fullName: 'Ali Mohammed Baba Mala', gender: 'Male', class: 'YEAR 9' },
+  { fullName: "Umm'suleim Ibrahim", gender: 'Female', class: 'YEAR 9' },
+  { fullName: "Umm'salma Auwal Usman", gender: 'Female', class: 'YEAR 9' },
+  { fullName: 'Nafisa Usman Imam', gender: 'Female', class: 'YEAR 9' }
+];
+
     
     console.log(`📋 Processing ${studentsData.length} students`);
     

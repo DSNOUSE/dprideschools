@@ -1,4 +1,4 @@
-/**
+/*
  * Shared utility functions for the results feature area.
  *
  * Centralises grade/letter calculations, score formatting,
@@ -6,17 +6,15 @@
  * the results page, the student-results page, and future consumers.
  */
 
+import { letterGrade } from "@/lib/grading/scheme";
+
 /**
  * Map a numeric average to a letter grade.
  *
  * Uses the school‑standard boundaries shared across both result pages.
  */
 export function calculateGrade(average: number): string {
-  if (average >= 80) return 'A';
-  if (average >= 60) return 'B';
-  if (average >= 50) return 'C';
-  if (average >= 40) return 'D';
-  return 'F';
+  return letterGrade(average);
 }
 
 /**
@@ -24,11 +22,16 @@ export function calculateGrade(average: number): string {
  */
 export function getGradeColor(grade: string): string {
   switch (grade) {
-    case 'A': return 'text-green-600 border-green-600';
-    case 'B': return 'text-blue-600 border-blue-600';
-    case 'C': return 'text-yellow-600 border-yellow-600';
-    case 'D': return 'text-orange-600 border-orange-600';
-    default:  return 'text-red-600 border-red-600';
+    case "A":
+      return "text-green-600 border-green-600";
+    case "B":
+      return "text-blue-600 border-blue-600";
+    case "C":
+      return "text-yellow-600 border-yellow-600";
+    case "D":
+      return "text-orange-600 border-orange-600";
+    default:
+      return "text-red-600 border-red-600";
   }
 }
 
@@ -40,7 +43,7 @@ export function formatStudentName(
   middleName?: string | null,
   lastName?: string,
 ): string {
-  return [firstName, middleName, lastName].filter(Boolean).join(' ');
+  return [firstName, middleName, lastName].filter(Boolean).join(" ");
 }
 
 /**
@@ -52,6 +55,6 @@ export function formatCommentAttribution(author: {
 }): string {
   const trimmed = author.name?.trim();
   if (trimmed) return trimmed;
-  if (author.teacherId?.trim()) return `Staff ID: ${author.teacherId.trim()}`;
-  return 'Teacher';
+  if (author.teacherId?.trim()) return "Staff ID: " + author.teacherId.trim();
+  return "Teacher";
 }

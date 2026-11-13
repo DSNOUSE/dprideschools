@@ -134,7 +134,7 @@ export const unifiedCredentialsProvider = Credentials({
               id: parent.id.toString(),
               email: parent.email,
               name: parent.name,
-              roles: ['parent'],
+              roles: ['Parent'],
               students: parent.students.map((sp) => {
                 const enrollment = sp.student.enrollments[0];
                 return {
@@ -184,7 +184,7 @@ export const unifiedCredentialsProvider = Credentials({
               id: student.id.toString(),
               admissionNo: student.admissionNo,
               name: `${student.firstName} ${student.lastName}`,
-              roles: ['student'],
+              roles: ['Student'],
               classId: enrollment?.classId,
               sessionId: enrollment?.sessionId,
               class: enrollment?.class ?? null,

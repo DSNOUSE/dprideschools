@@ -27,13 +27,28 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 // Missing students from our list
+// Missing students from our list (new 18-student roster first names)
 const missingStudents = [
-  'Ali Mohammed BMM',
-  'Nabage Rugayya Nazir',
-  'Khadija Usman Imam',
-  'Zainab Usman Imam',
-  'Maryam Faysal Ameen'
+  'RUQAIYYA',
+  'ABDULMUMINI',
+  'FATIMA',
+  'FATIMA',
+  'HAFSAT',
+  'NANA',
+  'BARATA',
+  'FATIMA',
+  'HAFSAT',
+  'AISHA',
+  'MUHAMMAD',
+  'KHADIJA',
+  'RUQAIYA',
+  'ZAINAB',
+  'Ali',
+  'Umm',
+  'Umm',
+  'Nafisa'
 ];
+
 
 async function main() {
   console.log('=== SEARCHING FOR MISSING STUDENTS ===\n');

@@ -55,12 +55,12 @@ const CLASS = {
 
 // The authoritative 18-student roll. admissionNo null => brand-new student.
 const TARGET = [
-  { admissionNo: null, firstName: 'Ruqaiyya', middleName: 'Usman', lastName: 'Imam', sex: 'FEMALE', klass: CLASS.DISCOVERY },
+  { admissionNo: 'DPS2026041', firstName: 'Ruqaiyya', middleName: 'Usman', lastName: 'Imam', sex: 'FEMALE', klass: CLASS.DISCOVERY },
   { admissionNo: null, firstName: 'Abdulmumini', middleName: 'Faiz', lastName: 'Muhammad', sex: 'MALE', klass: CLASS.DISCOVERY },
-  { admissionNo: null, firstName: 'Fatima', middleName: 'Mukhtar', lastName: 'Alkali', sex: 'FEMALE', klass: CLASS.EXPLORER },
+  { admissionNo: 'DPS2026043', firstName: 'Fatima', middleName: 'Mukhtar', lastName: 'Alkali', sex: 'FEMALE', klass: CLASS.EXPLORER },
   { admissionNo: 'DPS2026001', firstName: 'Fatima', middleName: 'Muhammad', lastName: 'Baba', sex: 'FEMALE', klass: CLASS.EXPLORER },
   { admissionNo: 'DPS2026002', firstName: 'Hafsat', middleName: 'Usman', lastName: 'Imam', sex: 'FEMALE', klass: CLASS.EXPLORER },
-  { admissionNo: null, firstName: 'Nana', middleName: 'Aisha', lastName: 'Saad', sex: 'FEMALE', klass: CLASS.EXPLORER },
+  { admissionNo: 'DPS2026044', firstName: 'Nana', middleName: 'Aisha', lastName: 'Saad', sex: 'FEMALE', klass: CLASS.EXPLORER },
   { admissionNo: 'DPS2026013', firstName: 'Barata', middleName: null, lastName: 'Amrullah', sex: 'FEMALE', klass: CLASS.YEAR_2 },
   { admissionNo: 'DPS2026014', firstName: 'Fatima', middleName: null, lastName: 'Ibrahim', sex: 'FEMALE', klass: CLASS.YEAR_2 },
   { admissionNo: 'DPS2026015', firstName: 'Hafsat', middleName: 'Bint', lastName: 'Abubakar', sex: 'FEMALE', klass: CLASS.YEAR_2 },

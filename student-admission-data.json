@@ -1,37 +1,128 @@
 [
-  {"sn":1,"classKey":"YEAR 8","name":"Nana Aisha Abubakar","sex":"F","reg":"354/17"},
-  {"sn":2,"classKey":"YEAR 8","name":"Hanifa Jibrin Usman","sex":"F","reg":"394/19"},
-  {"sn":3,"classKey":"YEAR 8","name":"Ali Mohammed BM","sex":"M","reg":"455/22"},
-  {"sn":4,"classKey":"YEAR 8","name":"Ummusalma Awal Usman","sex":"F","reg":"328/16"},
-  {"sn":5,"classKey":"YEAR 8","name":"Ummusuleim Ibrahim","sex":"F","reg":"333/16"},
-  {"sn":6,"classKey":"YEAR 8","name":"Aisha Muhammad","sex":"F","reg":"435/21"},
-  {"sn":7,"classKey":"YEAR 8","name":"Imam Usman Nafisa","sex":"F","reg":"346/17"},
-  {"sn":8,"classKey":"YEAR 5","name":"Sa'ad Fatima","sex":"F","reg":"393/18"},
-  {"sn":9,"classKey":"YEAR 5","name":"Sanusi Hafsat","sex":"F","reg":"294/15"},
-  {"sn":10,"classKey":"YEAR 4","name":"Ahmad Abdullahi Garba","sex":"M","reg":"482/25"},
-  {"sn":11,"classKey":"YEAR 4","name":"Abdallah Arif","sex":"M","reg":"417/19"},
-  {"sn":12,"classKey":"YEAR 4","name":"Abdulhamid Fatima","sex":"F","reg":"442/21"},
-  {"sn":13,"classKey":"YEAR 4","name":"Hussaini Maryam","sex":"F","reg":"436/21"},
-  {"sn":14,"classKey":"YEAR 4","name":"Mohammed Halima","sex":"F","reg":"447/21"},
-  {"sn":15,"classKey":"YEAR 4","name":"Abdulhamid Mohammed","sex":"M","reg":"443/21"},
-  {"sn":16,"classKey":"YEAR 4","name":"Nabage Rugayya Nazir","sex":"F","reg":"444/21"},
-  {"sn":17,"classKey":"YEAR 4","name":"Bilal Sani Shehu","sex":"M","reg":"475/24"},
-  {"sn":18,"classKey":"YEAR 3","name":"Aisha Musa","sex":"F","reg":"432/20"},
-  {"sn":19,"classKey":"YEAR 3","name":"Bilkisu Sani Shehu","sex":"F","reg":"458/22"},
-  {"sn":20,"classKey":"YEAR 3","name":"Khadija Usman Imam","sex":"F","reg":"426/20"},
-  {"sn":21,"classKey":"YEAR 3","name":"Zainab Usman Imam","sex":"F","reg":"406/19"},
-  {"sn":22,"classKey":"YEAR 1","name":"Hafsat Bint Abubakar","sex":"F","reg":"489/25"},
-  {"sn":23,"classKey":"YEAR 1","name":"Baraka Amrullah","sex":"F","reg":"438/21"},
-  {"sn":24,"classKey":"YEAR 1","name":"Fatima Ibrahim","sex":"F","reg":"454/22"},
-  {"sn":25,"classKey":"PREPARATORY","name":"Maryam Faysal Ameen","sex":"F","reg":"407/24"},
-  {"sn":26,"classKey":"PREPARATORY","name":"David Oloruntoba","sex":"M","reg":"480/25"},
-  {"sn":27,"classKey":"PREPARATORY","name":"Mukhtar Salihu","sex":"M","reg":"490/26"},
-  {"sn":28,"classKey":"DISCOVERY","name":"Noor Aliyu Maina","sex":"M","reg":"487/25"},
-  {"sn":29,"classKey":"DISCOVERY","name":"Umar Faruk Yahaya","sex":"M","reg":"483/25"},
-  {"sn":30,"classKey":"DISCOVERY","name":"Fatima Muhammad Baba","sex":"F","reg":"484/25"},
-  {"sn":31,"classKey":"DISCOVERY","name":"Mana Sa'ad","sex":"F","reg":"485/25"},
-  {"sn":32,"classKey":"DISCOVERY","name":"Hafsat Usman Imam","sex":"F","reg":"492/26"},
-  {"sn":33,"classKey":"EXPLORERS","name":"Amina Abdulhamid","sex":"F","reg":"471/24"},
-  {"sn":34,"classKey":"EXPLORERS","name":"Sheriff Aliyu Maina","sex":"M","reg":"488/25"},
-  {"sn":35,"classKey":"EXPLORERS","name":"Ibrahim Sani Shehu","sex":"M","reg":"474/24"}
+  {
+    "sn": 1,
+    "classKey": "DISCOVERY",
+    "name": "RUQAIYYA USMAN IMAM",
+    "sex": "Female",
+    "reg": "493/26"
+  },
+  {
+    "sn": 2,
+    "classKey": "DISCOVERY",
+    "name": "ABDULMUMINI FAAIZ MUHAMMAD",
+    "sex": "Male",
+    "reg": "494/26"
+  },
+  {
+    "sn": 3,
+    "classKey": "EXPLORERS",
+    "name": "FATIMA MUKHTAR ALKALI",
+    "sex": "Female",
+    "reg": "495/26"
+  },
+  {
+    "sn": 4,
+    "classKey": "EXPLORERS",
+    "name": "FATIMA MUHAMMED BABA",
+    "sex": "Female",
+    "reg": "496/26"
+  },
+  {
+    "sn": 5,
+    "classKey": "EXPLORERS",
+    "name": "HAFSAT USMAN IMAM",
+    "sex": "Female",
+    "reg": "497/26"
+  },
+  {
+    "sn": 6,
+    "classKey": "EXPLORERS",
+    "name": "NANA AISHA SAAD",
+    "sex": "Female",
+    "reg": "498/26"
+  },
+  {
+    "sn": 7,
+    "classKey": "YEAR 2",
+    "name": "BARATA AMRULLAH",
+    "sex": "Female",
+    "reg": "499/26"
+  },
+  {
+    "sn": 8,
+    "classKey": "YEAR 2",
+    "name": "FATIMA IBRAHIM",
+    "sex": "Female",
+    "reg": "500/26"
+  },
+  {
+    "sn": 9,
+    "classKey": "YEAR 2",
+    "name": "HAFSAT BINT ABUBAKAR",
+    "sex": "Female",
+    "reg": "501/26"
+  },
+  {
+    "sn": 10,
+    "classKey": "YEAR 5",
+    "name": "AISHA MUSA",
+    "sex": "Female",
+    "reg": "502/26"
+  },
+  {
+    "sn": 11,
+    "classKey": "YEAR 5",
+    "name": "MUHAMMAD ARIF ABDALLAH",
+    "sex": "Male",
+    "reg": "503/26"
+  },
+  {
+    "sn": 12,
+    "classKey": "YEAR 5",
+    "name": "KHADIJA USMAN IMAM",
+    "sex": "Female",
+    "reg": "504/26"
+  },
+  {
+    "sn": 13,
+    "classKey": "YEAR 5",
+    "name": "RUQAIYA NASIRU NABAGE",
+    "sex": "Female",
+    "reg": "505/26"
+  },
+  {
+    "sn": 14,
+    "classKey": "YEAR 5",
+    "name": "ZAINAB USMAN IMAM",
+    "sex": "Female",
+    "reg": "506/26"
+  },
+  {
+    "sn": 15,
+    "classKey": "YEAR 9",
+    "name": "Ali Mohammed Baba Mala",
+    "sex": "Male",
+    "reg": "507/26"
+  },
+  {
+    "sn": 16,
+    "classKey": "YEAR 9",
+    "name": "Umm'suleim Ibrahim",
+    "sex": "Female",
+    "reg": "508/26"
+  },
+  {
+    "sn": 17,
+    "classKey": "YEAR 9",
+    "name": "Umm'salma Auwal Usman",
+    "sex": "Female",
+    "reg": "509/26"
+  },
+  {
+    "sn": 18,
+    "classKey": "YEAR 9",
+    "name": "Nafisa Usman Imam",
+    "sex": "Female",
+    "reg": "510/26"
+  }
 ]

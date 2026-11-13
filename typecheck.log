@@ -1,0 +1,9 @@
+
+> dprideinternationalschool@0.1.0 type-check
+> tsc --noEmit
+
+app/admin/academics/departments/page.tsx(28,23): error TS2304: Cannot find name 'createDepartment'.
+app/admin/academics/departments/page.tsx(58,33): error TS2304: Cannot find name 'deleteDepartment'.
+app/admin/academics/terms/page.tsx(25,23): error TS2304: Cannot find name 'createTerm'.
+app/admin/academics/terms/page.tsx(43,33): error TS2304: Cannot find name 'deleteTerm'.
+src/lib/results/utils.ts(15,10): error TS2304: Cannot find name 'letterGrade'.

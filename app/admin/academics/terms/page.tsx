@@ -1,21 +1,21 @@
-import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import { createTerm, deleteTerm } from './actions';
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { createTerm, deleteTerm } from "./actions";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function TermsPage() {
   // Check authentication at the page level
   const session = await getServerSession(authOptions);
   const roles = (session?.user as any)?.roles as string[] | undefined;
-  
-  if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
-    redirect('/admin-signin');
+
+  if (!roles?.includes("Administrator") && !roles?.includes("Teacher")) {
+    redirect("/admin-signin");
   }
-  const terms = await prisma.term.findMany({ orderBy: { id: 'asc' } });
+  const terms = await prisma.term.findMany({ orderBy: { id: "asc" } });
   return (
     <div className="p-6">
       <div className="bg-white rounded-lg p-6 shadow space-y-6">
@@ -24,8 +24,14 @@ export default async function TermsPage() {
           <p className="text-gray-600">Create and manage academic terms.</p>
         </div>
         <form action={createTerm} className="flex gap-2">
-          <input name="name" placeholder="Term name (e.g., Term 1)" className="border rounded px-3 py-2" />
-          <button className="bg-blue-600 text-white px-4 py-2 rounded">Add</button>
+          <input
+            name="name"
+            placeholder="Term name (e.g., Term 1)"
+            className="border rounded px-3 py-2"
+          />
+          <button className="bg-blue-600 text-white px-4 py-2 rounded">
+            Add
+          </button>
         </form>
         <table className="w-full border text-sm">
           <thead className="bg-gray-50">

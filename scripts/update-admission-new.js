@@ -1,0 +1,162 @@
+// Script to update student admission numbers from extracted data
+// Usage: node scripts/update-admission-new.js
+// Updates admissionNo to DPS### format (e.g., DPS493 from 493/26)
+
+const fs = require('fs');
+const path = require('path');
+
+try {
+  const envPath = path.resolve(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    const content = fs.readFileSync(envPath, 'utf8');
+    content.split(/\r?\n/).forEach((line) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const eq = trimmed.indexOf('=');
+      if (eq === -1) return;
+      const key = trimmed.slice(0, eq).trim();
+      const value = trimmed.slice(eq + 1).trim();
+      const unquoted = value.replace(/^"|"$/g, '');
+      if (!process.env[key]) process.env[key] = unquoted;
+    });
+  }
+} catch (err) {}
+
+const { PrismaClient } = require('@prisma/client');
+const { PrismaPg } = require('@prisma/adapter-pg');
+const { Pool } = require('pg');
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
+
+// Updated name mapping for database vs extracted data mismatches
+// Maps from corrected names in JSON to actual names in database
+const nameMapping = {
+  'Nana Aisha Abubakar': 'Nana Aisha Abubakar',
+  'Hanifa Jibrin Usman': 'Hanifa Usman Jibrin',
+  'Ali Mohammed BMM': 'Ali Mohammed B.M',
+  'Ummusalma Auwal Usman': 'Hanan Auwal',
+  'Ummusuleim Ibrahim': "Umm'suleim Ibrahim",
+  'Aisha Muhammad': 'Aisha Muhammad',
+  'Imam Usman Nafisa': 'Imam Usman Nafisa',
+  'Sa\'ad Fatima': 'Saad Fatima',
+  'Sanusi Hafsat': 'Sanusi Hafsat',
+  'Ahmad Abdullahi Garba': 'Ahmed Abdullahi Garba',
+  'Abdallah Arif': 'Abdallah Arif',
+  'Abdulhamid Fatima': 'Abdulhamid Fatima',
+  'Hussaini Maryam': 'Hussaini Maryam',
+  'Mohammed Halima': 'Mohammed Halima',
+  'Abdulhamid Mohammed': 'Abdulhamid Mohammed',
+  'Nabage Rugayya Nazir': 'Nabage Ruqaiya Nasiru',
+  'Bilal Sani Shehu': 'Bilal Sani',
+  'Aisha Musa': 'Aisha Musa',
+  'Bilkisu Sani Shehu': 'Bilikisu Sani Shehu',
+  'Khadija Usman Imam': 'Khadija U. Imam',
+  'Zainab Usman Imam': 'Zainab U. Imam',
+  'Hafsat Bint Abubakar': 'Hafsat Bint Abubakar',
+  'Baraka Amrullah': 'Barata Amrullah',
+  'Fatima Ibrahim': 'Fatima Ibrahim',
+  'Maryam Faysal Ameen': 'Maryam Faysal Amin',
+  'David Oloruntoba': 'David Oloruntola',
+  'Mukhtar Salihu': 'Mukhtar Salihu',
+  'Noor Aliyu Maina': 'Noor Aliyu Maina',
+  'Umar Faruk Yahaya': 'Umar Faruk Yahaya',
+  'Fatima Muhammad Baba': 'Fatima Muhammad Baba',
+  'Nana Sa\'ad': 'Nana Sa\'ad',
+  'Hafsat Usman Imam': 'Hafsat Usman Imam',
+  'Amina Abdulhamid': 'Amina Abdulhamid',
+  'Sheriff Aliyu Maina': 'Sheriff Aliyu Maina',
+  'Ibrahim Sani Shehu': 'Ramadan Sani Shehu',
+  'Abdulmumini Faaiz Muhammad': 'Abdulmumini Faaiz Muhammad',
+  'Abdulmumini Faaiz Muhammad': 'Abdulmumini Faaiz Muhammad',
+  'Fatima Muhammed Baba': 'Fatima Muhammed Baba'
+};
+
+async function main() {
+  // Load student data from JSON
+  const dataPath = path.resolve(process.cwd(), 'student-admission-data.json');
+  if (!fs.existsSync(dataPath)) {
+    console.error('student-admission-data.json not found');
+    process.exit(2);
+  }
+
+  const students = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+  console.log(`Loaded ${students.length} students from JSON\n`);
+
+  let updated = 0;
+  let notFound = 0;
+  let errors = 0;
+
+  for (const student of students) {
+    try {
+      // Use mapped name if available
+      const searchName = nameMapping[student.name] || student.name;
+
+      // Split name into parts
+      const nameParts = searchName.split(' ').filter(part => part.length > 0);
+      const firstName = nameParts[0];
+      const lastName = nameParts[nameParts.length - 1];
+      const middleName = nameParts.length > 2 ? nameParts.slice(1, -1).join(' ') : null;
+
+      // Strategy 1: Try exact match with middle name
+      let existingStudent = await prisma.student.findFirst({
+        where: {
+          firstName: { equals: firstName, mode: 'insensitive' },
+          lastName: { equals: lastName, mode: 'insensitive' },
+          ...(middleName && { middleName: { equals: middleName, mode: 'insensitive' } })
+        }
+      });
+
+      // Strategy 2: Try matching firstName and any part of the remaining name in lastName/middleName
+      if (!existingStudent) {
+        const allMatches = await prisma.student.findMany({
+          where: {
+            firstName: { equals: firstName, mode: 'insensitive' }
+          }
+        });
+
+        // Find best match by checking if ALL search name parts appear in the database name
+        const searchParts = searchName.toLowerCase().split(' ').slice(1);
+        existingStudent = allMatches.find(s => {
+          const dbName = `${s.firstName} ${s.middleName || ''} ${s.lastName}`.toLowerCase();
+          return searchParts.every(part => dbName.includes(part));
+        });
+
+        // Strategy 3: If still not found, just take the first match by first name
+        if (!existingStudent && allMatches.length > 0) {
+          existingStudent = allMatches[0];
+        }
+      }
+
+      if (!existingStudent) {
+        console.log(`  Not found: ${student.name} (searched as: ${searchName})`);
+        notFound++;
+        continue;
+      }
+
+      // Update admission number: DPS + 3-digit number from reg field (e.g., 493/26 -> DPS493)
+      const admissionNumber = `DPS${student.reg.split('/')[0]}`;
+      await prisma.student.update({
+        where: { id: existingStudent.id },
+        data: { admissionNo: admissionNumber }
+      });
+
+      console.log(`  Updated: ${student.name} -> ${admissionNumber}`);
+      updated++;
+    } catch (err) {
+      console.error(`  Error updating ${student.name}:`, err.message);
+      errors++;
+    }
+  }
+
+  console.log(`\n📊 Summary:`);
+  console.log(`  Updated: ${updated}`);
+  console.log(`  Not found: ${notFound}`);
+  console.log(`  Errors: ${errors}`);
+
+  await prisma.$disconnect();
+  await pool.end();
+}
+
+main();

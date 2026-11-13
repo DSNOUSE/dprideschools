@@ -12,70 +12,37 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 // Student data organized by class
+
+// Student data organized by class (18 students for 2026/2027)
 const newStudentsData = {
   'DISCOVERY CLASS (Pre-Nursery)': [
-    { fullName: 'Fatima Muhammad Baba', gender: 'Female' },
-    { fullName: 'Hafsat Usman Imam', gender: 'Female' },
-    { fullName: 'Nana Sa\'ad', gender: 'Female' },
-    { fullName: 'Noor Aliyu Maina', gender: 'Male' },
-    { fullName: 'Umar Faruk Yahaya', gender: 'Male' }
+    { fullName: 'RUQAIYYA USMAN IMAM', gender: 'Female' },
+    { fullName: 'ABDULMUMINI FAAIZ MUHAMMAD', gender: 'Male' }
   ],
   'EXPLORERS (Nursery 1)': [
-    { fullName: 'Amina Abdulhamid', gender: 'Female' },
-    { fullName: 'Mukhtar Salihu', gender: 'Male' },
-    { fullName: 'Ramadan Ibrahim', gender: 'Male' },
-    { fullName: 'Sani Shehu', gender: 'Male' },
-    { fullName: 'Sheriff Aliyu Maina', gender: 'Male' }
-  ],
-  'PREPARATORY (Nursery 2)': [
-    { fullName: 'David Oloruntola', gender: 'Male' },
-    { fullName: 'Maryam Faysal Amin', gender: 'Female' }
-  ],
-  'YEAR 1': [
-    { fullName: 'Barata Amrullah', gender: 'Male' },
-    { fullName: 'Fatima Ibrahim', gender: 'Female' }
+    { fullName: 'FATIMA MUKHTAR ALKALI', gender: 'Female' },
+    { fullName: 'FATIMA MUHAMMED BABA', gender: 'Female' },
+    { fullName: 'HAFSAT USMAN IMAM', gender: 'Female' },
+    { fullName: 'NANA AISHA SAAD', gender: 'Female' }
   ],
   'YEAR 2': [
-    { fullName: 'Hafsat Abubakar', gender: 'Female' }
-  ],
-  'YEAR 3': [
-    { fullName: 'Aisha Musa', gender: 'Female' },
-    { fullName: 'Bilikisu Sani Shehu', gender: 'Female' },
-    { fullName: 'Khadija U. Imam', gender: 'Female' },
-    { fullName: 'Zainab U. Imam', gender: 'Female' }
-  ],
-  'YEAR 4': [
-    { fullName: 'Abdallah Arif', gender: 'Male' },
-    { fullName: 'Abdulhamid Fatima', gender: 'Female' },
-    { fullName: 'Abdulhamid Mohammed', gender: 'Male' },
-    { fullName: 'Ahmed Abdullahi Garba', gender: 'Male' },
-    { fullName: 'Bilal Sani', gender: 'Male' },
-    { fullName: 'Hussaini Maryam', gender: 'Female' },
-    { fullName: 'Mohammed Halima', gender: 'Female' },
-    { fullName: 'Nabage Ruqaiya Nasiru', gender: 'Female' }
+    { fullName: 'BARATA AMRULLAH', gender: 'Female' }
   ],
   'YEAR 5': [
-    { fullName: 'Saad Fatima', gender: 'Female' },
-    { fullName: 'Sanusi Hafsat', gender: 'Female' }
-  ],
-  'YEAR 7': [
-    { fullName: 'Aisha Muhammad', gender: 'Female' },
-    { fullName: 'Imam Usman Nafisa', gender: 'Female' }
-  ],
-  'YEAR 8': [
-    { fullName: 'Ali Mohammed B.M', gender: 'Male' },
-    { fullName: 'Hanan Auwal', gender: 'Female' },
-    { fullName: 'Hanifa Usman Jibrin', gender: 'Female' },
-    { fullName: 'Nana Aisha Abubakar', gender: 'Female' },
-    { fullName: 'Umm\'suleim Ibrahim', gender: 'Female' }
+    { fullName: 'AISHA MUSA', gender: 'Female' },
+    { fullName: 'MUHAMMAD ARIF ABDALLAH', gender: 'Male' },
+    { fullName: 'KHADIJA USMAN IMAM', gender: 'Female' },
+    { fullName: 'RUQAIYA NASIRU NABAGE', gender: 'Female' },
+    { fullName: 'ZAINAB USMAN IMAM', gender: 'Female' }
   ],
   'YEAR 9': [
-    { fullName: 'Abdallah Rabiu', gender: 'Male' },
-    { fullName: 'Ahmed Abubakar', gender: 'Male' },
-    { fullName: 'Sanusi Musab', gender: 'Male' },
-    { fullName: 'Zaid Musa', gender: 'Male' }
+    { fullName: 'Ali Mohammed Baba Mala', gender: 'Male' },
+    { fullName: "Umm'suleim Ibrahim", gender: 'Female' },
+    { fullName: "Umm'salma Auwal Usman", gender: 'Female' },
+    { fullName: 'Nafisa Usman Imam', gender: 'Female' }
   ]
 };
+
 
 // Function to generate unique admission numbers
 function generateAdmissionNumber(existingNumbers = []) {

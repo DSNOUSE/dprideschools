@@ -9,7 +9,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const session = await getServerSession(authOptions);
   const roles = (session?.user as any)?.roles as string[] | undefined;
   if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
-    redirect('/admin-signin');
+    redirect('/signin');
   }
 
   return (

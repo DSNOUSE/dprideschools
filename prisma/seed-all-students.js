@@ -9,67 +9,32 @@ const prisma = new PrismaClient();
 // Complete student data from the provided lists
 const allStudentsData = [
   // DISCOVERY CLASS (Pre-Nursery)
-  { fullName: 'Fatima Muhammad Baba', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)', department: 'Early Years' },
-  { fullName: 'Hafsat Usman Imam', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)', department: 'Early Years' },
-  { fullName: 'Nana Sa\'ad', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)', department: 'Early Years' },
-  { fullName: 'Noor Aliyu Maina', gender: 'Male', class: 'DISCOVERY CLASS (Pre-Nursery)', department: 'Early Years' },
-  { fullName: 'Umar Faruk Yahaya', gender: 'Male', class: 'DISCOVERY CLASS (Pre-Nursery)', department: 'Early Years' },
-  
+  { fullName: 'RUQAIYYA USMAN IMAM', gender: 'Female', class: 'DISCOVERY CLASS (Pre-Nursery)', department: 'Early Years' },
+  { fullName: 'ABDULMUMINI FAAIZ MUHAMMAD', gender: 'Male', class: 'DISCOVERY CLASS (Pre-Nursery)', department: 'Early Years' },
+
   // EXPLORERS (Nursery 1)
-  { fullName: 'Amina Abdulhamid', gender: 'Female', class: 'EXPLORERS (Nursery 1)', department: 'Early Years' },
-  { fullName: 'Mukhtar Salihu', gender: 'Male', class: 'EXPLORERS (Nursery 1)', department: 'Early Years' },
-  { fullName: 'Ramadan Ibrahim', gender: 'Male', class: 'EXPLORERS (Nursery 1)', department: 'Early Years' },
-  { fullName: 'Sani Shehu', gender: 'Male', class: 'EXPLORERS (Nursery 1)', department: 'Early Years' },
-  { fullName: 'Sheriff Aliyu Maina', gender: 'Male', class: 'EXPLORERS (Nursery 1)', department: 'Early Years' },
-  
-  // PREPARATORY (Nursery 2)
-  { fullName: 'David Oloruntola', gender: 'Male', class: 'PREPARATORY (Nursery 2)', department: 'Early Years' },
-  { fullName: 'Maryam Faysal Amin', gender: 'Female', class: 'PREPARATORY (Nursery 2)', department: 'Early Years' },
-  
-  // YEAR 1
-  { fullName: 'Barata Amrullah', gender: 'Male', class: 'YEAR 1', department: 'Primary' },
-  { fullName: 'Fatima Ibrahim', gender: 'Female', class: 'YEAR 1', department: 'Primary' },
-  
+  { fullName: 'FATIMA MUKHTAR ALKALI', gender: 'Female', class: 'EXPLORERS (Nursery 1)', department: 'Early Years' },
+  { fullName: 'FATIMA MUHAMMED BABA', gender: 'Female', class: 'EXPLORERS (Nursery 1)', department: 'Early Years' },
+  { fullName: 'HAFSAT USMAN IMAM', gender: 'Female', class: 'EXPLORERS (Nursery 1)', department: 'Early Years' },
+  { fullName: 'NANA AISHA SAAD', gender: 'Female', class: 'EXPLORERS (Nursery 1)', department: 'Early Years' },
+
   // YEAR 2
-  { fullName: 'Hafsat Abubakar', gender: 'Female', class: 'YEAR 2', department: 'Primary' },
-  
-  // YEAR 3
-  { fullName: 'Aisha Musa', gender: 'Female', class: 'YEAR 3', department: 'Primary' },
-  { fullName: 'Bilikisu Sani Shehu', gender: 'Female', class: 'YEAR 3', department: 'Primary' },
-  { fullName: 'Khadija U. Imam', gender: 'Female', class: 'YEAR 3', department: 'Primary' },
-  { fullName: 'Zainab U. Imam', gender: 'Female', class: 'YEAR 3', department: 'Primary' },
-  
-  // YEAR 4
-  { fullName: 'Abdallah Arif', gender: 'Male', class: 'YEAR 4', department: 'Primary' },
-  { fullName: 'Abdulhamid Fatima', gender: 'Female', class: 'YEAR 4', department: 'Primary' },
-  { fullName: 'Abdulhamid Mohammed', gender: 'Male', class: 'YEAR 4', department: 'Primary' },
-  { fullName: 'Ahmed Abdullahi Garba', gender: 'Male', class: 'YEAR 4', department: 'Primary' },
-  { fullName: 'Bilal Sani', gender: 'Male', class: 'YEAR 4', department: 'Primary' },
-  { fullName: 'Hussaini Maryam', gender: 'Female', class: 'YEAR 4', department: 'Primary' },
-  { fullName: 'Mohammed Halima', gender: 'Female', class: 'YEAR 4', department: 'Primary' },
-  { fullName: 'Nabage Ruqaiya Nasiru', gender: 'Female', class: 'YEAR 4', department: 'Primary' },
-  
+  { fullName: 'BARATA AMRULLAH', gender: 'Female', class: 'YEAR 2', department: 'Primary' },
+
   // YEAR 5
-  { fullName: 'Saad Fatima', gender: 'Female', class: 'YEAR 5', department: 'Primary' },
-  { fullName: 'Sanusi Hafsat', gender: 'Female', class: 'YEAR 5', department: 'Primary' },
-  
-  // YEAR 7
-  { fullName: 'Aisha Muhammad', gender: 'Female', class: 'YEAR 7', department: 'Secondary' },
-  { fullName: 'Imam Usman Nafisa', gender: 'Female', class: 'YEAR 7', department: 'Secondary' },
-  
-  // YEAR 8
-  { fullName: 'Ali Mohammed B.M', gender: 'Male', class: 'YEAR 8', department: 'Secondary' },
-  { fullName: 'Hanan Auwal', gender: 'Female', class: 'YEAR 8', department: 'Secondary' },
-  { fullName: 'Hanifa Usman Jibrin', gender: 'Female', class: 'YEAR 8', department: 'Secondary' },
-  { fullName: 'Nana Aisha Abubakar', gender: 'Female', class: 'YEAR 8', department: 'Secondary' },
-  { fullName: 'Umm\'suleim Ibrahim', gender: 'Female', class: 'YEAR 8', department: 'Secondary' },
-  
+  { fullName: 'AISHA MUSA', gender: 'Female', class: 'YEAR 5', department: 'Primary' },
+  { fullName: 'MUHAMMAD ARIF ABDALLAH', gender: 'Male', class: 'YEAR 5', department: 'Primary' },
+  { fullName: 'KHADIJA USMAN IMAM', gender: 'Female', class: 'YEAR 5', department: 'Primary' },
+  { fullName: 'RUQAIYA NASIRU NABAGE', gender: 'Female', class: 'YEAR 5', department: 'Primary' },
+  { fullName: 'ZAINAB USMAN IMAM', gender: 'Female', class: 'YEAR 5', department: 'Primary' },
+
   // YEAR 9
-  { fullName: 'Abdallah Rabiu', gender: 'Male', class: 'YEAR 9', department: 'Secondary' },
-  { fullName: 'Ahmed Abubakar', gender: 'Male', class: 'YEAR 9', department: 'Secondary' },
-  { fullName: 'Sanusi Musab', gender: 'Male', class: 'YEAR 9', department: 'Secondary' },
-  { fullName: 'Zaid Musa', gender: 'Male', class: 'YEAR 9', department: 'Secondary' }
+  { fullName: 'Ali Mohammed Baba Mala', gender: 'Male', class: 'YEAR 9', department: 'Secondary' },
+  { fullName: "Umm'suleim Ibrahim", gender: 'Female', class: 'YEAR 9', department: 'Secondary' },
+  { fullName: "Umm'salma Auwal Usman", gender: 'Female', class: 'YEAR 9', department: 'Secondary' },
+  { fullName: 'Nafisa Usman Imam', gender: 'Female', class: 'YEAR 9', department: 'Secondary' }
 ];
+
 
 function generateAdmissionNumber(existingNumbers = [], index) {
   const year = new Date().getFullYear();
