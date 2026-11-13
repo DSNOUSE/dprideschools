@@ -64,15 +64,18 @@ export async function calculateClassPositions(params: PositionCalculationParams)
 
   const positions: StudentPosition[] = [];
   let currentPosition = 1;
-  let previousScore = Number.NaN;
+  let previousScore: number | null = null;
   let studentsAtCurrentPosition = 0;
   let tiesHandled = 0;
 
-  for (let i = 0; i < results.length; i++) {
-    const result = results[i];
+  // FIX-010: Filter out null scores before ranking
+  const rankedResults = results.filter((r) => r.totalScore != null);
+
+  for (let i = 0; i < rankedResults.length; i++) {
+    const result = rankedResults[i];
     const score = toNumber(result.totalScore);
 
-    if (score === previousScore) {
+    if (previousScore != null && score === previousScore) {
       studentsAtCurrentPosition++;
       tiesHandled++;
     } else {
@@ -87,6 +90,18 @@ export async function calculateClassPositions(params: PositionCalculationParams)
       totalScore: score,
       average: toNumber(result.average),
     });
+  }
+
+  // FIX-010: Add unranked students (null scores) with position = null
+  for (const result of results) {
+    if (result.totalScore == null) {
+      positions.push({
+        studentId: result.studentId,
+        position: 0, // Use 0 to represent unranked
+        totalScore: 0,
+        average: toNumber(result.average),
+      });
+    }
   }
 
   return {

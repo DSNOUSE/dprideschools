@@ -540,9 +540,11 @@ export default function StudentResultsPage() {
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-2 text-left">Subject</th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">1st Score</th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">2nd Score</th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">Exam Score</th>
+                  {/* FIX-012: Show assessment breakdown with max scores */}
+                  <th className="border border-gray-300 px-4 py-2 text-center">CA1<br />(Max 10)</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">CA2<br />(Max 10)</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">Exam<br />(Max 80)</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">Total</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">Average</th>
                   <th className="border border-gray-300 px-4 py-2 text-center">Grade</th>
                 </tr>
@@ -551,12 +553,14 @@ export default function StudentResultsPage() {
                 {result.grades.map((grade, index) => {
                   const letterGrade = calculateGrade(grade.average);
                   const gradeColor = getGradeColor(letterGrade);
+                  const total = (grade.firstScore || 0) + (grade.secondScore || 0) + (grade.examScore || 0);
                   return (
                     <tr key={`${grade.subjectId}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                       <td className="border border-gray-300 px-4 py-2 font-medium">{grade.subject.name}</td>
-                      <td className="border border-gray-300 px-4 py-2 text-center">{grade.firstScore}</td>
-                      <td className="border border-gray-300 px-4 py-2 text-center">{grade.secondScore}</td>
-                      <td className="border border-gray-300 px-4 py-2 text-center">{grade.examScore}</td>
+                      <td className="border border-gray-300 px-4 py-2 text-center">{grade.firstScore ?? '-'}</td>
+                      <td className="border border-gray-300 px-4 py-2 text-center">{grade.secondScore ?? '-'}</td>
+                      <td className="border border-gray-300 px-4 py-2 text-center">{grade.examScore ?? '-'}</td>
+                      <td className="border border-gray-300 px-4 py-2 text-center font-bold">{total}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center font-bold">{grade.average.toFixed(1)}</td>
                       <td className="border border-gray-300 px-4 py-2 text-center">
                         <span className={`inline-block px-2 py-1 rounded text-sm font-bold border-1 ${gradeColor}`}>

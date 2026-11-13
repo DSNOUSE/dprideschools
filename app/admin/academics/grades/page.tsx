@@ -7,6 +7,13 @@ import { Button } from '@/components/Button';
 import Container from '@/components/Container';
 import UserMenu from '@/components/admin/UserMenu';
 
+interface Term {
+  id: number;
+  name: string;
+  sessionId: number;
+  order?: number;
+}
+
 interface GradeEntry {
   studentId: string;
   subjectId: number;
@@ -42,7 +49,7 @@ export default function GradeManagementPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [classes, setClasses] = useState([]);
   const [sessions, setSessions] = useState([]);
-  const [terms, setTerms] = useState<any[]>([]);
+  const [terms, setTerms] = useState<Term[]>([]);
   const [grades, setGrades] = useState<GradeEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -72,15 +79,15 @@ export default function GradeManagementPage() {
   }, [selectedSession]);
 
   useEffect(() => {
-    if (selectedClass && selectedSession && selectedTerm) {
-      console.log('Dependencies met for fetching students and subjects:', { selectedClass, selectedSession, selectedTerm });
+    if (selectedClass && selectedSession) {
+      console.log('Dependencies met for fetching students and subjects:', { selectedClass, selectedSession });
       fetchStudents();
       fetchSubjects();
       setCurrentPage(1);
     } else {
-      console.log('Dependencies NOT met for fetching students and subjects:', { selectedClass, selectedSession, selectedTerm });
+      console.log('Dependencies NOT met for fetching students and subjects:', { selectedClass, selectedSession });
     }
-  }, [selectedClass, selectedSession, selectedTerm]);
+  }, [selectedClass, selectedSession]);
 
   useEffect(() => {
     if (selectedSubject) {
@@ -126,32 +133,41 @@ export default function GradeManagementPage() {
 
   const fetchStudents = async () => {
     try {
-      console.log('Fetching students for class:', selectedClass, 'session:', selectedSession);
+      console.log('Fetching students for class:', selectedClass, 'session:', selectedSession, 'subject:', selectedSubject);
       const response = await fetch(
-        `/api/academics/students?classId=${selectedClass}&sessionId=${selectedSession}`
+        `/api/academics/students?classId=${selectedClass}&sessionId=${selectedSession}${
+          selectedSubject ? `&subjectId=${selectedSubject}` : ''
+        }`
       );
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched students:', data);
+        console.log(`Successfully fetched ${data.length} students`, data);
         setStudents(data);
       } else {
-        console.error('Failed to fetch students, response not ok:', response.status, response.statusText);
+        console.error(`Failed to fetch students: ${response.status} ${response.statusText}`);
       }
     } catch (err) {
-      console.error('Failed to fetch students:', err);
+      console.error('Error fetching students:', err);
     }
   };
 
   const fetchSubjects = async () => {
     try {
-      const [subjectsRes, departmentsRes] = await Promise.all([
-        fetch(`/api/academics/subjects?classId=${selectedClass}`),
-        fetch('/api/academics/departments')
+      console.log('Fetching subjects and departments for class:', selectedClass, 'session:', selectedSession);
+      
+      // FIX-008: Fetch students and subjects in parallel
+      const [subjectsRes, departmentsRes, studentsRes] = await Promise.all([
+        fetch(`/api/academics/subjects?classId=${selectedClass}&sessionId=${selectedSession}`),
+        fetch('/api/academics/departments'),
+        fetch(`/api/academics/students?classId=${selectedClass}&sessionId=${selectedSession}`),
       ]);
       
-      if (subjectsRes.ok && departmentsRes.ok) {
+      if (subjectsRes.ok && departmentsRes.ok && studentsRes.ok) {
         const subjects = await subjectsRes.json();
         const departments = await departmentsRes.json();
+        const students = await studentsRes.json();
+
+        console.log(`Fetched ${subjects.length} subjects and ${students.length} students`);
 
         // Create department lookup map with abbreviations
         const departmentMap: Record<string | number, string> = {};
@@ -176,9 +192,12 @@ export default function GradeManagementPage() {
         }));
 
         setSubjects(enhancedSubjects);
+        setStudents(students);
+      } else {
+        console.error('One or more API calls failed');
       }
     } catch (err) {
-      console.error('Failed to fetch subjects:', err);
+      console.error('Error fetching subjects/departments/students:', err);
     }
   };
 
@@ -230,10 +249,10 @@ export default function GradeManagementPage() {
   };
 
   useEffect(() => {
-    if (selectedSubject && students.length > 0) {
+    if (selectedSubject) {
       fetchExistingGrades();
     }
-  }, [selectedSubject, students]);
+  }, [selectedSubject]);
 
   const handleGradeChange = (studentId: string, field: keyof GradeEntry, value: string) => {
     const numValue = value === '' ? undefined : parseFloat(value);
@@ -382,7 +401,7 @@ export default function GradeManagementPage() {
               <option value="">Select Subject</option>
               {subjects.map((subject) => (
                 <option key={subject.id} value={subject.id}>
-                  {subject.displayName} (Max: {subject.maxScore})
+                  {subject.displayName || subject.name}
                 </option>
               ))}
             </select>
@@ -399,7 +418,7 @@ export default function GradeManagementPage() {
       )}
 
       {/* Grade Entry Table */}
-      {selectedSubject && students.length > 0 && (
+      {selectedSubject && (
         <div className="bg-white/90 backdrop-blur-sm rounded-lg border">
           <div className="p-3 sm:p-4 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
             <h3 className="text-base sm:text-lg font-semibold">Grade Entry</h3>

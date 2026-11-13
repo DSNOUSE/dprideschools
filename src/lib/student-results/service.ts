@@ -43,7 +43,8 @@ export async function getStudentHistory(admissionNo: string): Promise<StudentHis
             termId: term.id,
             sessionId: enrollment.sessionId,
             classId: enrollment.classId,
-            status: { in: ['PUBLISHED', 'APPROVED'] },
+            // FIX-011: Show DRAFT grades to students, not just PUBLISHED/APPROVED
+            status: { not: 'REJECTED' },
           },
           include: {
             subject: { select: { name: true } },

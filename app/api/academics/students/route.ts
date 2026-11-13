@@ -1,37 +1,63 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   if (!process.env.DATABASE_URL) {
-    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+    return NextResponse.json(
+      { error: "Database not available" },
+      { status: 503 },
+    );
   }
 
   try {
     const { searchParams } = new URL(request.url);
-    const classId = searchParams.get('classId');
-    const sessionId = searchParams.get('sessionId');
+    const classId = searchParams.get("classId");
+    const sessionId = searchParams.get("sessionId");
+    const subjectId = searchParams.get("subjectId");
 
     if (!classId || !sessionId) {
       return NextResponse.json(
-        { error: 'Class ID and Session ID are required' },
-        { status: 400 }
+        { error: "Class ID and Session ID are required" },
+        { status: 400 },
       );
     }
 
+    // FIX-003: Build filter with optional subject enrollment check
+    const baseWhere: any = {
+      classId: parseInt(classId),
+      sessionId: parseInt(sessionId),
+      status: { in: ["ACTIVE", "PROMOTED", "REPEATED", "GRADUATED"] },
+    };
+
+    // If subject filter provided, only return students enrolled in that subject
+    if (subjectId) {
+      const studentIds = await prisma.studentSubject.findMany({
+        where: {
+          offering: {
+            subjectId: parseInt(subjectId),
+            classId: parseInt(classId),
+            sessionId: parseInt(sessionId),
+          },
+        },
+        select: { studentId: true },
+        distinct: ["studentId"],
+      });
+
+      baseWhere.studentId = {
+        in: studentIds.map((ss) => ss.studentId),
+      };
+    }
+
     const enrollments = await prisma.enrollment.findMany({
-      where: {
-        classId: parseInt(classId),
-        sessionId: parseInt(sessionId),
-        status: 'ACTIVE',
-      },
+      where: baseWhere,
       include: {
         student: true,
       },
       orderBy: [
-        { student: { lastName: 'asc' } },
-        { student: { firstName: 'asc' } },
+        { student: { lastName: "asc" } },
+        { student: { firstName: "asc" } },
       ],
     });
 
@@ -44,7 +70,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(students);
   } catch (error) {
-    console.error('Error fetching students:', error);
-    return NextResponse.json({ error: 'Failed to fetch students' }, { status: 500 });
+    console.error("Error fetching students:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch students" },
+      { status: 500 },
+    );
   }
 }

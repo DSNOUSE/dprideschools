@@ -23,10 +23,32 @@ const schema = z.object({
 });
 
 async function getGrade(percentage: number) {
-  const scale = await prisma.gradingScale.findFirst({ where: { isDefault: true }, include: { bands: true } });
-  if (!scale || scale.bands.length === 0) return { grade: null, remark: null };
-  const band = scale.bands.find((b) => percentage >= Number(b.minScore) && percentage <= Number(b.maxScore));
-  return { grade: band?.grade ?? null, remark: band?.remark ?? null };
+  const scale = await prisma.gradingScale.findFirst({
+    where: { isDefault: true },
+    include: { bands: true },
+  });
+
+  // FIX-006: Add fallback grading scale if none configured
+  if (!scale || scale.bands.length === 0) {
+    const defaultBands = [
+      { grade: 'A', minScore: 70, maxScore: 100, remark: 'Excellent' },
+      { grade: 'B', minScore: 60, maxScore: 69, remark: 'Good' },
+      { grade: 'C', minScore: 50, maxScore: 59, remark: 'Satisfactory' },
+      { grade: 'D', minScore: 45, maxScore: 49, remark: 'Acceptable' },
+      { grade: 'E', minScore: 40, maxScore: 44, remark: 'Marginal' },
+      { grade: 'F', minScore: 0, maxScore: 39, remark: 'Fail' },
+    ];
+
+    const band = defaultBands.find(
+      (b) => percentage >= b.minScore && percentage <= b.maxScore
+    );
+    return { grade: band?.grade ?? 'F', remark: band?.remark ?? 'Fail' };
+  }
+
+  const band = scale.bands.find(
+    (b) => percentage >= Number(b.minScore) && percentage <= Number(b.maxScore)
+  );
+  return { grade: band?.grade ?? 'F', remark: band?.remark ?? 'Fail' };
 }
 
 export async function POST(request: Request) {

@@ -33,20 +33,24 @@ export async function GET(request: NextRequest) {
         orderBy: { subject: { name: 'asc' } },
       });
 
-      return NextResponse.json(
-        offerings.map((o) => ({
-          ...o.subject,
-          classId: o.classId,
-          section: o.class.level.section,
-          class: o.class,
-          department: {
-            id: o.class.level.id,
-            name: o.class.level.section.replaceAll('_', ' '),
-          },
-          offeringId: o.id,
-          isCompulsory: o.isCompulsory,
-        }))
-      );
+      // FIX-001: Add fallback to all subjects if no offerings found
+      if (offerings.length > 0) {
+        return NextResponse.json(
+          offerings.map((o) => ({
+            ...o.subject,
+            classId: o.classId,
+            section: o.class.level.section,
+            class: o.class,
+            department: {
+              id: o.class.level.id,
+              name: o.class.level.section.replaceAll('_', ' '),
+            },
+            offeringId: o.id,
+            isCompulsory: o.isCompulsory,
+          }))
+        );
+      }
+      // Fall through to generic subjects below if no offerings
     }
 
     const subjects = await prisma.subject.findMany({
