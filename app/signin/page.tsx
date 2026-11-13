@@ -32,13 +32,27 @@ export default function SignInPage() {
         console.log('Redirecting parent to results');
         router.push('/results');
       } else if (userRole === 'student' || roles.includes('student')) {
-        // Redirect directly to student dashboard
-        // Auth already has their admission number, class, and session
-        console.log('Redirecting student to personal dashboard');
-        router.push('/student/dashboard');
+        console.log('Redirecting student to personal results');
+        const admissionNo = (session.user as any)?.admissionNo;
+        
+        if (admissionNo) {
+          // Smart redirect to dedicated student results page, carrying the
+          // student's class/session so the portal can preselect them.
+          console.log('Smart redirect to student results page');
+          const classId = (session.user as any)?.classId;
+          const sessionId = (session.user as any)?.sessionId;
+          const params = new URLSearchParams({ student: admissionNo });
+          if (classId) params.set('class', String(classId));
+          if (sessionId) params.set('session', String(sessionId));
+          router.push(`/student-results?${params.toString()}`);
+        } else {
+          // Fallback to general results page
+          console.log('Fallback to general results page - missing admission number');
+          router.push('/results');
+        }
       } else {
-        console.log('Default redirect to home');
-        router.push('/');
+        console.log('Default redirect to results');
+        router.push('/results');
       }
     }
   }, [session, status, router]);

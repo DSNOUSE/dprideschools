@@ -280,6 +280,18 @@ export default function GradeManagementPage() {
     setMessage('');
 
     try {
+      const filteredGrades = grades.filter(grade => 
+        grade.firstScore !== undefined || 
+        grade.secondScore !== undefined || 
+        grade.fourthScore !== undefined  // Changed from examScore to fourthScore
+      );
+
+      if (filteredGrades.length === 0) {
+        setMessage('❌ Error: Please enter at least one score before saving');
+        setSaving(false);
+        return;
+      }
+
       const response = await fetch('/api/academics/grades', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -287,24 +299,27 @@ export default function GradeManagementPage() {
           classId: parseInt(selectedClass),
           sessionId: parseInt(selectedSession),
           termId: parseInt(selectedTerm),
-          grades: grades.filter(grade => 
-            grade.firstScore !== undefined || 
-            grade.secondScore !== undefined || 
-            grade.fourthScore !== undefined  // Changed from examScore to fourthScore
-          )
+          grades: filteredGrades
         })
       });
 
       if (response.ok) {
-        setMessage('Grades saved successfully!');
+        setMessage('✅ Grades saved successfully!');
         // Refresh grades
         await fetchExistingGrades();
       } else {
         const data = await response.json();
-        setMessage(data.error || 'Failed to save grades');
+        // Show detailed error information
+        let errorMsg = data.error || 'Failed to save grades';
+        if (data.details) {
+          errorMsg += '\n' + JSON.stringify(data.details, null, 2);
+        }
+        setMessage('❌ Error: ' + errorMsg);
+        console.error('Grade submission error:', data);
       }
     } catch (err) {
-      setMessage('Network error. Please try again.');
+      setMessage('❌ Network error. Please try again.');
+      console.error('Network error:', err);
     } finally {
       setSaving(false);
     }

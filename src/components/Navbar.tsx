@@ -18,7 +18,7 @@ const links = [
       { href: '/nursery', label: 'Our Nursery' },
       { href: '/teaching', label: 'Teaching' },
       { href: '/calendar', label: 'Calendar' },
-      { href: '/student/dashboard', label: 'Results' },
+      { href: '/results', label: 'Results' },
     ]
   },
   { href: '/parents', label: 'Parents' },
