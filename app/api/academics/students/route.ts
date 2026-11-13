@@ -31,7 +31,8 @@ export async function GET(request: NextRequest) {
       status: { in: ["ACTIVE", "PROMOTED", "REPEATED", "GRADUATED"] },
     };
 
-    // If subject filter provided, only return students enrolled in that subject
+    // If subject filter provided, try to filter by subject enrollment
+    // But if no students are found, fall through to return all class students
     if (subjectId) {
       const studentIds = await prisma.studentSubject.findMany({
         where: {
@@ -45,9 +46,12 @@ export async function GET(request: NextRequest) {
         distinct: ["studentId"],
       });
 
-      baseWhere.studentId = {
-        in: studentIds.map((ss) => ss.studentId),
-      };
+      // Only apply filter if students are found; otherwise show all class students
+      if (studentIds.length > 0) {
+        baseWhere.studentId = {
+          in: studentIds.map((ss) => ss.studentId),
+        };
+      }
     }
 
     const enrollments = await prisma.enrollment.findMany({

@@ -24,14 +24,17 @@ export default function SignInPage() {
       
       console.log('User logged in with role:', userRole, 'roles:', roles);
       
-      // Redirect based on role
-      if (userRole === 'Administrator' || userRole === 'Teacher' || roles.includes('Administrator') || roles.includes('Teacher')) {
+      // Redirect based on role (case-insensitive comparison)
+      const roleStr = userRole ? userRole.toLowerCase() : '';
+      const rolesLower = (roles || []).map((r: string) => r.toLowerCase());
+      
+      if (roleStr === 'administrator' || roleStr === 'teacher' || rolesLower.includes('administrator') || rolesLower.includes('teacher')) {
         console.log('Redirecting to admin dashboard');
         router.push('/admin');
-      } else if (userRole === 'parent' || roles.includes('parent')) {
+      } else if (roleStr === 'parent' || rolesLower.includes('parent')) {
         console.log('Redirecting parent to results');
         router.push('/results');
-      } else if (userRole === 'student' || roles.includes('student')) {
+      } else if (roleStr === 'student' || rolesLower.includes('student')) {
         console.log('Redirecting student to personal dashboard');
         router.push('/student/dashboard');
       } else {

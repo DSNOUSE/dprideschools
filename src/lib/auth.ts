@@ -34,13 +34,18 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         // Store basic user information in token
         (token as any).id = (user as any).id;
-        (token as any).email = (user as any).email;
+        (token as any).email = (user as any).email || (user as any).admissionNo;
         (token as any).name = (user as any).name;
         (token as any).teacherId = (user as any).teacherId;
         (token as any).roles = (user as any).roles || [];
         (token as any).admissionNo = (user as any).admissionNo;
         (token as any).students = (user as any).students;
-        console.log('JWT callback - User:', (user as any).email, 'Roles:', (user as any).roles);
+        // Store student enrollment data
+        (token as any).classId = (user as any).classId;
+        (token as any).sessionId = (user as any).sessionId;
+        (token as any).class = (user as any).class;
+        (token as any).session = (user as any).session;
+        console.log('JWT callback - User:', (token as any).email || (token as any).id, 'Roles:', (user as any).roles);
       }
       return token;
     },
@@ -53,7 +58,12 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).roles = (token as any).roles || [];
         (session.user as any).admissionNo = (token as any).admissionNo;
         (session.user as any).students = (token as any).students;
-        console.log('Session callback - User:', (token as any).email, 'Roles:', (token as any).roles);
+        // Store student enrollment data
+        (session.user as any).classId = (token as any).classId;
+        (session.user as any).sessionId = (token as any).sessionId;
+        (session.user as any).class = (token as any).class;
+        (session.user as any).session = (token as any).session;
+        console.log('Session callback - User:', (token as any).email || (token as any).admissionNo, 'Roles:', (token as any).roles);
       }
       return session;
     },
