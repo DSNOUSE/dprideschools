@@ -1,0 +1,76 @@
+
+> dprideinternationalschool@0.1.0 build
+> prisma generate && (prisma migrate deploy || echo 'Migration may have already run') && next build
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+
+✔ Generated Prisma Client (v7.2.0) to .\node_modules\@prisma\client in 318ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+Datasource "db": PostgreSQL database "neondb", schema "public" at "ep-young-math-aduevrkf-pooler.c-2.us-east-1.aws.neon.tech"
+
+10 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+▲ Next.js 16.1.1 (Turbopack)
+- Environments: .env
+- Experiments (use with caution):
+  ✓ turbopackUseSystemTlsCerts
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./app/student/dashboard/client.tsx:9:1
+Module not found: Can't resolve '@mui/icons-material/LogOut'
+   7 | import Link from 'next/link';
+   8 | import Container from '@/components/Container';
+>  9 | import { Print, LogOut, Home } from '@mui/icons-material';
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  10 | import { calculateGrade, getGradeColor, formatCommentAttribution } from '@/lib/results';
+  11 | import type { Student, Session, Term } from '@prisma/client';
+  12 | import type { ResultData } from '@/lib/results';
+
+
+
+Import trace:
+  Server Component:
+    ./app/student/dashboard/client.tsx
+    ./app/student/dashboard/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/student/dashboard/client.tsx:8:1
+Module not found: Can't resolve '@mui/icons-material/LogOut'
+   6 | import Link from 'next/link';
+   7 | import Container from '@/components/Container';
+>  8 | import { Print, LogOut, Home } from '@mui/icons-material';
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 | import {
+  10 |   calculateGrade,
+  11 |   getGradeColor,
+
+
+
+Import trace:
+  Server Component:
+    ./app/student/dashboard/client.tsx
+    ./app/student/dashboard/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./app/student/dashboard/client.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/student/dashboard/client.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
