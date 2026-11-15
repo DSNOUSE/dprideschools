@@ -8,6 +8,7 @@ import { signOut } from 'next-auth/react';
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
   const roles = (session?.user as any)?.roles as string[] | undefined;
+
   if (!roles?.includes('Administrator') && !roles?.includes('Teacher')) {
     redirect('/signin');
   }
@@ -17,7 +18,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <div className="max-w-7xl mx-auto bg-white rounded-none md:rounded-2xl shadow-xl overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr]">
           <aside className="hidden lg:block p-6 bg-gray-50">
-            
             <nav className="flex flex-col gap-3 h-full">
               <Link href="/admin/dashboard" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
                 <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,6 +37,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                 </svg>
                 <span>Calendar</span>
               </Link>
+
               <div className="mt-4 text-xs text-gray-400">Academics</div>
               <Link href="/admin/academics/departments" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white">
                 <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -62,12 +63,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                 </svg>
                 <span>Sessions</span>
               </Link>
-              
+
               <div className="mt-auto pt-6">
                 <form action="/api/auth/signout" method="POST" className="w-full">
-                  <button 
-                    type="submit" 
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded hover:bg-white text-red-600 hover:text-red-700"
+                  <button
+                    type="submit"
+                    className="w-full flex items-center gap-3 px-3 py-3 rounded-full bg-[#1e3a8a] hover:bg-blue-700 text-white transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
@@ -78,6 +79,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               </div>
             </nav>
           </aside>
+
           <main className="p-3 md:p-6 bg-white/0">{children}</main>
         </div>
       </div>

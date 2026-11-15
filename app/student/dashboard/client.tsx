@@ -73,7 +73,7 @@ export default function StudentDashboardClient({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         studentId: student.admissionNo,
-        classId: parseInt(selectedSession),
+        
         sessionId: parseInt(selectedSession),
         termId: parseInt(selectedTerm),
       }),
@@ -255,7 +255,7 @@ export default function StudentDashboardClient({
                           </td>
                           <td className="p-4 text-center">
                             <span
-                              className={`inline-block px-3 py-1 rounded-full font-bold text-white ${gradeColor}`}
+                              className={`inline-block px-3 py-1 rounded-full font-bold ${gradeColor}`}
                             >
                               {grade}
                             </span>

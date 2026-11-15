@@ -61,7 +61,7 @@ export default function Welcome({ message, name }: WelcomeProps) {
 
             
 
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
 
             DPRIDE INTERNATIONAL SCHOOL
 
