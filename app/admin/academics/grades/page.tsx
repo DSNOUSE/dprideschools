@@ -59,7 +59,7 @@ export default function GradeManagementPage() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.push('/signin');
+      router.push('/admin-signin');
     }
   }, [status, router]);
 
@@ -86,6 +86,15 @@ export default function GradeManagementPage() {
       setCurrentPage(1);
     } else {
       console.log('Dependencies NOT met for fetching students and subjects:', { selectedClass, selectedSession });
+    }
+  }, [selectedClass, selectedSession]);
+
+  useEffect(() => {
+    if (selectedClass || selectedSession) {
+      setSelectedSubject('');
+      setSubjects([]);
+      setStudents([]);
+      setGrades([]);
     }
   }, [selectedClass, selectedSession]);
 
@@ -145,6 +154,7 @@ export default function GradeManagementPage() {
   const fetchTermsForSession = async (sessionId: string) => {
     try {
       const res = await fetch(`/api/academics/terms?sessionId=${encodeURIComponent(sessionId)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setTerms(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -469,8 +479,8 @@ export default function GradeManagementPage() {
             <div className="p-8 text-center">Loading grades...</div>
           ) : students.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
-              <p className="text-base font-medium">No students found for this subject</p>
-              <p className="text-sm mt-1">Make sure students are enrolled in this subject</p>
+              <p className="text-base font-medium">No students enrolled</p>
+              <p className="text-sm mt-1">Make sure students are enrolled in this class for the selected session</p>
             </div>
           ) : (
             <>
@@ -591,7 +601,7 @@ export default function GradeManagementPage() {
               </div>
 
               {/* Desktop Table Layout */}
-              <div className="hidden sm:block overflow-x-auto">
+              <div className="overflow-x-auto">
                 <table className="w-full text-xs sm:text-sm">
                   <thead>
                     <tr className="border-b bg-gray-50">
@@ -619,8 +629,8 @@ export default function GradeManagementPage() {
                             type="number"
                             step="0.1"
                             min="0"
-                            max="100"
-                            value={grade?.firstScore || ''}
+                            max="10"
+                            value={grade?.firstScore ?? ''}
                             onChange={(e) => handleGradeChange(student.id, 'firstScore', e.target.value)}
                             className="w-16 sm:w-20 px-1 sm:px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
@@ -630,8 +640,8 @@ export default function GradeManagementPage() {
                             type="number"
                             step="0.1"
                             min="0"
-                            max="100"
-                            value={grade?.secondScore || ''}
+                            max="10"
+                            value={grade?.secondScore ?? ''}
                             onChange={(e) => handleGradeChange(student.id, 'secondScore', e.target.value)}
                             className="w-16 sm:w-20 px-1 sm:px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
@@ -641,14 +651,14 @@ export default function GradeManagementPage() {
                             type="number"
                             step="0.1"
                             min="0"
-                            max="100"
-                            value={grade?.fourthScore || ''}
+                            max="80"
+                            value={grade?.fourthScore ?? ''}
                             onChange={(e) => handleGradeChange(student.id, 'fourthScore', e.target.value)}
                             className="w-16 sm:w-20 px-1 sm:px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </td>
                         <td className="p-2 sm:p-3 text-center font-medium text-xs sm:text-sm">
-                          {average > 0 ? average.toFixed(1) : '-'}
+                          {average.toFixed(1)}
                         </td>
                       </tr>
                     );
