@@ -33,10 +33,10 @@ export default function UserMenu({ userName, userRole }: UserMenuProps) {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg  border-blue-600 bg-[#1e40af] hover:bg-blue-100 transition-colors font-medium text-blue-900"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg  border-blue-600 bg-[#1e40af] hover:bg-blue-100 transition-colors font-medium text-white"
         title="User menu - Click to sign out"
       >
-        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-blue text-sm font-bold flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-blue-600 text-sm font-bold flex-shrink-0">
           {userName.charAt(0).toUpperCase()}
         </div>
         <div className="hidden sm:flex sm:flex-col sm:items-start">

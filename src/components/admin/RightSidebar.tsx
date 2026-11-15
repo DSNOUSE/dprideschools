@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { MenuBook, School, Person, Group } from "@mui/icons-material";
+import { MenuBook, School, Person } from "@mui/icons-material";
 
 type Recent = { id: string; name: string; role?: string; when?: string };
 
