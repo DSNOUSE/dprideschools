@@ -469,8 +469,8 @@ export default function GradeManagementPage() {
             <div className="p-8 text-center">Loading grades...</div>
           ) : students.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
-              <p className="text-base font-medium">No students found for this subject</p>
-              <p className="text-sm mt-1">Make sure students are enrolled in this subject</p>
+              <p className="text-base font-medium">No students enrolled</p>
+              <p className="text-sm mt-1">Make sure students are enrolled in this class for the selected session</p>
             </div>
           ) : (
             <>
