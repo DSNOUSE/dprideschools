@@ -36,30 +36,6 @@ export async function GET(request: NextRequest) {
       // Show only offerings that exist for this class+session.
 // An empty array is intentional — it means "no subjects configured",
 // and the UI should show a warning rather than guess.
-if (classId && sessionId) {
-      const offerings = await prisma.subjectOffering.findMany({
-        where: { classId: parseInt(classId, 10), sessionId, isActive: true },
-        include: { subject: true, class: { include: { level: true } } },
-        orderBy: { subject: { name: 'asc' } },
-      });
-
-      return NextResponse.json(
-        offerings.map((o) => ({
-          ...o.subject,
-          classId: o.classId,
-          section: o.class.level.section,
-          class: o.class,
-          department: {
-            id: o.class.level.id,
-            name: o.class.level.section.replaceAll('_', ' '),
-          },
-          offeringId: o.id,
-          isCompulsory: o.isCompulsory,
-        }))
-      );
-    }
-    }
-
     const subjects = await prisma.subject.findMany({
       where: { isActive: true },
       orderBy: { name: 'asc' },

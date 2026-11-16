@@ -56,6 +56,8 @@ export default function GradeManagementPage() {
   const [message, setMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const STUDENTS_PER_PAGE = 3;
+  const [subjectsLoading, setSubjectsLoading] = useState(false);
+  const [subjectsError, setSubjectsError] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
